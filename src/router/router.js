@@ -146,7 +146,7 @@ export const roleRoutes = [{
             {
 
                 name: "updateArticle",
-                authKey: "UPDTED_ARTICLE",
+                authKey: "UPDATE_ARTICLE",
                 path: 'updateArticle',
                 component: () => import('@/views/articleManage/update/index'),
                 meta: {
@@ -206,7 +206,7 @@ export const roleRoutes = [{
             {
 
                 name: "updateTAG",
-                authKey: "UPDTED_TAG",
+                authKey: "UPDATE_TAG",
                 path: 'updateTag',
                 component: () => import('@/views/tagManage/update/index'),
                 meta: {

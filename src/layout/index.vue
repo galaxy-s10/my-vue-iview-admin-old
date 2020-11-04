@@ -32,7 +32,11 @@
                   <!-- {{ item.meta.title }} -->
                 </template>
                 <template v-for="(itemm, indexx) in item.children">
-                  <MenuItem :name="itemm.name" :key="indexx">
+                  <MenuItem
+                    :name="itemm.name"
+                    :key="indexx"
+                    v-auth="itemm.authKey"
+                  >
                     {{ itemm.meta.title }}
                   </MenuItem>
                 </template>
@@ -80,6 +84,7 @@
 </template>
 
 <script>
+import { roleRoutes } from "@/router/router";
 // import Header from "./header/index";
 // import Sider from "./sider/index";
 // import Footer from "./footer/index";
@@ -116,12 +121,26 @@ export default {
     },
   },
   methods: {
-    pushRouter(name) {
-      this.$router.push({ name: name });
+    pushRouter(path) {
+      console.log(path)
+      this.$router.push({ name: path });
+    },
+    change(e, role) {
+      if (e) {
+        if (!this.roles.includes(role)) {
+          this.roles.push(role);
+        }
+      } else {
+        const index = this.roles.findIndex((item) => item === role);
+        this.roles.splice(index, 1);
+      }
     },
   },
   created() {},
   mounted() {
+    console.log(roleRoutes);
+    console.log(this.$router.options.routes);
+    // this.menuList = roleRoutes;
     this.menuList = this.$router.options.routes;
   },
 };
