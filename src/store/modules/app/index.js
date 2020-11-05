@@ -12,12 +12,13 @@ const app = {
             {
                 title:'文章1',
                 path:'',
-                name:'adf',
+                name:'addArticle',
             },
         ]
     },
     mutations: {
         addTagOpenPage(state,item){
+            console.log('vuex')
             console.log(item);
             console.log(state.tagOpenPageList);
             utils.oneOf(item,state.tagOpenPageList)

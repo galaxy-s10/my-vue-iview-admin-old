@@ -92,6 +92,7 @@
 </template>
 
 <script>
+import utils from "../libs/utils";
 import TagOpenPage from "../components/tagOpenPage";
 import { roleRoutes } from "@/router/router";
 // import Header from "./header/index";
@@ -107,7 +108,7 @@ export default {
   },
   data() {
     return {
-      isCollapsed: true,
+      isCollapsed: false,
       menuList: [
         "ARTICLE_LIST",
         "ADD_ARTICLE",
@@ -127,6 +128,9 @@ export default {
         // console.log(state.auth.auth == this.menuList);
         return state.auth.auth;
       },
+      tagList(state) {
+        return state.app.tagOpenPageList;
+      },
     }),
     activeName() {
       return this.$route.name;
@@ -141,28 +145,50 @@ export default {
       console.log(this.isCollapsed);
       this.isCollapsed = !this.isCollapsed;
     },
-    findItem(source,target) {
-      source.forEach((item) => {
-        console.log('======');
-        console.log(item.name == target);
-        console.log(item);
-        console.log('9999999',item.name);
-        console.log(target);
-        if (item.name == target) {
-          console.log("找到了");
-          return item;
-        } else {
-          if (item.children) {
-            this.findItem(item.children,target);
-          }
+    findItem(source, target) {
+      var res = false;
+      function digui(source, target) {
+        let ress = "";
+        try {
+          source.forEach((item) => {
+            // console.log(target);
+            if (item.name == target) {
+              ress = item;
+              // console.log(res);
+              throw new Error();
+            } else {
+              if (item.children) {
+                digui(item.children, target);
+              }
+            }
+          });
+        } catch (e) {
+          res = ress;
         }
-      });
+      }
+      digui(source, target);
+      console.log("]]]]]]]]]]]]");
+      return res;
     },
     changeMenu(path) {
-      console.log(path);
+      // console.log("ppppppppppp");
+      // console.log(path);
+      // console.log(this.menuList);
       // this.findItem(this.menuList,path)
-      console.log(this.findItem(this.menuList,path))
-      // console.log('000000000');
+      // 判断当前跳转页面有没有在tagOpenPageList里面
+      // 查询点击跳转的路由信息
+      let target = this.findItem(this.menuList, path);
+      console.log("target");
+      console.log(target);
+      console.log(this.tagList);
+      console.log(path);
+      let tag;
+      let bool = utils.exist(this.tagList, path);
+      if(bool){
+        
+      }
+      // console.log(tag);
+      console.log('000000000');
       console.log(this["app/addTagOpenPage"]);
       // console.log(this.$store.commit("app/addTagOpenPage"));
       this["app/addTagOpenPage"](path);
