@@ -18,7 +18,9 @@ const app = {
     },
     mutations: {
         addTagOpenPage(state,item){
-            utils.oneOf(state.addTagOpenPage)
+            console.log(item);
+            console.log(state.tagOpenPageList);
+            utils.oneOf(item,state.tagOpenPageList)
         }
     },
     actions: {

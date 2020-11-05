@@ -2,49 +2,49 @@
   <div>
     <Layout :style="{ minHeight: '100vh' }">
       <Sider collapsible v-model="isCollapsed" :collapsed-width="78">
-        <div v-if="auth.length != 0">
-          <Menu
-            mode="vertical"
-            width="100"
-            theme="dark"
-            @on-select="changeMenu"
-            :active-name="activeName"
-          >
-            <template v-for="(item, index) in menuList">
-              <Submenu
-                v-if="item.children && item.children.length > 1"
-                :name="item.name"
-                :key="index"
-                v-auth="item.authKey"
-              >
-                <template slot="title">
-                  <Icon :type="item.meta.icon" />
-                  <span v-if="!isCollapsed">{{ item.meta.title }}</span>
-                </template>
-                <template v-for="(itemm, indexx) in item.children">
-                  <MenuItem
-                    :name="itemm.name"
-                    :key="indexx"
-                    v-auth="itemm.authKey"
-                  >
-                    <span v-if="!isCollapsed">{{ itemm.meta.title }}</span>
-                  </MenuItem>
-                </template>
-              </Submenu>
-
-              <MenuItem
-                v-if="item.children && item.children.length <= 1"
-                :name="item.name"
-                :key="index"
-              >
+        <!-- <div v-if="auth.length != 0"> -->
+        <Menu
+          mode="vertical"
+          width="100"
+          theme="dark"
+          @on-select="changeMenu"
+          :active-name="activeName"
+        >
+          <template v-for="(item, index) in menuList">
+            <Submenu
+              v-if="item.children && item.children.length > 1"
+              :name="item.name"
+              :key="index"
+              v-auth="item.authKey"
+            >
+              <template slot="title">
                 <Icon :type="item.meta.icon" />
-                <span v-if="!isCollapsed">
-                  {{ item.meta.title }}
-                </span>
-              </MenuItem>
-            </template>
-          </Menu>
-        </div>
+                <span v-if="!isCollapsed">{{ item.meta.title }}</span>
+              </template>
+              <template v-for="(itemm, indexx) in item.children">
+                <MenuItem
+                  :name="itemm.name"
+                  :key="indexx"
+                  v-auth="itemm.authKey"
+                >
+                  <span v-if="!isCollapsed">{{ itemm.meta.title }}</span>
+                </MenuItem>
+              </template>
+            </Submenu>
+
+            <MenuItem
+              v-if="item.children && item.children.length <= 1"
+              :name="item.name"
+              :key="index"
+            >
+              <Icon :type="item.meta.icon" />
+              <span v-if="!isCollapsed">
+                {{ item.meta.title }}
+              </span>
+            </MenuItem>
+          </template>
+        </Menu>
+        <!-- </div> -->
       </Sider>
       <Layout :style="{ background: 'white' }">
         <Header
@@ -141,9 +141,29 @@ export default {
       console.log(this.isCollapsed);
       this.isCollapsed = !this.isCollapsed;
     },
+    findItem(source,target) {
+      source.forEach((item) => {
+        console.log('======');
+        console.log(item.name == target);
+        console.log(item);
+        console.log('9999999',item.name);
+        console.log(target);
+        if (item.name == target) {
+          console.log("找到了");
+          return item;
+        } else {
+          if (item.children) {
+            this.findItem(item.children,target);
+          }
+        }
+      });
+    },
     changeMenu(path) {
       console.log(path);
-      console.log( this['app/addTagOpenPage']);
+      // this.findItem(this.menuList,path)
+      console.log(this.findItem(this.menuList,path))
+      // console.log('000000000');
+      console.log(this["app/addTagOpenPage"]);
       // console.log(this.$store.commit("app/addTagOpenPage"));
       this["app/addTagOpenPage"](path);
       this.$router.push({ name: path });
