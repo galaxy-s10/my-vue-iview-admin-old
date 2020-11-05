@@ -7,7 +7,7 @@
             mode="vertical"
             width="100"
             theme="dark"
-            @on-select="pushRouter"
+            @on-select="changeMenu"
             :active-name="activeName"
           >
             <template v-for="(item, index) in menuList">
@@ -69,15 +69,11 @@
                 :to="item.path"
                 >{{ item.meta.title }}</BreadcrumbItem
               >
-              <!-- <BreadcrumbItem to="/">Home</BreadcrumbItem>
-              <BreadcrumbItem to="/components/breadcrumb"
-                >Components</BreadcrumbItem
-              >
-              <BreadcrumbItem>Breadcrumb</BreadcrumbItem> -->
             </Breadcrumb>
           </div>
         </Header>
         <Content>
+          <tag-open-page></tag-open-page>
           <router-view></router-view>
         </Content>
         <Footer
@@ -96,17 +92,19 @@
 </template>
 
 <script>
+import TagOpenPage from "../components/tagOpenPage";
 import { roleRoutes } from "@/router/router";
 // import Header from "./header/index";
 // import Sider from "./sider/index";
 // import Footer from "./footer/index";
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 export default {
-  //   components: {
-  //     Header,
-  //     Sider,
-  //     Footer,
-  //   },
+  components: {
+    TagOpenPage,
+    // Header,
+    // Sider,
+    // Footer,
+  },
   data() {
     return {
       isCollapsed: true,
@@ -138,12 +136,16 @@ export default {
     },
   },
   methods: {
+    ...mapMutations(["app/addTagOpenPage"]),
     collapsedSider() {
       console.log(this.isCollapsed);
       this.isCollapsed = !this.isCollapsed;
     },
-    pushRouter(path) {
+    changeMenu(path) {
       console.log(path);
+      console.log( this['app/addTagOpenPage']);
+      // console.log(this.$store.commit("app/addTagOpenPage"));
+      this["app/addTagOpenPage"](path);
       this.$router.push({ name: path });
     },
     change(e, role) {
