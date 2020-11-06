@@ -5,8 +5,8 @@
       :key="index"
       type="dot"
       closable
-      :color="active?'primary':'#e8eaec'"
-      >{{ item.title }}</Tag
+      :color="active ? 'primary' : '#e8eaec'"
+      >{{ item.meta.title }}</Tag
     >
   </div>
 </template>
@@ -17,7 +17,7 @@ export default {
   components: {},
   data() {
     return {
-      active:true
+      active: true,
     };
   },
   computed: {

@@ -4,16 +4,16 @@ const app = {
     namespaced:true,
     state: {
         tagOpenPageList:[
-            {
-                title:'首页',
-                path:'',
-                name:'dashboard',
-            },
-            {
-                title:'文章1',
-                path:'',
-                name:'addArticle',
-            },
+            // {
+            //     title:'首页',
+            //     path:'',
+            //     name:'dashboard',
+            // },
+            // {
+            //     title:'文章1',
+            //     path:'',
+            //     name:'addArticle',
+            // },
         ]
     },
     mutations: {
@@ -21,7 +21,8 @@ const app = {
             console.log('vuex')
             console.log(item);
             console.log(state.tagOpenPageList);
-            utils.oneOf(item,state.tagOpenPageList)
+            state.tagOpenPageList.push(item)
+            // utils.oneOf(item,state.tagOpenPageList)
         }
     },
     actions: {

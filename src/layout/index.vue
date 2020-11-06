@@ -184,14 +184,15 @@ export default {
       console.log(path);
       let tag;
       let bool = utils.exist(this.tagList, path);
-      if(bool){
-        
+      console.log(bool)
+      if (!bool) {
+        this['app/addTagOpenPage'](target)
       }
       // console.log(tag);
-      console.log('000000000');
-      console.log(this["app/addTagOpenPage"]);
+      console.log("000000000");
+      // console.log(this["app/addTagOpenPage"]);
       // console.log(this.$store.commit("app/addTagOpenPage"));
-      this["app/addTagOpenPage"](path);
+      // this["app/addTagOpenPage"](path);
       this.$router.push({ name: path });
     },
     change(e, role) {

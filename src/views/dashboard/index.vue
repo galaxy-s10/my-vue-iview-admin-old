@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div>
+    dashboard
+    <!-- <div>
       当前权限：
       <span v-for="(item, index) in auth" :key="index">{{ item }},</span>
     </div>
@@ -80,7 +81,7 @@
           @on-change="change($event, 'SELECT_TAG')"
         ></i-switch>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

@@ -7,7 +7,7 @@ Vue.use(VueRouter)
 
 // 默认路由
 export const defaultRoutes = [{
-        name: "index",
+        name: "admin",
         path: '/',
         component: Layout,
         redirect: '/dashboard',
@@ -16,32 +16,41 @@ export const defaultRoutes = [{
             icon: 'md-speedometer',
         },
         children: [{
-                name: "dashboard",
-                path: 'dashboard',
-                component: () => import('@/views/dashboard/index'),
+            name: "dashboard",
+            path: 'dashboard',
+            component: () => import('@/views/dashboard/index'),
+            meta: {
+                title: '控制台',
+                icon: 'md-speedometer',
+            },
+        }, ]
+    },
+    {
+        name: "setting",
+        path: '/setting',
+        component: Layout,
+        meta: {
+            title: '设置',
+            icon: 'md-speedometer',
+        },
+        children: [{
+                name: "profile",
+                path: 'profile',
+                component: () => import('@/views/setting/profile'),
                 meta: {
-                    title: '控制台',
+                    title: '账号信息',
                     icon: 'md-speedometer',
                 },
             },
-            // {
-            //     name: "register",
-            //     path: 'register',
-            //     component: () => import('@/views/register/index'),
-            //     meta: {
-            //         title: '注册',
-            //         icon: 'md-add',
-            //     },
-            // },
-            // {
-            //     name: "login",
-            //     path: 'login',
-            //     component: () => import('@/views/login/index'),
-            //     meta: {
-            //         title: '登录',
-            //         icon: 'ios-add',
-            //     },
-            // },
+            {
+                name: "security",
+                path: 'security',
+                component: () => import('@/views/setting/security'),
+                meta: {
+                    title: '修改密码',
+                    icon: 'md-speedometer',
+                },
+            },
         ]
     },
     {
@@ -50,7 +59,7 @@ export const defaultRoutes = [{
         redirect: 'login',
         component: Layout,
         meta: {
-            title: '首页',
+            title: '首页管理',
             icon: 'md-home',
         },
         children: [{
@@ -79,19 +88,43 @@ export const defaultRoutes = [{
         component: Layout,
         redirect: '/404',
         meta: {
-            title: '未找到',
+            title: '报错页面',
             icon: 'md-eye',
         },
         children: [{
-            name: "notFound",
-            path: '404',
-            component: () => import('@/views/404/index'),
-            // meta: {
-            //     title: '未找到',
-            //     icon: 'md-speedometer',
-            // },
-        }, ]
-    }
+                name: "authError",
+                path: '401',
+                component: () => import('@/views/error/401/index'),
+                meta: {
+                    title: '权限错误',
+                    icon: 'md-speedometer',
+                },
+            },
+            {
+                name: "notFound",
+                path: '404',
+                component: () => import('@/views/error/404/index'),
+                meta: {
+                    title: '页面未找到',
+                    icon: 'md-speedometer',
+                },
+            },
+            {
+                name: "serverError",
+                path: '500',
+                component: () => import('@/views/error/500/index'),
+                meta: {
+                    title: '服务器错误',
+                    icon: 'md-speedometer',
+                },
+            },
+        ]
+    },
+    // {
+    //     name: "pathError",
+    //     path: '*',
+    //     redirect: '/404',
+    // },
 ]
 
 // 权限路由
