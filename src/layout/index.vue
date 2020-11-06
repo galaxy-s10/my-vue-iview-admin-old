@@ -133,6 +133,7 @@ export default {
       },
     }),
     activeName() {
+      // console.log(this.$route.name)
       return this.$route.name;
     },
     rotateIcon() {
@@ -151,10 +152,10 @@ export default {
         let ress = "";
         try {
           source.forEach((item) => {
-            // console.log(target);
+            console.log(target);
             if (item.name == target) {
               ress = item;
-              // console.log(res);
+              console.log(res);
               throw new Error();
             } else {
               if (item.children) {
@@ -167,7 +168,7 @@ export default {
         }
       }
       digui(source, target);
-      console.log("]]]]]]]]]]]]");
+      // console.log("]]]]]]]]]]]]");
       return res;
     },
     changeMenu(path) {
@@ -178,18 +179,18 @@ export default {
       // 判断当前跳转页面有没有在tagOpenPageList里面
       // 查询点击跳转的路由信息
       let target = this.findItem(this.menuList, path);
-      console.log("target");
-      console.log(target);
-      console.log(this.tagList);
-      console.log(path);
+      // console.log("target");
+      // console.log(target);
+      // console.log(this.tagList);
+      // console.log(path);
       let tag;
       let bool = utils.exist(this.tagList, path);
-      console.log(bool)
+      // console.log(bool)
       if (!bool) {
         this['app/addTagOpenPage'](target)
       }
       // console.log(tag);
-      console.log("000000000");
+      // console.log("000000000");
       // console.log(this["app/addTagOpenPage"]);
       // console.log(this.$store.commit("app/addTagOpenPage"));
       // this["app/addTagOpenPage"](path);
@@ -206,14 +207,18 @@ export default {
       }
     },
     getBreadcrumb() {
+      // console.log('[[[[[[[[]]]]]]]]')
+      // console.log(this.$route.matched)
       const matched = this.$route.matched.filter(
         (item) => item.meta && item.meta.title
       );
-      console.log(
-        this.$route.matched.filter((item) => item.meta && item.meta.title)
-      );
-      console.log(matched[0]);
-      console.log(this.$route.matched);
+      // console.log(
+      //   this.$route.matched.filter((item) => item.meta && item.meta.title)
+      // );
+      // console.log(matched[0]);
+      // console.log(this.$route.matched);
+      // console.log('】】】】】】】】】】】】】】】】】】】】】】】】】')
+      // console.log(matched)
       this.breadList = matched;
     },
   },

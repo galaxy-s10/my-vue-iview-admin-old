@@ -5,7 +5,8 @@
       :key="index"
       type="dot"
       closable
-      :color="active ? 'primary' : '#e8eaec'"
+      :color="activeColor(item.name)"
+      @click.native="onChangeTag(item.name)"
       >{{ item.meta.title }}</Tag
     >
   </div>
@@ -18,6 +19,7 @@ export default {
   data() {
     return {
       active: true,
+      currentTag: null,
     };
   },
   computed: {
@@ -30,9 +32,35 @@ export default {
         return state.app.tagOpenPageList;
       },
     }),
+    activeColor() {
+      return (v) => {
+        console.log("0000", v);
+        // console.log("999999999", this.$route.name);
+        if (v == this.currentTag) {
+          return "#41b883";
+        } else {
+          return "#e8eaec";
+        }
+      };
+    },
   },
-  methods: {},
-  created() {},
+  watch: {
+    $route() {
+      this.currentTag = this.$route.name;
+      console.log("999999999", this.$route.name);
+      // this.getBreadcrumb();
+    },
+  },
+  methods: {
+    onChangeTag(v) {
+      console.log(v);
+      this.$router.push({ name: v });
+    },
+  },
+  created() {
+    this.currentTag = this.$route.name;
+    console.log(this.currentTag);
+  },
   mounted() {},
 };
 </script>
