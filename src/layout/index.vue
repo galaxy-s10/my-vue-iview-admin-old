@@ -3,6 +3,9 @@
     <Layout :style="{ minHeight: '100vh' }">
       <Sider collapsible v-model="isCollapsed" :collapsed-width="78">
         <!-- <div v-if="auth.length != 0"> -->
+          <div class="logo">
+            {{title}}
+          </div>
         <Menu
           mode="vertical"
           width="100"
@@ -120,6 +123,9 @@ export default {
     };
   },
   computed: {
+    ...mapState('app',[
+      'title'
+    ]),
     ...mapState({
       auth(state) {
         // console.log("state.auth.auth");
@@ -240,4 +246,13 @@ export default {
 </script>
 
 <style scoped>
+.logo{
+  color: white;
+  width: 100%;
+  height: 64px;
+  line-height: 64px;
+  font-size: 24px;
+  font-weight: 500;
+  text-align: center;
+}
 </style>

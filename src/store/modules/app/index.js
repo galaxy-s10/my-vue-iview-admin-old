@@ -1,23 +1,74 @@
-import utils  from "@/libs/utils";
+import utils from "@/libs/utils";
 
 const app = {
-    namespaced:true,
+    namespaced: true,
     state: {
-        tagOpenPageList:[
-            // {
-            //     title:'首页',
-            //     path:'',
-            //     name:'dashboard',
-            // },
-            // {
-            //     title:'文章1',
-            //     path:'',
-            //     name:'addArticle',
-            // },
+        title: 'Vue-iview-admin',
+        tagOpenPageList: [{
+                name: 'dashboard',
+                meta: {
+                    title: '首页'
+                },
+
+            },
+            {
+                name: 'dashboard',
+                meta: {
+                    title: '首页'
+                }
+            },
+            {
+                name: 'dashboard',
+                meta: {
+                    title: '首页'
+                }
+            },
+            {
+                name: 'dashboard',
+                meta: {
+                    title: '首页'
+                }
+            },
+            {
+                name: 'dashboard',
+                meta: {
+                    title: '首页'
+                }
+            },
+            {
+                name: 'dashboard',
+                meta: {
+                    title: '首页'
+                }
+            },
+            {
+                name: 'dashboard',
+                meta: {
+                    title: '首页'
+                }
+            },
+            {
+                name: 'dashboard',
+                meta: {
+                    title: '首页'
+                }
+            },
+            {
+                name: 'dashboard',
+                meta: {
+                    title: '首页'
+                }
+            },
+            {
+                name: 'dashboard',
+                meta: {
+                    title: '首页'
+                }
+            },
         ]
     },
     mutations: {
-        addTagOpenPage(state,item){
+        addTagOpenPage(state, item) {
             console.log('vuex')
             console.log(item);
             console.log(state.tagOpenPageList);

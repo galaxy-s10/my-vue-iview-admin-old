@@ -60,7 +60,7 @@ export const defaultRoutes = [{
     component: Layout,
     redirect: '/404',
     meta: {
-        title: '报错页面',
+        title: '异常页面',
         icon: 'md-eye',
     },
     children: [{

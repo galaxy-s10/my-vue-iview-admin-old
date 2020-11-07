@@ -1,7 +1,20 @@
 <template>
   <div>
     dashboard
-    <!-- <div>
+    <Dropdown trigger="hover" placement="right-start">
+      <a href="javascript:void(0)">
+        菜单(左)
+        <Icon type="ios-arrow-down"></Icon>
+      </a>
+      <DropdownMenu slot="list">
+        <DropdownItem>驴打滚</DropdownItem>
+        <DropdownItem>炸酱面</DropdownItem>
+        <DropdownItem>豆汁儿</DropdownItem>
+        <DropdownItem>冰糖葫芦</DropdownItem>
+        <DropdownItem>北京烤鸭</DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
+    <div>
       当前权限：
       <span v-for="(item, index) in auth" :key="index">{{ item }},</span>
     </div>
@@ -81,7 +94,7 @@
           @on-change="change($event, 'SELECT_TAG')"
         ></i-switch>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 
