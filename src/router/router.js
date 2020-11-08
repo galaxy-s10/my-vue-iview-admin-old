@@ -17,7 +17,7 @@ export const defaultRoutes = [{
     },
     children: [{
         name: "dashboard",
-        path: 'dashboard',
+        path: '/dashboard',
         component: () => import('@/views/dashboard/index'),
         meta: {
             title: '控制台',
@@ -36,8 +36,8 @@ export const defaultRoutes = [{
     },
     children: [{
         name: "register",
-        path: 'register',
-        component: () => import('@/views/register/index'),
+        path: '/home/register',
+        component: () => import('@/views/home/register/index'),
         meta: {
             title: '注册',
             icon: 'md-add',
@@ -45,8 +45,8 @@ export const defaultRoutes = [{
     },
     {
         name: "login",
-        path: 'login',
-        component: () => import('@/views/login/index'),
+        path: '/home/login',
+        component: () => import('@/views/home/login/index'),
         meta: {
             title: '登录',
             icon: 'ios-add',
@@ -77,7 +77,7 @@ export const defaultRoutes = [{
         path: '/404',
         component: () => import('@/views/error/404/index'),
         meta: {
-            title: '页面未找到',
+            title: '页面不存在',
             icon: 'md-speedometer',
         },
     },
@@ -96,13 +96,14 @@ export const defaultRoutes = [{
     name: "setting",
     path: '/setting',
     component: Layout,
+    redirect: '/setting/profile',
     meta: {
         title: '设置',
         icon: 'md-speedometer',
     },
     children: [{
         name: "profile",
-        path: 'profile',
+        path: '/setting/profile',
         component: () => import('@/views/setting/profile'),
         meta: {
             title: '账号信息',
@@ -111,7 +112,7 @@ export const defaultRoutes = [{
     },
     {
         name: "security",
-        path: 'security',
+        path: '/setting/security',
         component: () => import('@/views/setting/security'),
         meta: {
             title: '修改密码',
@@ -119,6 +120,10 @@ export const defaultRoutes = [{
         },
     },
     ]
+},
+{
+    path: '/login',
+    component: () => import('@/views/login/index'),
 },
 ]
 
@@ -128,6 +133,7 @@ export const roleRoutes = [{
     authKey: ["ARTICLE_LIST", "ADD_ARTICLE", "DELETE_ARTICLE", "SELECT_ARTICLE", "UPDATE_ARTICLE"],
     path: '/articleManage',
     component: Layout,
+    // redirect: '/articleManage/articleList',
     meta: {
         title: '文章管理',
         icon: 'md-podium'
@@ -135,7 +141,7 @@ export const roleRoutes = [{
     children: [{
         name: "articleList",
         authKey: "ARTICLE_LIST",
-        path: 'articleList',
+        path: '/articleManage/articleList',
         component: () => import('@/views/articleManage/list/index'),
         meta: {
             title: '文章列表'
@@ -145,7 +151,7 @@ export const roleRoutes = [{
 
         name: "addArticle",
         authKey: "ADD_ARTICLE",
-        path: 'addArticle',
+        path: '/articleManage/addArticle',
         component: () => import('@/views/articleManage/add/index'),
         meta: {
             title: '增加文章'
@@ -154,7 +160,7 @@ export const roleRoutes = [{
     {
         name: "deleteArticle",
         authKey: "DELETE_ARTICLE",
-        path: 'deleteArticle',
+        path: '/articleManage/deleteArticle',
         component: () => import('@/views/articleManage/delete/index'),
         meta: {
             title: '删除文章'
@@ -165,7 +171,7 @@ export const roleRoutes = [{
 
         name: "selectArticle",
         authKey: "SELECT_ARTICLE",
-        path: 'selectArticle',
+        path: '/articleManage/selectArticle',
         component: () => import('@/views/articleManage/select/index'),
         meta: {
             title: '查询文章'
@@ -175,7 +181,7 @@ export const roleRoutes = [{
 
         name: "updateArticle",
         authKey: "UPDATE_ARTICLE",
-        path: 'updateArticle',
+        path: '/articleManage/updateArticle',
         component: () => import('@/views/articleManage/update/index'),
         meta: {
             title: '修改文章'
@@ -186,8 +192,9 @@ export const roleRoutes = [{
 {
     name: "tagManage",
     authKey: ["TAG_LIST", "ADD_TAG", "DELETE_TAG", "SELECT_TAG", "UPDATE_TAG"],
-    path: '/tagManage',
+    path: '/tagManage//tagManage',
     component: Layout,
+    redirect: '/tagManage/tagList',
     meta: {
         title: '标签管理',
         icon: 'md-pricetag'
@@ -195,7 +202,7 @@ export const roleRoutes = [{
     children: [{
         name: "tagList",
         authKey: "TAG_LIST",
-        path: 'tagList',
+        path: '/tagManage//tagManage/tagList',
         component: () => import('@/views/tagManage/list/index'),
         meta: {
             title: '标签列表'
@@ -205,7 +212,7 @@ export const roleRoutes = [{
 
         name: "addTag",
         authKey: "ADD_TAG",
-        path: 'addTag',
+        path: '/tagManage/addTag',
         component: () => import('@/views/tagManage/add/index'),
         meta: {
             title: '添加标签'
@@ -214,7 +221,7 @@ export const roleRoutes = [{
     {
         name: "deleteTAG",
         authKey: "DELETE_TAG",
-        path: 'deleteTag',
+        path: '/tagManage/deleteTag',
         component: () => import('@/views/tagManage/delete/index'),
         meta: {
             title: '删除标签'
@@ -225,7 +232,7 @@ export const roleRoutes = [{
 
         name: "selectTAG",
         authKey: "SELECT_TAG",
-        path: 'selectTag',
+        path: '/tagManage/selectTag',
         component: () => import('@/views/tagManage/select/index'),
         meta: {
             title: '查询标签'
@@ -235,7 +242,7 @@ export const roleRoutes = [{
 
         name: "updateTAG",
         authKey: "UPDATE_TAG",
-        path: 'updateTag',
+        path: '/tagManage/updateTag',
         component: () => import('@/views/tagManage/update/index'),
         meta: {
             title: '修改标签'

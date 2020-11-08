@@ -5,6 +5,7 @@ import 'iview/dist/styles/iview.css';
 
 import router from './router'
 import store from './store'
+import './permission'
 
 import plugins from './libs/plugins'
 

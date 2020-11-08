@@ -1,69 +1,33 @@
 <template>
   <div>
-    <Layout :style="{ minHeight: '100vh' }">
-      <Sider
-        width="200"
-        :collapsed-width="70"
-        collapsible
-        v-model="isCollapsed"
-      >
-        <!-- <Sider width="200" collapsible v-model="isCollapsed"> -->
-        <!-- <div v-if="auth.length != 0"> -->
-        <div class="logo">
-          {{ title }}
-        </div>
-        <Menu
-          mode="vertical"
-          width="100"
-          theme="dark"
-          @on-select="changeMenu"
-          :active-name="activeName"
-        >
-          <template v-for="(item, index) in menuList">
-            <Submenu
-              v-if="item.children && item.children.length > 1"
-              :name="item.name"
-              :key="index"
-              v-auth="item.authKey"
-            >
-              <template slot="title">
-                <Icon :type="item.meta.icon" />
-                <span v-if="!isCollapsed">{{ item.meta.title }}</span>
-              </template>
-              <template v-for="(itemm, indexx) in item.children">
-                <MenuItem
-                  :name="itemm.name"
-                  :key="indexx"
-                  v-auth="itemm.authKey"
-                >
-                  <span v-if="!isCollapsed">{{ itemm.meta.title }}</span>
-                </MenuItem>
-              </template>
-            </Submenu>
-
-            <MenuItem
-              v-if="item.children && item.children.length <= 1"
-              :name="item.name"
-              :key="index"
-            >
-              <Icon :type="item.meta.icon" />
-              <span v-if="!isCollapsed">
-                {{ item.meta.title }}
-              </span>
-            </MenuItem>
-          </template>
-        </Menu>
-      </Sider>
-      <!-- <Layout :style="{overflowX:'auto'}"> -->
+    <div class="layout">
       <Layout>
-        <Header
-          :style="{
-            padding: '0',
-            background: '#fff',
-            boxShadow: '0 2px 3px 2px rgba(0,0,0,.1)',
-          }"
+        <Sider
+          ref="side1"
+          hide-trigger
+          collapsible
+          :collapsed-width="78"
+          v-model="isCollapsed"
         >
-          <div style="display: flex; align-items: center">
+          <Menu
+            active-name="1-2"
+            theme="dark"
+            width="auto"
+            :class="menuitemClasses"
+          >
+            <MenuItem name="1-1">
+              <Icon type="ios-navigate"></Icon> <span>Option 1</span>
+            </MenuItem>
+            <MenuItem name="1-2">
+              <Icon type="ios-search"></Icon> <span>Option 2</span>
+            </MenuItem>
+            <MenuItem name="1-3">
+              <Icon type="ios-settings"></Icon> <span>Option 3</span>
+            </MenuItem>
+          </Menu>
+        </Sider>
+        <Layout>
+          <Header :style="{ padding: 0 }" class="layout-header-bar">
             <Icon
               @click.native="collapsedSider"
               :class="rotateIcon"
@@ -71,33 +35,15 @@
               type="md-menu"
               size="24"
             ></Icon>
-            <Breadcrumb>
-              <BreadcrumbItem
-                v-for="(item, index) in breadList"
-                :key="index"
-                :to="item.path"
-                >{{ item.meta.title }}</BreadcrumbItem
-              >
-            </Breadcrumb>
-          </div>
-        </Header>
-        <Content>
-          <tag-open-page ref="tagOpen"></tag-open-page>
-          <router-view></router-view>
-        </Content>
-
-        <Footer
-          :style="{
-            background: '#e74c3c',
-            padding: 0,
-            bottom: 0,
-            textAlign: 'center',
-          }"
-        >
-          Footer
-        </Footer>
+          </Header>
+          <Content
+            :style="{ margin: '20px', background: '#fff', minHeight: '260px' }"
+          >
+            Content
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
+    </div>
   </div>
 </template>
 
@@ -163,10 +109,10 @@ export default {
         let ress = "";
         try {
           source.forEach((item) => {
-            // console.log(target);
+            console.log(target);
             if (item.name == target) {
               ress = item;
-              // console.log(res);
+              console.log(res);
               throw new Error();
             } else {
               if (item.children) {
@@ -205,9 +151,7 @@ export default {
       // console.log(this["app/addTagOpenPage"]);
       // console.log(this.$store.commit("app/addTagOpenPage"));
       // this["app/addTagOpenPage"](path);
-      this.$router.push({ name: path }).catch((err)=>{
-        // console.log(err)
-      });
+      this.$router.push({ name: path });
     },
     change(e, role) {
       if (e) {
@@ -244,13 +188,11 @@ export default {
     this.getBreadcrumb();
   },
   mounted() {
-    // console.log(this.$refs.tagOpen.$el);
-    // let width = this.$refs.tagOpen.$el.clientWidth;
-    // console.log(width);
-    // if (this.isCollapsed) {
-    //   width = width - 200;
-    // }
-    // console.log(width);
+    console.log("ppppp");
+    console.log(this.$refs.layout1);
+    console.log(utils.getStyle(this.$refs.layout1.$el, "width"));
+    // console.log(roleRoutes);
+
     // this.menuList = roleRoutes;
     this.menuList = this.$router.options.routes;
   },
@@ -266,5 +208,54 @@ export default {
   font-size: 24px;
   font-weight: 500;
   text-align: center;
+}
+.layout {
+  border: 1px solid #d7dde4;
+  background: #f5f7f9;
+  position: relative;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.layout-header-bar {
+  background: #fff;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+.layout-logo-left {
+  width: 90%;
+  height: 30px;
+  background: #5b6270;
+  border-radius: 3px;
+  margin: 15px auto;
+}
+.menu-icon {
+  transition: all 0.3s;
+}
+.rotate-icon {
+  transform: rotate(-90deg);
+}
+.menu-item span {
+  display: inline-block;
+  overflow: hidden;
+  width: 69px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+  transition: width 0.2s ease 0.2s;
+}
+.menu-item i {
+  transform: translateX(0px);
+  transition: font-size 0.2s ease, transform 0.2s ease;
+  vertical-align: middle;
+  font-size: 16px;
+}
+.collapsed-menu span {
+  width: 0px;
+  transition: width 0.2s ease;
+}
+.collapsed-menu i {
+  transform: translateX(5px);
+  transition: font-size 0.2s ease 0.2s, transform 0.2s ease 0.2s;
+  vertical-align: middle;
+  font-size: 22px;
 }
 </style>

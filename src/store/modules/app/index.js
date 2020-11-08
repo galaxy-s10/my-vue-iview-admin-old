@@ -4,74 +4,21 @@ const app = {
     namespaced: true,
     state: {
         title: 'Vue-iview-admin',
-        tagOpenPageList: [{
-                name: 'dashboard',
-                meta: {
-                    title: '首页'
-                },
+        tagOpenPageList: [
+            // {
+            //     name: 'dashboard',
+            //     meta: {
+            //         title: '首页'
+            //     },
 
-            },
-            {
-                name: 'dashboard',
-                meta: {
-                    title: '首页'
-                }
-            },
-            {
-                name: 'dashboard',
-                meta: {
-                    title: '首页'
-                }
-            },
-            {
-                name: 'dashboard',
-                meta: {
-                    title: '首页'
-                }
-            },
-            {
-                name: 'dashboard',
-                meta: {
-                    title: '首页'
-                }
-            },
-            {
-                name: 'dashboard',
-                meta: {
-                    title: '首页'
-                }
-            },
-            {
-                name: 'dashboard',
-                meta: {
-                    title: '首页'
-                }
-            },
-            {
-                name: 'dashboard',
-                meta: {
-                    title: '首页'
-                }
-            },
-            {
-                name: 'dashboard',
-                meta: {
-                    title: '首页'
-                }
-            },
-            {
-                name: 'dashboard',
-                meta: {
-                    title: '首页'
-                }
-            },
+            // },
         ]
     },
     mutations: {
         addTagOpenPage(state, item) {
-            console.log('vuex')
-            console.log(item);
-            console.log(state.tagOpenPageList);
+            // console.log('vuex')
+            // console.log(item);
+            // console.log(state.tagOpenPageList);
             state.tagOpenPageList.push(item)
             // utils.oneOf(item,state.tagOpenPageList)
         }

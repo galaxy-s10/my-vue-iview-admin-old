@@ -18,4 +18,16 @@ utils.exist = (arr, val) => {
     return false
 }
 
+// 获取样式
+utils.getStyle = (obj, name) => {
+    if (window.getComputedStyle) {
+        // 非ie
+        return window.getComputedStyle(obj, null)[name];
+    }
+    else {
+        // ie
+        return obj.currentStyle[name];
+    }
+}
+
 export default utils;

@@ -39,7 +39,7 @@ export default {
   },
   created() {},
   mounted() {
-    console.log(this.$router.options.routes);
+    // console.log(this.$router.options.routes);
   },
 };
 </script>

@@ -1,20 +1,55 @@
 <template>
   <div>
-    <div class="tagListWrap">
-      <Icon class="arrow arrow-left" type="ios-arrow-back" size="24" />
-      <Icon class="arrow arrow-right" type="ios-arrow-forward" size="24" />
-      <div class="tagList">
-        <Tag
-          v-for="(item, index) in tagOpenPageList"
-          :key="index"
-          type="dot"
-          :closable="isClosable(item.name)"
-          :color="activeColor(item.name)"
-          @click.native="onChangeTag(item.name)"
-        >
-          {{ item.meta.title }}
-        </Tag>
+    <div class="tagOpen">
+      <div class="tagListWrap">
+        <Icon
+          class="arrow arrow-left"
+          type="ios-arrow-back"
+          size="24"
+          @click.native="left"
+        />
+        <Icon
+          class="arrow arrow-right"
+          type="ios-arrow-forward"
+          size="24"
+          @click.native="right"
+        />
+        <div style="overflow: hidden" ref="tagListWrap">
+          <div
+            class="tagList"
+            ref="tagList"
+            :style="{
+              transition: alltime,
+              transform: `translateX(${offset}px)`,
+            }"
+          >
+            <Tag
+              v-for="(item, index) in tagOpenPageList"
+              :key="index"
+              type="dot"
+              :closable="isClosable(item.name)"
+              :color="activeColor(item.name)"
+              @click.native="onChangeTag(item.name)"
+            >
+              {{ item.meta.title }}
+            </Tag>
+          </div>
+        </div>
       </div>
+      <!-- <div class="drop"> -->
+      <Dropdown placement="bottom-end">
+        <Button size="small">
+          <!-- 下拉菜单 -->
+          <Icon type="ios-arrow-down"></Icon>
+        </Button>
+        <DropdownMenu slot="list">
+          <DropdownItem>关闭左侧</DropdownItem>
+          <DropdownItem>关闭右侧</DropdownItem>
+          <DropdownItem>关闭其他</DropdownItem>
+          <DropdownItem>全部关闭</DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
+      <!-- </div> -->
     </div>
   </div>
 </template>
@@ -29,6 +64,8 @@ export default {
       active: true,
       currentTag: null,
       menuList: [],
+      offset: 0,
+      alltime: "all .3s",
     };
   },
   computed: {
@@ -39,7 +76,7 @@ export default {
     }),
     activeColor() {
       return (v) => {
-        console.log("0000", v);
+        // console.log("0000", v);
         if (v == this.currentTag) {
           return "#41b883";
         } else {
@@ -49,7 +86,7 @@ export default {
     },
     isClosable() {
       return (v) => {
-        console.log(v);
+        // console.log(v);
         return v !== "dashboard" ? true : false;
       };
     },
@@ -57,13 +94,58 @@ export default {
   watch: {
     $route() {
       this.currentTag = this.$route.name;
-      console.log("999999999", this.$route.name);
+      // console.log("999999999", this.$route.name);
+    },
+    tagOpenPageList() {
+      this.$nextTick(() => {
+        console.log("sss");
+        this.right();
+      });
     },
   },
   methods: {
     ...mapMutations(["app/addTagOpenPage"]),
+    left() {
+      // console.log(this.$refs.tagList);
+      // console.log(this.$refs.tagListWrap);
+      let tagListWrapWidth = this.$refs.tagListWrap.clientWidth;
+      let tagListWidth = this.$refs.tagList.clientWidth;
+      let num = tagListWidth - tagListWrapWidth;
+      console.log(tagListWidth, tagListWrapWidth, num);
+      if (num > 0) {
+        // 如果滚动距离不超过了容器的宽度，直接归零。
+        if (num < tagListWrapWidth) {
+          this.offset = 0;
+        } else {
+          // 如果滚动距离超过了容器的宽度，只能滚动一个容器的宽度
+          let newnum = this.offset + tagListWrapWidth;
+          // console.log(newnum)
+          // 当滚到第一个时，不能再滚了
+          this.offset = newnum > 0 ? 0 : newnum;
+        }
+        // console.log(num);
+        // // this.alltime = "all 0s"
+        // console.log(this.offset);
+        // let newnum = num - this.offset;
+        // this.offset = newnum;
+        // console.log(this.offset);
+      }
+    },
+    right() {
+      // console.log(this.$refs.tagList);
+      // console.log(this.$refs.tagListWrap);
+      let tagListWrapWidth = this.$refs.tagListWrap.clientWidth;
+      let tagListWidth = this.$refs.tagList.clientWidth;
+      let num = tagListWidth - tagListWrapWidth;
+      console.log(tagListWidth, tagListWrapWidth, num);
+      if (num > 0) {
+        console.log(num);
+        this.offset = -num;
+        console.log(this.offset);
+      }
+    },
     onChangeTag(v) {
-      console.log(v);
+      // console.log(v);
       this.$router.push({ name: v });
     },
     findItem(source, target) {
@@ -72,10 +154,10 @@ export default {
         let ress = "";
         try {
           source.forEach((item) => {
-            console.log(target);
+            // console.log(target);
             if (item.name == target) {
               ress = item;
-              console.log(res);
+              // console.log(res);
               throw new Error();
             } else {
               if (item.children) {
@@ -96,9 +178,9 @@ export default {
   created() {
     this.menuList = this.$router.options.routes;
     this.currentTag = this.$route.name;
-    console.log(this);
-    console.log(this.currentTag);
-    console.log(this.tagOpenPageList);
+    // console.log(this);
+    // console.log(this.currentTag);
+    // console.log(this.tagOpenPageList);
     let target = this.findItem(this.menuList, this.currentTag);
     let bool = utils.exist(this.tagOpenPageList, target);
     // console.log(bool)
@@ -106,24 +188,46 @@ export default {
       this["app/addTagOpenPage"](target);
     }
   },
-  mounted() {},
+  mounted() {
+    // if (this.isCollapsed) {
+    // width = width - 200;
+    // }
+    // console.log(width);
+    // console.log(this.$refs.tagListWrap )
+    // console.log(this.$refs.tagListWrap.clientWidth )
+    // console.log(utils.getStyle(this.$refs.tagListWrap,'width'))
+    // console.log(utils.getStyle(this.$refs.tagListWrap,'clientWidth'))
+    // console.log(utils.getStyle(this.$refs.tagList,'width'))
+  },
 };
 </script>
 
 <style scoped>
-.tagListWrap {
-  position: relative;
-  /* width: 500px; */
+.tagOpen {
+  display: flex;
+  justify-content: space-between;
   height: 50px;
   line-height: 50px;
-  background: #f0f0f0;
-  white-space: nowrap;
+  background: #f5f7f9;
+}
+/* .drop {
+  position: absolute;
+  right: 0;
+} */
+.tagListWrap {
+  position: relative;
+  flex: 1;
+  /* background: #f0f0f0; */
+  /* white-space: nowrap; */
   padding: 0 30px;
+  overflow: hidden;
 }
 .tagList {
-  width: 100%;
-  background: red;
-  overflow: hidden;
+  position: relative;
+  /* width: 100%; */
+  /* background: red; */
+  white-space: nowrap;
+  float: left;
 }
 .arrow {
   position: absolute;

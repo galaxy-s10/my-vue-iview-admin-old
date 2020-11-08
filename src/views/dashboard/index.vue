@@ -1,7 +1,7 @@
 <template>
   <div>
     dashboard
-    <Dropdown trigger="hover" placement="right-start">
+    <!-- <Dropdown trigger="hover" placement="right-start">
       <a href="javascript:void(0)">
         菜单(左)
         <Icon type="ios-arrow-down"></Icon>
@@ -94,7 +94,7 @@
           @on-change="change($event, 'SELECT_TAG')"
         ></i-switch>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
