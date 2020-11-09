@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from './request'
 
 //标签列表
 export function taglist(size) {

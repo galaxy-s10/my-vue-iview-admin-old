@@ -1,6 +1,7 @@
 <template>
   <div>
     dashboard
+    <span v-for="(item, index) in auth" :key="index">{{ item }},</span>
     <!-- <Dropdown trigger="hover" placement="right-start">
       <a href="javascript:void(0)">
         菜单(左)
@@ -101,7 +102,6 @@
 <script>
 import { mapState } from "vuex";
 export default {
-  name: "App",
   components: {},
   data() {
     return {
@@ -119,10 +119,12 @@ export default {
     ...mapState({
       auth(state) {
         console.log("state.auth.auth");
-        console.log(state.auth.auth);
+        console.log(state);
+        console.log(state.app.title)
+        console.log(state.title)
         console.log(this.menuList);
-        console.log(state.auth.auth == this.menuList);
-        return state.auth.auth;
+        // console.log(state.auth.auth == this.menuList);
+        // return state.auth.auth;
       },
     }),
     checkRole() {

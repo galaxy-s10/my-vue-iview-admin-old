@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from './request'
 
 //友链列表
 export function linklist() {

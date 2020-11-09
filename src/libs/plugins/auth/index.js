@@ -16,6 +16,7 @@ export default {
         // console.log(store);
         // console.log(store);
         const access = store.state.auth.auth
+        // const access = store.state.auth
         // const access =  [
         //     "ARTICLE_LIST",
         //     "ADD_ARTICLE",

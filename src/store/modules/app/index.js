@@ -1,7 +1,7 @@
 import utils from "@/libs/utils";
 
 const app = {
-    namespaced: true,
+    // namespaced: true,
     state: {
         title: 'Vue-iview-admin',
         tagOpenPageList: [

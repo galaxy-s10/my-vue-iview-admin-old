@@ -31,13 +31,14 @@
 </template>
 
 <script>
+import { getAuth } from "@/api/auth";
 export default {
   components: {},
   data() {
     return {
       formInline: {
-        user: "12",
-        password: "123",
+        user: "hss",
+        password: "19990507a",
       },
       redirect: "",
     };
@@ -54,8 +55,13 @@ export default {
   },
   methods: {
     handleSubmit() {
-      console.log(this.redirect);
-      this.$router.push({ path: this.redirect });
+      getAuth(1).then(res=>{
+        console.log(res)
+      }).catch(err=>{
+        console.log(err)
+      })
+      // console.log(this.redirect);
+      // this.$router.push({ path: this.redirect });
     },
   },
   created() {},

@@ -130,17 +130,25 @@ export default {
     };
   },
   computed: {
-    ...mapState("app", ["title"]),
+    // ...mapState("app", ["title"]),
+    // ...mapState("app", {
+    //   title: (state) => state.title,
+    // }),
     ...mapState({
+      title(state) {
+        console.log("titletitle");
+        console.log(state);
+        return state.app.title;
+      },
       auth(state) {
-        // console.log("state.auth.auth");
-        // console.log(state.auth.auth);
+        console.log("state.auth.auth");
+        console.log(state);
         // console.log(this.menuList);
         // console.log(state.auth.auth == this.menuList);
-        return state.auth.auth;
+        // return state.auth;
       },
       tagList(state) {
-        return state.app.tagOpenPageList;
+        // return state.app.tagOpenPageList;
       },
     }),
     activeName() {
@@ -152,7 +160,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["app/addTagOpenPage"]),
+    // ...mapMutations(["app/addTagOpenPage"]),
     collapsedSider() {
       console.log(this.isCollapsed);
       this.isCollapsed = !this.isCollapsed;
@@ -205,7 +213,7 @@ export default {
       // console.log(this["app/addTagOpenPage"]);
       // console.log(this.$store.commit("app/addTagOpenPage"));
       // this["app/addTagOpenPage"](path);
-      this.$router.push({ name: path }).catch((err)=>{
+      this.$router.push({ name: path }).catch((err) => {
         // console.log(err)
       });
     },

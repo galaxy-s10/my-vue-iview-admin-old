@@ -104,7 +104,10 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["app/addTagOpenPage"]),
+    ...mapMutations(["addTagOpenPage"]),
+    // ...mapMutations({
+
+    // }),
     left() {
       // console.log(this.$refs.tagList);
       // console.log(this.$refs.tagListWrap);
@@ -185,7 +188,7 @@ export default {
     let bool = utils.exist(this.tagOpenPageList, target);
     // console.log(bool)
     if (!bool) {
-      this["app/addTagOpenPage"](target);
+      this["addTagOpenPage"](target);
     }
   },
   mounted() {
