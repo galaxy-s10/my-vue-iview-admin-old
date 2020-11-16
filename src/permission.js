@@ -2,9 +2,9 @@ import router from './router'
 import store from './store'
 import { defaultRoutes } from './router/router'
 
-const whiteList = [] // no redirect whitelist
+const whiteList = []
 
-console.log(defaultRoutes)
+// console.log(defaultRoutes)
 defaultRoutes.forEach(item => {
   if (whiteList.indexOf(item.path) == -1) {
     whiteList.push(item.path)
@@ -18,23 +18,23 @@ defaultRoutes.forEach(item => {
   }
 })
 
-console.log('白名单')
-console.log(whiteList)
+// console.log('白名单')
+// console.log(whiteList)
 
 router.beforeEach(async (to, from, next) => {
-  console.log('to', to)
-  console.log('from', from)
-  console.log(whiteList.indexOf(to.path))
+  // console.log('to', to)
+  // console.log('from', from)
+  // console.log(whiteList.indexOf(to.path))
   if (whiteList.indexOf(to.path) == -1) {
-    console.log('nonono')
+    // console.log('nonono')
     next({ path: '/login', query: { redirect: to.path } })
   } else {
-    console.log('okkk')
+    // console.log('okkk')
     next()
   }
   // next()
 })
 
 router.afterEach(() => {
-  console.log('afterEach')
+  // console.log('afterEach')
 })

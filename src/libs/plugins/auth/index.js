@@ -15,7 +15,13 @@ export default {
         // console.log('this.state');
         // console.log(store);
         // console.log(store);
-        const access = store.state.auth.auth
+        const myAuths = []
+        const auths = store.state.user.roleAuth.auths
+        auths.forEach(item=>{
+            myAuths.push(item.auth_name)
+        })
+        console.log('auths')
+        console.log(auths)
         // const access = store.state.auth
         // const access =  [
         //     "ARTICLE_LIST",
@@ -28,8 +34,8 @@ export default {
         // console.log(access);
         // console.log(value == access);
         // console.log('value == access');
-        if (value && access) {
-            const isPermission = checkAuth(access, value)
+        if (value && myAuths) {
+            const isPermission = checkAuth(myAuths, value)
             // console.log('isPermission!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
             // console.log(isPermission);
             if (!isPermission) {

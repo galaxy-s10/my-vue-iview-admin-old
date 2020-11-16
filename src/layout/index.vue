@@ -119,13 +119,14 @@ export default {
   data() {
     return {
       isCollapsed: false,
-      menuList: [
-        "ARTICLE_LIST",
-        "ADD_ARTICLE",
-        "UPDATE_ARTICLE",
-        "SELECT_ARTICLE",
-        "DELETE_ARTICLE",
-      ],
+      menuList: [],
+      // menuList: [
+      //   "ARTICLE_LIST",
+      //   "ADD_ARTICLE",
+      //   "UPDATE_ARTICLE",
+      //   "SELECT_ARTICLE",
+      //   "DELETE_ARTICLE",
+      // ],
       breadList: [],
     };
   },
@@ -148,7 +149,7 @@ export default {
         // return state.auth;
       },
       tagList(state) {
-        // return state.app.tagOpenPageList;
+        return state.app.tagOpenPageList;
       },
     }),
     activeName() {
@@ -160,7 +161,8 @@ export default {
     },
   },
   methods: {
-    // ...mapMutations(["app/addTagOpenPage"]),
+    ...mapMutations(["addTagOpenPage"]),
+    // ...mapMutations("app", ["addTagOpenPage"]),
     collapsedSider() {
       console.log(this.isCollapsed);
       this.isCollapsed = !this.isCollapsed;
@@ -191,22 +193,22 @@ export default {
       return res;
     },
     changeMenu(path) {
-      // console.log("ppppppppppp");
+      console.log("ppppppppppp");
       // console.log(path);
       // console.log(this.menuList);
       // this.findItem(this.menuList,path)
       // 判断当前跳转页面有没有在tagOpenPageList里面
       // 查询点击跳转的路由信息
       let target = this.findItem(this.menuList, path);
-      // console.log("target");
-      // console.log(target);
-      // console.log(this.tagList);
-      // console.log(path);
+      console.log("target");
+      console.log(target);
+      console.log(this.tagList);
+      console.log(path);
       let tag;
       let bool = utils.exist(this.tagList, path);
       // console.log(bool)
       if (!bool) {
-        this["app/addTagOpenPage"](target);
+        this.addTagOpenPage(target);
       }
       // console.log(tag);
       // console.log("000000000");

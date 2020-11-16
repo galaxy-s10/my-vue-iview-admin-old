@@ -3,6 +3,25 @@
     dashboard
     <span v-for="(item, index) in auth" :key="index">{{ item }},</span>
 
+    <Select
+      v-model="form.province_id"
+      style="width: 200px"
+      @on-change="change1"
+    >
+      <Option v-for="item in provinceList" :value="item.id" :key="item.id">{{
+        item.name
+      }}</Option>
+    </Select>
+    <Select v-model="form.city_id" style="width: 200px" @on-change="change2">
+      <Option v-for="item in cityList" :value="item.id" :key="item.id">{{
+        item.name
+      }}</Option>
+    </Select>
+    <Select v-model="form.area_id" style="width: 200px" @on-change="change3">
+      <Option v-for="item in areaList" :value="item.id" :key="item.id">{{
+        item.name
+      }}</Option>
+    </Select>
 
     <!-- <Dropdown trigger="hover" placement="right-start">
       <a href="javascript:void(0)">

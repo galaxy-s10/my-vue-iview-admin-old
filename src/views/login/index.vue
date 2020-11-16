@@ -2,29 +2,36 @@
   <div>
     <div class="wrap">
       <div class="login">
-        <i-form ref="formInline" :model="formInline" :inline="false">
-          <FormItem prop="user">
-            <i-input
-              type="text"
-              v-model="formInline.user"
-              placeholder="Username"
-            >
-              <Icon type="ios-person-outline" slot="prepend"></Icon>
-            </i-input>
-          </FormItem>
-          <FormItem prop="password">
-            <i-input
-              type="password"
-              v-model="formInline.password"
-              placeholder="Password"
-            >
-              <Icon type="ios-lock-outline" slot="prepend"></Icon>
-            </i-input>
-          </FormItem>
-          <FormItem>
-            <Button type="primary" long @click="handleSubmit">Signin</Button>
-          </FormItem>
-        </i-form>
+        <Card :bordered="false">
+          <p slot="title">欢迎登录</p>
+          <i-form ref="formInline" :model="form" :inline="false">
+            <FormItem prop="user">
+              <i-input
+                type="text"
+                v-model="form.username"
+                placeholder="Username"
+              >
+                <Icon type="ios-person-outline" slot="prepend"></Icon>
+              </i-input>
+            </FormItem>
+            <FormItem prop="password">
+              <i-input
+                type="password"
+                v-model="form.password"
+                placeholder="Password"
+              >
+                <Icon type="ios-lock-outline" slot="prepend"></Icon>
+              </i-input>
+            </FormItem>
+            <FormItem>
+              <Checkbox v-model="getRemember" @on-change="edit"
+                >七天内免登陆</Checkbox
+              >
+              <Button type="primary" long @click="handleSubmit">登录</Button>
+              <Button type="primary" long @click="aaa">aaa</Button>
+            </FormItem>
+          </i-form>
+        </Card>
       </div>
     </div>
   </div>
@@ -32,18 +39,36 @@
 
 <script>
 import { getAuth } from "@/api/auth";
+import cache from "../../libs/cache";
+import { mapState, mapMutations, mapActions } from "vuex";
+
 export default {
   components: {},
   data() {
     return {
-      formInline: {
-        user: "hss",
+      form: {
+        username: "hss",
         password: "19990507a",
       },
       redirect: "",
     };
   },
-  computed: {},
+  created() {
+    // console.log(this.remember);
+  },
+  mounted() {},
+  computed: {
+    ...mapState("user", ["remember"]),
+    getRemember: {
+      get: function () {
+        return this.remember;
+      },
+      set: function (newValue) {
+        // console.log(newValue);
+        this.editRemember(newValue);
+      },
+    },
+  },
   watch: {
     $route: {
       handler: function (route) {
@@ -54,18 +79,33 @@ export default {
     },
   },
   methods: {
-    handleSubmit() {
-      getAuth(1).then(res=>{
-        console.log(res)
-      }).catch(err=>{
-        console.log(err)
-      })
-      // console.log(this.redirect);
-      // this.$router.push({ path: this.redirect });
+    aaa() {
+      let res = cache.getStorageExt("token");
+      console.log(res);
+    },
+    ...mapMutations("user", ["editRemember"]),
+    ...mapActions("user", ["login", "getUserInfo", "getAuth"]),
+    edit(e) {
+      // console.log("remember计算属性的set方法已经修改了数据");
+    },
+    async handleSubmit() {
+      // console.log(this.form)
+      try {
+        let res = await this.login(this.form);
+        if (this.remember) {
+          // let exp = 5000;
+          let exp = 1 * 24 * 60 * 60 * 1000;
+          cache.setStorageExt("token", res.token, exp);
+        }
+        await this.getUserInfo();
+        await this.getAuth();
+        // this.$router.push({ path: "/" });
+        this.$router.push({ path: this.redirect || "/" });
+      } catch (err) {
+        console.log(err);
+      }
     },
   },
-  created() {},
-  mounted() {},
 };
 </script>
 

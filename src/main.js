@@ -3,6 +3,10 @@ import App from './App.vue';
 import iView from 'iview';
 import 'iview/dist/styles/iview.css';
 
+import request from './api/request'
+
+Vue.prototype.$http = request
+
 import router from './router'
 import store from './store'
 import './permission'
