@@ -98,7 +98,7 @@ export default {
     },
     tagOpenPageList() {
       this.$nextTick(() => {
-        console.log("sss");
+        // console.log("sss");
         this.right();
       });
     },
@@ -144,7 +144,7 @@ export default {
       if (num > 0) {
         console.log(num);
         this.offset = -num;
-        console.log(this.offset);
+        // console.log(this.offset);
       }
     },
     onChangeTag(v) {

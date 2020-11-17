@@ -17,11 +17,13 @@ export default {
         // console.log(store);
         const myAuths = []
         const auths = store.state.user.roleAuth.auths
+        // console.log('auths')
+        // console.log(auths)
         auths.forEach(item=>{
             myAuths.push(item.auth_name)
         })
-        console.log('auths')
-        console.log(auths)
+        // console.log('auths')
+        // console.log(auths)
         // const access = store.state.auth
         // const access =  [
         //     "ARTICLE_LIST",

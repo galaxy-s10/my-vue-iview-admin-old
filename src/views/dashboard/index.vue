@@ -141,18 +141,18 @@ export default {
   computed: {
     ...mapState({
       auth(state) {
-        console.log("state.auth.auth");
-        console.log(state);
-        console.log(state.app.title);
-        console.log(state.title);
-        console.log(this.menuList);
+        // console.log("state.auth.auth");
+        // console.log(state);
+        // console.log(state.app.title);
+        // console.log(state.title);
+        // console.log(this.menuList);
         // console.log(state.auth.auth == this.menuList);
         // return state.auth.auth;
       },
     }),
     checkRole() {
       return (v) => {
-        console.log(this.auth.includes(v));
+        // console.log(this.auth.includes(v));
         return this.auth.includes(v);
       };
     },
@@ -208,17 +208,17 @@ export default {
   },
   created() {},
   mounted() {
-    console.log(this.$router.options.routes);
-    this.$http({
-      url: `/juhe/xzqh/query?key=8b10defc9f7fc715ce11cbd34bbdd65f&fid=0'`,
-    })
-      .then((res) => {
-        console.log(res.result);
-        this.provinceList = res.result;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    // console.log(this.$router.options.routes);
+    // this.$http({
+    //   url: `/juhe/xzqh/query?key=8b10defc9f7fc715ce11cbd34bbdd65f&fid=0'`,
+    // })
+    //   .then((res) => {
+    //     console.log(res.result);
+    //     this.provinceList = res.result;
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   },
 };
 </script>

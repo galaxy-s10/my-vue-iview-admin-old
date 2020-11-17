@@ -6,10 +6,14 @@ const user = {
     // （state加不加命名空间都要带模块名）
     namespaced: true,
     state: () => ({
-        token: '',
+        token: "",
         remember: true,    // 七天免登陆
         roleAuth: {},
-        user: {}
+        username: "",
+        id: "",
+        role: "",
+        avatar: "",
+        title: ""
     }),
     mutations: {
         editRemember(state, payload) {
@@ -17,9 +21,16 @@ const user = {
             state.remember = payload
         },
         setUser(state, payload) {
-            state.user = payload
+            // console.log(payload)
+            const { id, username, role, avatar, title } = payload
+            state.id = id
+            state.username = username
+            state.role = role
+            state.avatar = avatar
+            state.title = title
         },
         setRoleAuth(state, payload) {
+            // console.log(payload)
             state.roleAuth = payload
         },
 
@@ -58,12 +69,12 @@ const user = {
         },
         // 获取用户角色以及权限
         getAuth({ commit, state }) {
-            let id = state.user.id
-            console.log(id)
+            let id = state.id
+            // console.log(id)
             return new Promise((resolve, reject) => {
                 getAuth(id).then(res => {
-                    console.log(res)
-                    commit("setRoleAuth",res.rows[0].role)
+                    // console.log(res)
+                    commit("setRoleAuth", res.rows[0].role)
                     resolve(res)
                 }).catch(err => {
                     console.log(err)

@@ -1,6 +1,6 @@
 <template>
   <div>
-      401
+    你没有权限进入：{{ msg }} 页面
   </div>
 </template>
 
@@ -8,11 +8,16 @@
 export default {
   components: {},
   data() {
-    return {};
+    return {
+      msg: "",
+    };
   },
   computed: {},
   methods: {},
-  created() {},
+  created() {
+    console.log(this.$route.params.msg);
+    this.msg = this.$route.params.msg;
+  },
   mounted() {},
 };
 </script>

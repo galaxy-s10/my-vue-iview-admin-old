@@ -22,7 +22,7 @@
           <template v-for="(item, index) in menuList">
             <Submenu
               v-if="item.children && item.children.length > 1"
-              :name="item.name"
+              :name="item.path"
               :key="index"
               v-auth="item.authKey"
             >
@@ -32,7 +32,7 @@
               </template>
               <template v-for="(itemm, indexx) in item.children">
                 <MenuItem
-                  :name="itemm.name"
+                  :name="itemm.path"
                   :key="indexx"
                   v-auth="itemm.authKey"
                 >
@@ -43,7 +43,7 @@
 
             <MenuItem
               v-if="item.children && item.children.length <= 1"
-              :name="item.name"
+              :name="item.redirect"
               :key="index"
             >
               <Icon :type="item.meta.icon" />
@@ -137,13 +137,13 @@ export default {
     // }),
     ...mapState({
       title(state) {
-        console.log("titletitle");
-        console.log(state);
+        // console.log("titletitle");
+        // console.log(state);
         return state.app.title;
       },
       auth(state) {
-        console.log("state.auth.auth");
-        console.log(state);
+        // console.log("state.auth.auth");
+        // console.log(state);
         // console.log(this.menuList);
         // console.log(state.auth.auth == this.menuList);
         // return state.auth;
@@ -153,8 +153,7 @@ export default {
       },
     }),
     activeName() {
-      // console.log(this.$route.name)
-      return this.$route.name;
+      return this.$route.path;
     },
     rotateIcon() {
       return ["menu-icon", this.isCollapsed ? "rotate-icon" : ""];
@@ -164,7 +163,6 @@ export default {
     ...mapMutations(["addTagOpenPage"]),
     // ...mapMutations("app", ["addTagOpenPage"]),
     collapsedSider() {
-      console.log(this.isCollapsed);
       this.isCollapsed = !this.isCollapsed;
     },
     findItem(source, target) {
@@ -173,10 +171,8 @@ export default {
         let ress = "";
         try {
           source.forEach((item) => {
-            // console.log(target);
-            if (item.name == target) {
+            if (item.path == target) {
               ress = item;
-              // console.log(res);
               throw new Error();
             } else {
               if (item.children) {
@@ -189,35 +185,21 @@ export default {
         }
       }
       digui(source, target);
-      // console.log("]]]]]]]]]]]]");
       return res;
     },
     changeMenu(path) {
-      console.log("ppppppppppp");
-      // console.log(path);
-      // console.log(this.menuList);
-      // this.findItem(this.menuList,path)
       // 判断当前跳转页面有没有在tagOpenPageList里面
       // 查询点击跳转的路由信息
       let target = this.findItem(this.menuList, path);
-      console.log("target");
-      console.log(target);
-      console.log(this.tagList);
-      console.log(path);
       let tag;
       let bool = utils.exist(this.tagList, path);
-      // console.log(bool)
       if (!bool) {
         this.addTagOpenPage(target);
       }
-      // console.log(tag);
-      // console.log("000000000");
-      // console.log(this["app/addTagOpenPage"]);
-      // console.log(this.$store.commit("app/addTagOpenPage"));
-      // this["app/addTagOpenPage"](path);
-      this.$router.push({ name: path }).catch((err) => {
-        // console.log(err)
-      });
+      this.$router.push({ path });
+      // .catch((err) => {
+      //   console.log(err);
+      // });
     },
     change(e, role) {
       if (e) {

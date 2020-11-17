@@ -23,7 +23,7 @@ class CacheModel {
         expires = parseInt(expires) || false;
         // let timestamp = Date.parse(new Date());
         let timestamp = new Date().getTime();
-        console.log(timestamp)
+        // console.log(timestamp)
         if (!expires) {
             throw new Error("请传入过期时间")
         }

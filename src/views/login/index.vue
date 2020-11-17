@@ -72,7 +72,7 @@ export default {
   watch: {
     $route: {
       handler: function (route) {
-        console.log(route);
+        // console.log(route);
         this.redirect = route.query.redirect;
       },
       immediate: true,
@@ -81,7 +81,7 @@ export default {
   methods: {
     aaa() {
       let res = cache.getStorageExt("token");
-      console.log(res);
+      // console.log(res);
     },
     ...mapMutations("user", ["editRemember"]),
     ...mapActions("user", ["login", "getUserInfo", "getAuth"]),
@@ -99,7 +99,6 @@ export default {
         }
         await this.getUserInfo();
         await this.getAuth();
-        // this.$router.push({ path: "/" });
         this.$router.push({ path: this.redirect || "/" });
       } catch (err) {
         console.log(err);

@@ -10,7 +10,7 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     let token = cache.getStorageExt("token")
-    console.log(token)
+    // console.log(token)
     if (token) {
       config.headers['Authorization'] = 'Bearer ' + token
     }
