@@ -28,7 +28,7 @@
               :key="index"
               type="dot"
               :closable="isClosable(item.name)"
-              :color="activeColor(item.name)"
+              :color="activeColor(item.path)"
               @click.native="onChangeTag(item.name)"
             >
               {{ item.meta.title }}
@@ -76,7 +76,7 @@ export default {
     }),
     activeColor() {
       return (v) => {
-        // console.log("0000", v);
+        console.log("0000", v);
         if (v == this.currentTag) {
           return "#41b883";
         } else {
@@ -93,7 +93,7 @@ export default {
   },
   watch: {
     $route() {
-      this.currentTag = this.$route.name;
+      this.currentTag = this.$route.path;
       // console.log("999999999", this.$route.name);
     },
     tagOpenPageList() {
@@ -158,7 +158,7 @@ export default {
         try {
           source.forEach((item) => {
             // console.log(target);
-            if (item.name == target) {
+            if (item.path == target) {
               ress = item;
               // console.log(res);
               throw new Error();
@@ -180,14 +180,17 @@ export default {
 
   created() {
     this.menuList = this.$router.options.routes;
-    this.currentTag = this.$route.name;
+    this.currentTag = this.$route.path;
     // console.log(this);
     // console.log(this.currentTag);
     // console.log(this.tagOpenPageList);
     let target = this.findItem(this.menuList, this.currentTag);
-    let bool = utils.exist(this.tagOpenPageList, target);
-    // console.log(bool)
+    console.log(target);
+    let bool = utils.exist(this.tagOpenPageList, target.path);
+    console.log(this.tagOpenPageList);
+    console.log(bool)
     if (!bool) {
+      console.log('没有这个打开tag，插入');
       this["addTagOpenPage"](target);
     }
   },
@@ -236,7 +239,7 @@ export default {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 999;
+  z-index: 99;
 }
 .arrow:hover {
   cursor: pointer;

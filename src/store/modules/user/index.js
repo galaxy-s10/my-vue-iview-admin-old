@@ -73,9 +73,13 @@ const user = {
             // console.log(id)
             return new Promise((resolve, reject) => {
                 getAuth(id).then(res => {
-                    // console.log(res)
-                    commit("setRoleAuth", res.rows[0].role)
-                    resolve(res)
+                    const { count, rows } = res
+                    if (count == 0) {
+                        reject('你没有任何权限！')
+                    } else {
+                        commit("setRoleAuth", rows[0].role)
+                        resolve(res)
+                    }
                 }).catch(err => {
                     console.log(err)
                     reject(err)

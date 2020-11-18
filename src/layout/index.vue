@@ -51,6 +51,15 @@
                 {{ item.meta.title }}
               </span>
             </MenuItem>
+            <!-- <MenuItem
+              v-if="!item.children"
+              :name="item.path"
+            >
+              <Icon :type="item.meta.icon" />
+              <span v-if="!isCollapsed">
+                {{ item.meta.title }}
+              </span>
+            </MenuItem> -->
           </template>
         </Menu>
       </Sider>
@@ -63,11 +72,14 @@
             boxShadow: '0 2px 3px 2px rgba(0,0,0,.1)',
           }"
         >
-          <div style="display: flex; align-items: center">
+          <div style="position: relative; display: flex; align-items: center">
             <Icon
               @click.native="collapsedSider"
               :class="rotateIcon"
-              :style="{ margin: '0 20px' }"
+              :style="{
+                margin: '0 20px',
+                transform: !isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
+              }"
               type="md-menu"
               size="24"
             ></Icon>
@@ -79,6 +91,26 @@
                 >{{ item.meta.title }}</BreadcrumbItem
               >
             </Breadcrumb>
+            <div style="position: absolute; right: 10px">
+              <Dropdown style="margin-left: 20px" trigger="click">
+                <a href="javascript:void(0)">
+                  {{ username }}
+                  <Icon type="md-arrow-dropdown" />
+                </a>
+                <DropdownMenu slot="list">
+                  <DropdownItem
+                    ><a href="https://www.zhengbeining.com/" target="_bank"
+                      >网站前台</a
+                    >
+                  </DropdownItem>
+                  <DropdownItem divided>个人信息</DropdownItem>
+                  <DropdownItem divided @click.native="logout">
+                    退出登录
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+              <Avatar size="large" shape="square" :src="avatar" />
+            </div>
           </div>
         </Header>
         <Content>
@@ -109,6 +141,7 @@ import { roleRoutes } from "@/router/router";
 // import Sider from "./sider/index";
 // import Footer from "./footer/index";
 import { mapState, mapMutations } from "vuex";
+import cache from "@/libs/cache";
 export default {
   components: {
     TagOpenPage,
@@ -131,7 +164,7 @@ export default {
     };
   },
   computed: {
-    // ...mapState("app", ["title"]),
+    ...mapState("user", ["username", "avatar"]),
     // ...mapState("app", {
     //   title: (state) => state.title,
     // }),
@@ -160,6 +193,10 @@ export default {
     },
   },
   methods: {
+    logout() {
+      cache.clearStorage("token");
+      this.$router.push({ path: `/login?redirect=${this.$route.path}` });
+    },
     ...mapMutations(["addTagOpenPage"]),
     // ...mapMutations("app", ["addTagOpenPage"]),
     collapsedSider() {
@@ -194,6 +231,7 @@ export default {
       let tag;
       let bool = utils.exist(this.tagList, path);
       if (!bool) {
+        console.log('点击判断，没有就插入');
         this.addTagOpenPage(target);
       }
       this.$router.push({ path });

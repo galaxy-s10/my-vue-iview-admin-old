@@ -1,5 +1,5 @@
 <template>
-  <div>文章列表</div>
+  <div></div>
 </template>
 
 <script>
@@ -8,10 +8,10 @@ export default {
   data() {
     return {};
   },
-  computed: {},
-  methods: {},
   created() {},
   mounted() {},
+  computed: {},
+  methods: {},
 };
 </script>
 

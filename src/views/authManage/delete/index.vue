@@ -1,5 +1,5 @@
 <template>
-  <div>文章列表</div>
+  <div>删除文章</div>
 </template>
 
 <script>
