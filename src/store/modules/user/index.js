@@ -21,7 +21,6 @@ const user = {
             state.remember = payload
         },
         setUser(state, payload) {
-            // console.log(payload)
             const { id, username, role, avatar, title } = payload
             state.id = id
             state.username = username
@@ -39,7 +38,6 @@ const user = {
         login({ state }, userInfo) {
             return new Promise((reslove, reject) => {
                 login(userInfo).then(res => {
-                    console.log(res)
                     reslove(res)
                 }).catch(err => {
                     console.log(err)
@@ -51,7 +49,6 @@ const user = {
         getUserInfo({ commit, state }) {
             // let res = cache.getStorageExt('token')
             return new Promise((resolve, reject) => {
-                console.log('0000')
                 // console.log(state.token)
                 getUserInfo(state.token).then(res => {
                     const { userinfo } = res

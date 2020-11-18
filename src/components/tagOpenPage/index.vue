@@ -76,7 +76,6 @@ export default {
     }),
     activeColor() {
       return (v) => {
-        console.log("0000", v);
         if (v == this.currentTag) {
           return "#41b883";
         } else {
@@ -190,7 +189,6 @@ export default {
     console.log(this.tagOpenPageList);
     console.log(bool)
     if (!bool) {
-      console.log('没有这个打开tag，插入');
       this["addTagOpenPage"](target);
     }
   },

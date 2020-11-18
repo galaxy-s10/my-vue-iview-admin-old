@@ -89,7 +89,6 @@ export default {
       // console.log("remember计算属性的set方法已经修改了数据");
     },
     async handleSubmit() {
-      // console.log(this.form)
       try {
         let res = await this.login(this.form);
         if (this.remember) {
@@ -97,9 +96,16 @@ export default {
           let exp = 1 * 24 * 60 * 60 * 1000;
           cache.setStorageExt("token", res.token, exp);
         }
+        // try {
         await this.getUserInfo();
         await this.getAuth();
         this.$router.push({ path: this.redirect || "/" });
+        this.$Message.success({
+          content: res.message,
+        });
+        // } catch (err) {
+        //   console.log(err)
+        // }
       } catch (err) {
         console.log(err);
       }

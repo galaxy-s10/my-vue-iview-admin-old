@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { getAuthList } from "../../../api/auth";
+import { getRoleList } from "../../../api/auth";
 export default {
   components: {},
   data() {
@@ -25,9 +25,7 @@ export default {
           },
         },
         [
-          h("span", [
-            h("span", data.auth_name + "（" + data.auth_description + "）"),
-          ]),
+          h("span", [h("span", data.role_name)]),
           h("span", {
             style: {
               display: "inline-block",
@@ -40,7 +38,7 @@ export default {
     },
   },
   created() {
-    getAuthList().then((res) => {
+    getRoleList().then((res) => {
       console.log(res);
       let { rows } = res;
       let temp = [];
@@ -53,6 +51,7 @@ export default {
       }
       digui();
       console.log(temp);
+      function digui1() {}
       temp.forEach((tempItem) => {
         rows.forEach((rowsItem) => {
           if (tempItem.id == rowsItem.p_id) {

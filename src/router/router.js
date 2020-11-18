@@ -311,62 +311,96 @@ export const roleRoutes = [{
         icon: 'md-lock',
         authKey: ["AUTH_LIST", "ADD_AUTH", "DELETE_AUTH", "SELECT_AUTH", "UPDATE_AUTH"],
     },
-    children: [{
-        name: "authList",
-        authKey: "AUTH_LIST",
-        path: '/authManage/authList',
-        component: () => import('@/views/authManage/list/index'),
-        meta: {
-            title: '权限列表',
+    children: [
+        {
+            name: "roleList",
+            authKey: "ROLE_LIST",
+            path: '/roleManage/roleList',
+            component: () => import('@/views/roleManage/list/index'),
+            meta: {
+                title: '角色管理',
+                authKey: "ROLE_LIST",
+            }
+        },
+        {
+            name: "authList",
             authKey: "AUTH_LIST",
-        }
-    },
-    {
-
-        name: "addAuth",
-        authKey: "ADD_AUTH",
-        path: '/authManage/addAuth',
-        component: () => import('@/views/authManage/add/index'),
-        meta: {
-            title: '添加标签',
-            authKey: "ADD_AUTH",
-        }
-    },
-    {
-        name: "deleteAuth",
-        authKey: "DELETE_AUTH",
-        path: '/authManage/deleteAuth',
-        component: () => import('@/views/authManage/delete/index'),
-        meta: {
-            title: '删除标签',
-            authKey: "DELETE_AUTH",
-        }
-    },
-
-    {
-
-        name: "selectAuth",
-        authKey: "SELECT_AUTH",
-        path: '/authManage/selectAuth',
-        component: () => import('@/views/authManage/select/index'),
-        meta: {
-            title: '查询权限',
-            authKey: "SELECT_AUTH",
-        }
-    },
-    {
-
-        name: "updateAuth",
-        authKey: "UPDATE_AUTH",
-        path: '/authManage/updateAuth',
-        component: () => import('@/views/authManage/update/index'),
-        meta: {
-            title: '修改权限',
-            authKey: "UPDATE_AUTH",
-        }
-    },
+            path: '/authManage/authList',
+            component: () => import('@/views/authManage/list/index'),
+            meta: {
+                title: '权限管理',
+                authKey: "AUTH_LIST",
+            }
+        },
     ]
 },
+    // {
+    //     name: "authManage",
+    //     authKey: ["AUTH_LIST", "ADD_AUTH", "DELETE_AUTH", "SELECT_AUTH", "UPDATE_AUTH"],
+    //     path: '/authManage',
+    //     component: Layout,
+    //     redirect: '/authManage/authList',
+    //     meta: {
+    //         title: '权限管理',
+    //         icon: 'md-lock',
+    //         authKey: ["AUTH_LIST", "ADD_AUTH", "DELETE_AUTH", "SELECT_AUTH", "UPDATE_AUTH"],
+    //     },
+    //     children: [{
+    //         name: "authList",
+    //         authKey: "AUTH_LIST",
+    //         path: '/authManage/authList',
+    //         component: () => import('@/views/authManage/list/index'),
+    //         meta: {
+    //             title: '权限列表',
+    //             authKey: "AUTH_LIST",
+    //         }
+    //     },
+    //     {
+
+    //         name: "addAuth",
+    //         authKey: "ADD_AUTH",
+    //         path: '/authManage/addAuth',
+    //         component: () => import('@/views/authManage/add/index'),
+    //         meta: {
+    //             title: '添加标签',
+    //             authKey: "ADD_AUTH",
+    //         }
+    //     },
+    //     {
+    //         name: "deleteAuth",
+    //         authKey: "DELETE_AUTH",
+    //         path: '/authManage/deleteAuth',
+    //         component: () => import('@/views/authManage/delete/index'),
+    //         meta: {
+    //             title: '删除标签',
+    //             authKey: "DELETE_AUTH",
+    //         }
+    //     },
+
+    //     {
+
+    //         name: "selectAuth",
+    //         authKey: "SELECT_AUTH",
+    //         path: '/authManage/selectAuth',
+    //         component: () => import('@/views/authManage/select/index'),
+    //         meta: {
+    //             title: '查询权限',
+    //             authKey: "SELECT_AUTH",
+    //         }
+    //     },
+    //     {
+
+    //         name: "updateAuth",
+    //         authKey: "UPDATE_AUTH",
+    //         path: '/authManage/updateAuth',
+    //         component: () => import('@/views/authManage/update/index'),
+    //         meta: {
+    //             title: '修改权限',
+    //             authKey: "UPDATE_AUTH",
+    //         }
+    //     },
+    //     ]
+    // },
 
 
 ]
