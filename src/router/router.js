@@ -302,7 +302,7 @@ export const roleRoutes = [{
 },
 {
     name: "authManage",
-    authKey: ["AUTH_LIST", "ADD_AUTH", "DELETE_AUTH", "SELECT_AUTH", "UPDATE_AUTH"],
+    authKey: ["AUTH_LIST", "ADD_AUTH", "DELETE_AUTH", "SELECT_AUTH", "UPDATE_AUTH", "ROLE_MANAGE", "AUTH_MANAGE", "USER_MANAGE"],
     path: '/authManage',
     component: Layout,
     redirect: '/authManage/authList',
@@ -312,6 +312,16 @@ export const roleRoutes = [{
         authKey: ["AUTH_LIST", "ADD_AUTH", "DELETE_AUTH", "SELECT_AUTH", "UPDATE_AUTH"],
     },
     children: [
+        {
+            name: "userList",
+            authKey: "USER_MANAGE",
+            path: '/userManage/userList',
+            component: () => import('@/views/userManage/list/index'),
+            meta: {
+                title: '用户管理',
+                authKey: "USER_MANAGE",
+            }
+        },
         {
             name: "roleList",
             authKey: "ROLE_LIST",

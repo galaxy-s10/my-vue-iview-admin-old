@@ -1,6 +1,6 @@
 import request from './request'
 
-// 获取用户角色以及权限
+// 获取某个用户的角色以及权限
 export function getAuth(id) {
     console.log(id)
     return request({
@@ -21,6 +21,14 @@ export function getRoleList() {
 export function getAuthList() {
     return request({
         url: '/api/auth/list',
+        method: 'get',
+    })
+}
+
+// 获取所有用户以及其角色列表
+export function getUserRoleList() {
+    return request({
+        url: '/api/roleauth/userRoleList',
         method: 'get',
     })
 }

@@ -31,10 +31,7 @@ router.beforeEach(async (to, from, next) => {
       // console.log(to.path)
       if (whiteList.indexOf(to.path) == -1) {
         // console.log('不在白名单，判断有无对应权限，没有就跳转登录页面')
-        const allAuths = []
-        hasUserInfo.roleAuth.auths.forEach(item => {
-          allAuths.push(item.auth_name)
-        })
+        const allAuths = hasUserInfo.auth
         if (allAuths.includes(to.meta.authKey)) {
           next()
         } else {
