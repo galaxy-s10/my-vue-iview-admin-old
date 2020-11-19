@@ -7,8 +7,8 @@
       @on-ok="ok"
       @on-cancel="cancel"
     >
-      {{ currentRow.user && currentRow.user.username }}
-      <div v-if="currentRole.length">
+      {{ showRole && currentRow && currentRow.username }}
+      <div v-if="showRole">
         <Tree :data="allRole" :render="renderContent" show-checkbox></Tree>
       </div>
     </Modal>
@@ -37,13 +37,13 @@ export default {
           title: "用户名",
           width: "80",
           render: (h, params) => {
-            return h("span", params.row.user.username);
+            return h("span", params.row.username);
           },
         },
         {
           title: "角色",
           render: (h, params) => {
-            console.log(params.row.user.roles);
+            console.log(params.row.roles);
             return h("span", "sdf");
           },
         },
@@ -110,6 +110,7 @@ export default {
     async show(v) {
       this.showRole = true;
       this.currentRow = v;
+      console.log(v);
       await getRoleList().then((res) => {
         console.log("获取所有角色");
         function handleRole(data) {
@@ -143,12 +144,14 @@ export default {
         }
         this.allRole = handleRole(res.rows);
       });
-      await getAuth(v.user.id).then((res) => {
+      await getAuth(v.id).then((res) => {
         console.log("获取我的角色");
         console.log(res);
-        res.rows[0].user.roles.forEach((item) => {
-          this.currentRole.push(item.role_name);
-        });
+        if (res.count > 0) {
+          res.rows[0].user.roles.forEach((item) => {
+            this.currentRole.push(item.role_name);
+          });
+        }
         // this.currentRole = this.role;
       });
       console.log(this.currentRole);
