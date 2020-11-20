@@ -1,5 +1,6 @@
 <template>
   <div>
+    location add
     <Tree :data="roleList" :render="renderContent" show-checkbox></Tree>
   </div>
 </template>
