@@ -1,6 +1,7 @@
 <template>
   <div>
     <Tree :data="roleList" :render="renderContent" show-checkbox></Tree>
+    add
   </div>
 </template>
 
