@@ -91,23 +91,25 @@ export default {
     async handleSubmit() {
       try {
         let res = await this.login(this.form);
-        if (this.remember) {
-          // let exp = 5000;
-          let exp = 1 * 24 * 60 * 60 * 1000;
-          cache.setStorageExt("token", res.token, exp);
+        if (res) {
+          if (this.remember) {
+            // let exp = 5000;
+            let exp = 1 * 24 * 60 * 60 * 1000;
+            cache.setStorageExt("token", res.token, exp);
+          }
+          await this.getUserInfo();
+          await this.getAuth();
+          this.$router.push({ path: this.redirect || "/" });
+          this.$Message.success({
+            content: res.message,
+          });
         }
-        // try {
-        await this.getUserInfo();
-        await this.getAuth();
-        this.$router.push({ path: this.redirect || "/" });
-        this.$Message.success({
-          content: res.message,
-        });
-        // } catch (err) {
-        //   console.log(err)
-        // }
       } catch (err) {
-        console.log(err);
+        console.log('???00')
+        console.log(err)
+        this.$Message.error({
+          content: err.message,
+        });
       }
     },
   },

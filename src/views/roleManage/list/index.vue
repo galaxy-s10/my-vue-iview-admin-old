@@ -1,17 +1,48 @@
 <template>
   <div>
-    <Button type="text"><Icon type="ios-add-circle" /></Button>
-    <Tree :data="roleList" :render="renderContent" show-checkbox></Tree>
-    <Table border :columns="columns" :data="roleList"></Table>
+    <!-- <Tree :data="roleList" :render="renderContent" show-checkbox></Tree> -->
+    <Table
+      border
+      :loading="roleList.length == 0"
+      :columns="columns"
+      :data="roleList"
+    ></Table>
+    <Modal v-model="showRole" title="编辑角色" @on-ok="ok" @on-cancel="cancel">
+      <div>
+        {{ showRole && currentRow && currentRow.username }}
+      </div>
+      <div class="aaa">
+        <div v-if="allAuth.length == 0" style="position: relative">
+          <Spin size="large">
+            <Icon type="ios-loading" class="demo-spin-icon-load"></Icon>
+            <div>加载中...</div>
+          </Spin>
+        </div>
+        <Tree
+          v-else
+          :data="allAuth"
+          :render="renderContent"
+          show-checkbox
+          @on-check-change="getChecked"
+        ></Tree>
+      </div>
+    </Modal>
   </div>
 </template>
 
 <script>
-import { getRoleList } from "../../../api/auth";
+import { getAuthList } from "../../../api/auth";
+import { getRoleList, editRoleAuth } from "../../../api/role";
+import { getAuth, getOneRoleAuth } from "../../../api/roleauth";
 export default {
   components: {},
   data() {
     return {
+      currentRow: {},
+      allAuth: [],
+      auths: [],
+      currentAuth: [],
+      showRole: false,
       roleList: [],
       columns: [
         {
@@ -39,35 +70,34 @@ export default {
           width: "150",
           render: (h, params) => {
             console.log(params);
-            if (params.row.children) {
-              return h("span", params.row.role_name);
-            } else {
-              return h("span", [
-                h(
-                  "Button",
-                  {
-                    props: {
-                      type: "success",
-                      size: "small",
-                    },
-                    on: {
-                      click: () => {
-                        console.log(params.row);
-                      },
-                    },
-                  },
-                  [
-                    h("Icon", {
-                      props: {
-                        type: "md-add",
-                        size: "small",
-                      },
-                    }),
-                  ]
-                ),
-                h("span", params.row.role_name),
-              ]);
-            }
+            // if (!params.row.children) {
+            return h("span", params.row.role_name);
+            // } else {
+            //   return h("span", [
+            //     h(
+            //       "Button",
+            //       {
+            //         props: {
+            //           size: "small",
+            //         },
+            //         on: {
+            //           click: () => {
+            //             console.log(params.row);
+            //           },
+            //         },
+            //       },
+            //       [
+            //         h("Icon", {
+            //           props: {
+            //             type: "md-add",
+            //             size: "small",
+            //           },
+            //         }),
+            //       ]
+            //     ),
+            //     h("span", params.row.role_name),
+            //   ]);
+            // }
           },
         },
         {
@@ -128,6 +158,103 @@ export default {
   },
   computed: {},
   methods: {
+    getChecked(v) {
+      console.log(v);
+      function getAllAuthId(data) {
+        let temp = [];
+        function digui(data) {
+          data.forEach((item) => {
+            temp.push(item.id);
+            if (item.children) {
+              digui(item.children);
+            }
+          });
+        }
+        digui(data);
+        return [...new Set(temp)];
+      }
+      this.auths = getAllAuthId(v);
+      console.log(this.auths);
+    },
+    async show(v) {
+      this.showRole = true;
+      this.currentRow = v;
+      await getAuthList().then((res) => {
+        console.log("获取所有权限");
+        function handleAuth(data) {
+          let temp = [];
+          data.forEach((item) => {
+            if (item.p_id == 0) {
+              temp.push(item);
+            }
+          });
+          function digui(data, temp) {
+            temp.forEach((tempItem, tempIndex) => {
+              let children = [];
+              data.forEach((dataItem, dataIndex) => {
+                if (tempItem.id == dataItem.p_id) {
+                  // let children = tempItem.children ? tempItem.children : [];
+                  children.push(dataItem);
+                }
+              });
+              if (children.length > 0) {
+                tempItem.children = children;
+                digui(data, children);
+              }
+            });
+          }
+          digui(data, temp);
+          return temp;
+        }
+        this.allAuth = handleAuth(res.rows);
+      });
+      await getOneRoleAuth(v.id).then((res) => {
+        console.log("获取当前角色的权限");
+        console.log(res);
+        if (res.count > 0) {
+          res.rows.forEach((item) => {
+            this.currentAuth.push(item.auth_id);
+          });
+        }
+      });
+      function digui(data, val) {
+        data.forEach((item1, index1) => {
+          if (val.includes(item1.id)) {
+            item1.checked = true;
+          }
+          if (item1.children) {
+            digui(item1.children, val);
+          }
+        });
+        // });
+      }
+      let depData = JSON.parse(JSON.stringify(this.allAuth));
+      digui(depData, this.currentAuth);
+      this.allAuth = depData;
+      console.log(this.allAuth);
+    },
+    ok() {
+      // this.showRole = false
+      console.log("ok");
+      this.allAuth = [];
+      this.currentAuth = [];
+      editRoleAuth({
+        id: this.currentRow.id,
+        auths: this.auths,
+      })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    cancel() {
+      // this.showRole = false
+      console.log("quxiao");
+      this.allAuth = [];
+      this.currentAuth = [];
+    },
     //转换时间格式
     formateDate(datetime) {
       function addDateZero(num) {
@@ -158,7 +285,7 @@ export default {
           },
         },
         [
-          h("span", [h("span", data.role_name)]),
+          h("span", [h("span", data.auth_name + "-" + data.auth_description)]),
           h("span", {
             style: {
               display: "inline-block",
@@ -202,13 +329,13 @@ export default {
         digui(data, temp);
         return temp;
       }
-      let temp = handleRole(rows)
-      temp.forEach(item=>{
+      let temp = handleRole(rows);
+      temp.forEach((item) => {
         console.log(temp);
-        if(!item.children){
-          item._disableExpand = true
+        if (!item.children) {
+          item._disableExpand = true;
         }
-      })
+      });
       console.log(temp);
       this.roleList = temp;
     });

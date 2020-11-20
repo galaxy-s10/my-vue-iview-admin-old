@@ -1,4 +1,6 @@
-import { getAuth } from "@/api/auth";
+// import { getAuth } from "@/api/auth";
+// import { getRoleList } from "../../../api/role";
+import { getAuth } from "../../../api/roleauth";
 import { login, getUserInfo } from "@/api/user";
 import cache from '@/libs/cache'
 const user = {
@@ -13,6 +15,7 @@ const user = {
         username: "",
         id: "",
         role: "",
+        status: "",
         avatar: "",
         title: ""
     }),
@@ -22,12 +25,13 @@ const user = {
             state.remember = payload
         },
         setUser(state, payload) {
-            const { id, username, role, avatar, title } = payload
+            const { id, username, role, status, avatar, title } = payload
             state.id = id
             state.username = username
             state.role = role
             state.avatar = avatar
             state.title = title
+            state.status = status
         },
         setRole(state, payload) {
             // console.log(payload)

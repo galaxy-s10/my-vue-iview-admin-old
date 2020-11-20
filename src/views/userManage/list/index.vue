@@ -1,6 +1,11 @@
 <template>
   <div>
-    <Table border :columns="columns" :data="userList"></Table>
+    <Table
+      border
+      :loading="userList.length == 0"
+      :columns="columns"
+      :data="userList"
+    ></Table>
     <Modal v-model="showRole" title="编辑角色" @on-ok="ok" @on-cancel="cancel">
       <div>
         {{ showRole && currentRow && currentRow.username }}
@@ -25,7 +30,8 @@
 </template>
 
 <script>
-import { getUserRoleList, getRoleList, getAuth } from "../../../api/auth";
+import { getRoleList, editUserRole } from "../../../api/role";
+import { getAuth, getUserRoleList } from "../../../api/roleauth";
 import { mapState } from "vuex";
 export default {
   components: {},
@@ -54,6 +60,12 @@ export default {
           title: "角色",
           render: (h, params) => {
             return h("span", "sdf");
+          },
+        },
+        {
+          title: "状态",
+          render: (h, params) => {
+            return h("span", params.row.status == 1 ? "正常" : "禁用");
           },
         },
         {
@@ -196,18 +208,30 @@ export default {
       console.log("ok");
       this.allRole = [];
       this.currentRole = [];
-      this.$http({
-        url: "/api/role/editRole",
-        method: "put",
-        data:{
-          id:this.currentRow.id,
-          roles:this.roles
-        }
-      }).then((res) => {
-        console.log(res);
-      }).catch(err=>{
-        console.log(err);
+      editUserRole({
+        id: this.currentRow.id,
+        roles: this.roles,
       })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      // this.$http({
+      //   url: "/api/role/editRole",
+      //   method: "put",
+      //   data: {
+      //     id: this.currentRow.id,
+      //     roles: this.roles,
+      //   },
+      // })
+      //   .then((res) => {
+      //     console.log(res);
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
     },
     cancel() {
       // this.showRole = false
