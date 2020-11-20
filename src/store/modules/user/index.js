@@ -8,7 +8,8 @@ const user = {
     state: () => ({
         token: "",
         remember: true,    // 七天免登陆
-        roleAuth: {},
+        role: [],
+        auth: [],
         username: "",
         id: "",
         role: "",
@@ -28,9 +29,13 @@ const user = {
             state.avatar = avatar
             state.title = title
         },
-        setRoleAuth(state, payload) {
+        setRole(state, payload) {
             // console.log(payload)
-            state.roleAuth = payload
+            state.role = payload
+        },
+        setAuth(state, payload) {
+            // console.log(payload)
+            state.auth = payload
         },
 
     },
@@ -71,10 +76,22 @@ const user = {
             return new Promise((resolve, reject) => {
                 getAuth(id).then(res => {
                     const { count, rows } = res
+                    console.log(res)
                     if (count == 0) {
                         reject('你没有任何权限！')
                     } else {
-                        commit("setRoleAuth", rows[0].role)
+                        let role = []
+                        let auth = []
+                        rows[0].user.roles.forEach(item => {
+                            role.push(item.role_name)
+                        });
+                        rows[0].user.roles.forEach(item => {
+                            item.auths.forEach(val => {
+                                auth.push(val.auth_name)
+                            })
+                        });
+                        commit("setRole", role)
+                        commit("setAuth", auth)
                         resolve(res)
                     }
                 }).catch(err => {

@@ -1,5 +1,5 @@
 <template>
-  <div></div>
+  <div>查询文章</div>
 </template>
 
 <script>
@@ -8,10 +8,10 @@ export default {
   data() {
     return {};
   },
-  created() {},
-  mounted() {},
   computed: {},
   methods: {},
+  created() {},
+  mounted() {},
 };
 </script>
 

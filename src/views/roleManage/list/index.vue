@@ -39,8 +39,8 @@ export default {
   },
   created() {
     getRoleList().then((res) => {
-      console.log(res);
       let { rows } = res;
+<<<<<<< HEAD
       function createTree(arr, pid) {
         let tree = [];
         arr.forEach((e) => {
@@ -55,16 +55,38 @@ export default {
       function parentDeal(data, pid) {
         //声明返回数组
         let returnArr = [];
+=======
+      function handleRole(data) {
+        let temp = [];
+>>>>>>> 0026bcdbb1c7756f34d5bb8ca1c2a1468fc42542
         data.forEach((item) => {
-          if (item.p_id === pid) {
-            //除去最高层级的数据（id === 0）
-            returnArr.push(item);
-            //进入递归中处理
-            childrenDeal(data, item, item.id);
+          if (item.p_id == 0) {
+            temp.push(item);
           }
         });
-        return returnArr;
+        function digui(data, temp) {
+          temp.forEach((tempItem, tempIndex) => {
+            let children = [];
+            data.forEach((dataItem, dataIndex) => {
+              if (tempItem.id == dataItem.p_id) {
+                // let children = tempItem.children ? tempItem.children : [];
+                children.push(dataItem);
+              }
+              // if (children.length > 0) {
+              //   digui(dataItem[1]);
+              // }
+            });
+            console.log(tempItem);
+            if (children.length > 0) {
+              tempItem.children = children;
+              digui(data, children);
+            }
+          });
+        }
+        digui(data, temp);
+        return temp;
       }
+<<<<<<< HEAD
       function childrenDeal(arr, itemData, itemId) {
         //首先判断是否有子类  没有默认为空
         itemData.children = itemData.children ? itemData.children : [];
@@ -84,6 +106,9 @@ export default {
       // parentDeal(rows,0)
       console.log(parentDeal(rows, 0));
       // this.roleList = parentDeal(rows, 0);
+=======
+      this.roleList = handleRole(rows);
+>>>>>>> 0026bcdbb1c7756f34d5bb8ca1c2a1468fc42542
     });
   },
   mounted() {},
