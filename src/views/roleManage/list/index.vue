@@ -41,6 +41,17 @@ export default {
     getRoleList().then((res) => {
       console.log(res);
       let { rows } = res;
+      function createTree(arr, pid) {
+        let tree = [];
+        arr.forEach((e) => {
+          if (pid == e.p_id) {
+            e.child = createTree(arr, e.id);
+            tree.push(e);
+          }
+        });
+        return tree;
+      }
+      // console.log(createTree(rows, 0));
       function parentDeal(data, pid) {
         //声明返回数组
         let returnArr = [];
@@ -68,7 +79,7 @@ export default {
           }
         });
         // }
-        
+
       }
       // parentDeal(rows,0)
       console.log(parentDeal(rows, 0));
