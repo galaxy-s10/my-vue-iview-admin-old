@@ -1,15 +1,24 @@
 <template>
   <div>
     <Table border :columns="columns" :data="userList"></Table>
-    <Modal
-      v-model="showRole"
-      title="Common Modal dialog box title"
-      @on-ok="ok"
-      @on-cancel="cancel"
-    >
-      {{ showRole && currentRow && currentRow.username }}
-      <div v-if="showRole">
-        <Tree :data="allRole" :render="renderContent" show-checkbox></Tree>
+    <Modal v-model="showRole" title="编辑角色" @on-ok="ok" @on-cancel="cancel">
+      <div>
+        {{ showRole && currentRow && currentRow.username }}
+      </div>
+      <div class="aaa">
+        <div v-if="allRole.length == 0" style="position: relative">
+          <Spin size="large">
+            <Icon type="ios-loading" class="demo-spin-icon-load"></Icon>
+            <div>加载中...</div>
+          </Spin>
+        </div>
+        <Tree
+          v-else
+          :data="allRole"
+          :render="renderContent"
+          show-checkbox
+          @on-check-change="getChecked"
+        ></Tree>
       </div>
     </Modal>
   </div>
@@ -22,6 +31,7 @@ export default {
   components: {},
   data() {
     return {
+      roles: [],
       currentRow: {},
       allRole: [],
       currentRole: [],
@@ -43,7 +53,6 @@ export default {
         {
           title: "角色",
           render: (h, params) => {
-            console.log(params.row.roles);
             return h("span", "sdf");
           },
         },
@@ -107,10 +116,27 @@ export default {
     ...mapState("user", ["id", "role"]),
   },
   methods: {
+    getChecked(v) {
+      console.log(v);
+      function getAllRoleId(data) {
+        let temp = [];
+        function digui(data) {
+          data.forEach((item) => {
+            temp.push(item.id);
+            if (item.children) {
+              digui(item.children);
+            }
+          });
+        }
+        digui(data);
+        return [...new Set(temp)];
+      }
+      this.roles = getAllRoleId(v);
+      // console.log(getAllRoleId(v));
+    },
     async show(v) {
       this.showRole = true;
       this.currentRow = v;
-      console.log(v);
       await getRoleList().then((res) => {
         console.log("获取所有角色");
         function handleRole(data) {
@@ -128,11 +154,7 @@ export default {
                   // let children = tempItem.children ? tempItem.children : [];
                   children.push(dataItem);
                 }
-                // if (children.length > 0) {
-                //   digui(dataItem[1]);
-                // }
               });
-              console.log(tempItem);
               if (children.length > 0) {
                 tempItem.children = children;
                 digui(data, children);
@@ -145,8 +167,8 @@ export default {
         this.allRole = handleRole(res.rows);
       });
       await getAuth(v.id).then((res) => {
-        console.log("获取我的角色");
-        console.log(res);
+        // console.log("获取我的角色");
+        // console.log(res);
         if (res.count > 0) {
           res.rows[0].user.roles.forEach((item) => {
             this.currentRole.push(item.role_name);
@@ -154,13 +176,8 @@ export default {
         }
         // this.currentRole = this.role;
       });
-      console.log(this.currentRole);
       function digui(data, val) {
-        // console.log(currentRole);
-        // currentRole.forEach((item, index) => {
-        // console.log(item);
         data.forEach((item1, index1) => {
-          console.log(item1);
           if (val.includes(item1.role_name)) {
             item1.checked = true;
           }
@@ -172,17 +189,30 @@ export default {
       }
       let depData = JSON.parse(JSON.stringify(this.allRole));
       digui(depData, this.currentRole);
-      console.log(depData);
       this.allRole = depData;
     },
     ok() {
       // this.showRole = false
       console.log("ok");
+      this.allRole = [];
       this.currentRole = [];
+      this.$http({
+        url: "/api/role/editRole",
+        method: "put",
+        data:{
+          id:this.currentRow.id,
+          roles:this.roles
+        }
+      }).then((res) => {
+        console.log(res);
+      }).catch(err=>{
+        console.log(err);
+      })
     },
     cancel() {
       // this.showRole = false
       console.log("quxiao");
+      this.allRole = [];
       this.currentRole = [];
     },
     remove(v) {
@@ -236,7 +266,6 @@ export default {
   created() {},
   mounted() {
     getUserRoleList().then((res) => {
-      console.log(res);
       this.userList = res.rows;
     });
   },
@@ -244,4 +273,27 @@ export default {
 </script>
 
 <style scoped>
+/deep/ .ivu-spin {
+  text-align: initial;
+}
+/* .aaa /deep/ .ivu-tree ul li{
+    margin: 0;
+}
+.aaa /deep/ .ivu-checkbox-disabled .ivu-checkbox-inner{
+  background: #eee;
+} */
+.demo-spin-icon-load {
+  animation: ani-demo-spin 1s linear infinite;
+}
+@keyframes ani-demo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 </style>

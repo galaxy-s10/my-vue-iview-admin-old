@@ -1,6 +1,8 @@
 <template>
   <div>
+    <Button type="text"><Icon type="ios-add-circle" /></Button>
     <Tree :data="roleList" :render="renderContent" show-checkbox></Tree>
+    <Table border :columns="columns" :data="roleList"></Table>
   </div>
 </template>
 
@@ -11,10 +13,141 @@ export default {
   data() {
     return {
       roleList: [],
+      columns: [
+        {
+          type: "expand",
+          width: 50,
+          render: (h, params) => {
+            console.log("params.row.children");
+            console.log(params.row.children);
+            if (params.row.children) {
+              return h("span", {
+                props: {
+                  row: params.row,
+                },
+              });
+            }
+          },
+        },
+        {
+          title: "id",
+          key: "id",
+          width: "60",
+        },
+        {
+          title: "角色名",
+          width: "150",
+          render: (h, params) => {
+            console.log(params);
+            if (params.row.children) {
+              return h("span", params.row.role_name);
+            } else {
+              return h("span", [
+                h(
+                  "Button",
+                  {
+                    props: {
+                      type: "success",
+                      size: "small",
+                    },
+                    on: {
+                      click: () => {
+                        console.log(params.row);
+                      },
+                    },
+                  },
+                  [
+                    h("Icon", {
+                      props: {
+                        type: "md-add",
+                        size: "small",
+                      },
+                    }),
+                  ]
+                ),
+                h("span", params.row.role_name),
+              ]);
+            }
+          },
+        },
+        {
+          title: "创建时间",
+          render: (h, params) => {
+            return h("span", this.formateDate(params.row.createdAt));
+          },
+        },
+        {
+          title: "更新时间",
+          render: (h, params) => {
+            return h("span", this.formateDate(params.row.updatedAt));
+          },
+        },
+        {
+          title: "操作",
+          width: "130",
+          render: (h, params) => {
+            return h("div", [
+              h(
+                "Button",
+                {
+                  props: {
+                    type: "primary",
+                    size: "small",
+                  },
+                  style: {
+                    marginRight: "5px",
+                  },
+                  on: {
+                    click: () => {
+                      this.show(params.row);
+                    },
+                  },
+                },
+                "编辑"
+              ),
+              h(
+                "Button",
+                {
+                  props: {
+                    type: "error",
+                    size: "small",
+                  },
+                  on: {
+                    click: () => {
+                      this.remove(params.row);
+                    },
+                  },
+                },
+                "删除"
+              ),
+            ]);
+          },
+        },
+      ],
     };
   },
   computed: {},
   methods: {
+    //转换时间格式
+    formateDate(datetime) {
+      function addDateZero(num) {
+        return num < 10 ? "0" + num : num;
+      }
+      let d = new Date(datetime);
+      let formatdatetime =
+        d.getFullYear() +
+        "-" +
+        addDateZero(d.getMonth() + 1) +
+        "-" +
+        addDateZero(d.getDate()) +
+        " " +
+        addDateZero(d.getHours()) +
+        ":" +
+        addDateZero(d.getMinutes()) +
+        ":" +
+        addDateZero(d.getSeconds());
+      return formatdatetime;
+    },
     renderContent(h, { root, node, data }) {
       return h(
         "span",
@@ -69,7 +202,15 @@ export default {
         digui(data, temp);
         return temp;
       }
-      this.roleList = handleRole(rows);
+      let temp = handleRole(rows)
+      temp.forEach(item=>{
+        console.log(temp);
+        if(!item.children){
+          item._disableExpand = true
+        }
+      })
+      console.log(temp);
+      this.roleList = temp;
     });
   },
   mounted() {},

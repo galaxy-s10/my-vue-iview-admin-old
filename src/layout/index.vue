@@ -115,7 +115,10 @@
         </Header>
         <Content>
           <tag-open-page ref="tagOpen"></tag-open-page>
-          <router-view></router-view>
+          <div class="main-content">
+            <router-view></router-view>
+          </div>
+          
         </Content>
 
         <Footer
@@ -296,5 +299,9 @@ export default {
   font-size: 24px;
   font-weight: 500;
   text-align: center;
+}
+.main-content{
+  background: white;
+  padding: 20px;
 }
 </style>
