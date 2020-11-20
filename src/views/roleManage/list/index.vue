@@ -3,6 +3,7 @@
     location add
     <Tree :data="roleList" :render="renderContent" show-checkbox></Tree>
     add
+    location second add
   </div>
 </template>
 
