@@ -118,7 +118,6 @@
           <div class="main-content">
             <router-view></router-view>
           </div>
-          
         </Content>
 
         <Footer
@@ -234,7 +233,7 @@ export default {
       let tag;
       let bool = utils.exist(this.tagList, path);
       if (!bool) {
-        console.log('点击判断，没有就插入');
+        console.log("点击判断，没有就插入");
         this.addTagOpenPage(target);
       }
       this.$router.push({ path });
@@ -300,7 +299,7 @@ export default {
   font-weight: 500;
   text-align: center;
 }
-.main-content{
+.main-content {
   background: white;
   padding: 20px;
 }

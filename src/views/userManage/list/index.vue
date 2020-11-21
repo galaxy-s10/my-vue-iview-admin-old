@@ -26,10 +26,19 @@
         ></Tree>
       </div>
     </Modal>
+    <!-- <Modal
+      v-model="showEditStatus"
+      title="提示"
+      @on-ok="ok"
+      @on-cancel="cancel"
+    >
+      确认{{ currentUser.status == 1 ? "禁用" : "开启" }}
+    </Modal> -->
   </div>
 </template>
 
 <script>
+import { editStatus } from "../../../api/user";
 import { getRoleList, editUserRole } from "../../../api/role";
 import { getAuth, getUserRoleList } from "../../../api/roleauth";
 import { mapState } from "vuex";
@@ -37,6 +46,9 @@ export default {
   components: {},
   data() {
     return {
+      loading: true,
+      showEditStatus: false,
+      currentUser: {},
       roles: [],
       currentRow: {},
       allRole: [],
@@ -65,7 +77,31 @@ export default {
         {
           title: "状态",
           render: (h, params) => {
-            return h("span", params.row.status == 1 ? "正常" : "禁用");
+            console.log(params.row.status);
+            // this.status = params.row.status == 1 ? true : false;
+            // if (params.row.status == 1) {
+            return h("iSwitch", {
+              props: {
+                value: params.row.status == 1 ? true : false,
+                size: "large",
+                "before-change": () => this.beforeChangeStatus(params.row),
+              },
+              on: {
+                "on-change": (status) => this.changeStatus(status, params.row),
+                // "on-change": (status) => {
+                //   console.log(params.row);
+                //   console.log(status);
+                // },
+              },
+              scopedSlots: {
+                open: () => {
+                  return h("span", "正常");
+                },
+                close: () => {
+                  return h("span", "禁用");
+                },
+              },
+            });
           },
         },
         {
@@ -128,6 +164,61 @@ export default {
     ...mapState("user", ["id", "role"]),
   },
   methods: {
+    beforeChangeStatus(user) {
+      this.showEditStatus = true;
+      this.currentUser = user;
+      let { id, status } = user;
+      console.log(id);
+      return new Promise((resolve, reject) => {
+        this.$Modal.confirm({
+          title: "提示",
+          loading: this.loading,
+          content:
+            status == 1
+              ? `确认要禁用${user.username}吗`
+              : `确认要启用${user.username}吗`,
+          onOk: () => {
+            // if (status == 1) {
+            editStatus({ id, status: status == 1 ? 2 : 1 })
+              .then((res) => {
+                this.$Message.success({
+                  content: res.message,
+                });
+                this.$Modal.remove();
+                resolve();
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+            // } else {
+            //   editStatus({ id, status: 1 })
+            //     .then((res) => {
+            //       this.$Message.error({
+            //         content: res.message,
+            //       });
+            //       this.$Modal.remove();
+            //       resolve();
+            //     })
+            //     .catch((err) => {
+            //       console.log(err);
+            //     });
+            // }
+          },
+          onCancel: () => {
+            // reject();
+          },
+        });
+      });
+    },
+    changeStatus(status, user) {
+      console.log("改变switch");
+      console.log(status, user);
+      // console.log(this);
+      // this.showEditStatus = true;
+      // this.currentUser = params.row;
+      // console.log(params.row);
+      // console.log(status);
+    },
     getChecked(v) {
       console.log(v);
       function getAllRoleId(data) {

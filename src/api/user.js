@@ -61,6 +61,14 @@ export function edit(data) {
   })
 }
 
+export function editStatus(data) {
+  return request({
+    url: '/api/user/editStatus',
+    method: 'put',
+    data
+  })
+}
+
 export function deluser(id) {
   return request({
     url: '/api/user/del',

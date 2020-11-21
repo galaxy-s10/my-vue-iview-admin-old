@@ -8,3 +8,12 @@ export function getAuthList() {
     })
 }
 
+// 获取某个用户的所有权限
+export function getUserAuth(id) {
+    return request({
+        url: '/api/auth/getUserAuth',
+        method: 'get',
+        params: { id }
+    })
+}
+
