@@ -164,6 +164,20 @@ export default {
     ...mapState("user", ["id", "role"]),
   },
   methods: {
+    test() {
+      for (let i = 0; i < 100; i++) {
+        this.$http("/api/article/typelist")
+          .then((res) => {
+            this.$Message.success({
+              content: "请求ok",
+            });
+            console.log(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    },
     beforeChangeStatus(user) {
       this.showEditStatus = true;
       this.currentUser = user;
@@ -189,6 +203,7 @@ export default {
               })
               .catch((err) => {
                 console.log(err);
+                this.$Modal.remove();
               });
             // } else {
             //   editStatus({ id, status: 1 })

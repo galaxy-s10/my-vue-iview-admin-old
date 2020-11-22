@@ -302,24 +302,34 @@ export const roleRoutes = [{
 },
 {
     name: "authManage",
-    authKey: ["AUTH_LIST", "ADD_AUTH", "DELETE_AUTH", "SELECT_AUTH", "UPDATE_AUTH", "ROLE_MANAGE", "AUTH_MANAGE", "USER_MANAGE"],
+    authKey: [
+        "AUTH_LIST", "ADD_AUTH", "DELETE_AUTH", "SELECT_AUTH", "UPDATE_AUTH",
+        "ROLE_LIST", "ADD_ROLE", "DELETE_ROLE", "SELECT_ROLE", "UPDATE_ROLE",
+        "USER_LIST", "ADD_USER", "DELETE_USER", "SELECT_USER", "UPDATE_USER",
+        "AUTH_MANAGE", "ROLE_MANAGE", "USER_MANAGE"
+    ],
     path: '/authManage',
     component: Layout,
     redirect: '/authManage/authList',
     meta: {
         title: '权限管理',
         icon: 'md-lock',
-        authKey: ["AUTH_LIST", "ADD_AUTH", "DELETE_AUTH", "SELECT_AUTH", "UPDATE_AUTH"],
+        authKey: [
+            "AUTH_LIST", "ADD_AUTH", "DELETE_AUTH", "SELECT_AUTH", "UPDATE_AUTH",
+            "ROLE_LIST", "ADD_ROLE", "DELETE_ROLE", "SELECT_ROLE", "UPDATE_ROLE",
+            "USER_LIST", "ADD_USER", "DELETE_USER", "SELECT_USER", "UPDATE_USER",
+            "AUTH_MANAGE", "ROLE_MANAGE", "USER_MANAGE"
+        ],
     },
     children: [
         {
             name: "userList",
-            authKey: "USER_MANAGE",
+            authKey: "USER_LIST",
             path: '/userManage/userList',
             component: () => import('@/views/userManage/list/index'),
             meta: {
                 title: '用户管理',
-                authKey: "USER_MANAGE",
+                authKey: "USER_LIST",
             }
         },
         {
@@ -342,6 +352,30 @@ export const roleRoutes = [{
                 authKey: "AUTH_LIST",
             }
         },
+    ]
+},
+{
+    name: "logManage",
+    authKey: ["LOG_LIST", 'LOG_MANAGE'],
+    path: '/logManage',
+    component: Layout,
+    redirect: '/logManage/logList',
+    meta: {
+        title: '日志管理',
+        icon: 'md-paw',
+        authKey: ["LOG_LIST", "ADD_AUTH", "DELETE_AUTH", "SELECT_AUTH", "UPDATE_AUTH"],
+    },
+    children: [
+        {
+            name: "logList",
+            authKey: "LOG_LIST",
+            path: '/logManage/logList',
+            component: () => import('@/views/logManage/list/index'),
+            meta: {
+                title: '日志列表',
+                authKey: "LOG_LIST",
+            }
+        }
     ]
 },
     // {

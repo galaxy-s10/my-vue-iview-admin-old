@@ -60,15 +60,18 @@ const user = {
             return new Promise((resolve, reject) => {
                 // console.log(state.token)
                 getUserInfo(state.token).then(res => {
-                    const { userinfo } = res
-                    commit('setUser', userinfo)
+                    console.log('resresres')
+                    console.log(res)
+                    const { userInfo } = res
+                    commit('setUser', userInfo)
                     if (res.code == 0) {
                         reject('验证失败，请重新登录。')
                     } else {
-                        resolve(userinfo)
+                        resolve(userInfo)
                     }
                 }).catch(err => {
-                    // console.log(err)
+                    console.log('errerrerrerr')
+                    console.log(err)
                     reject(err)
                 })
             })
@@ -82,7 +85,7 @@ const user = {
                     const { count, rows } = res
                     console.log(res)
                     if (count == 0) {
-                        reject('你没有任何权限！')
+                        reject({ message: '你没有任何权限！' })
                     } else {
                         let role = []
                         let auth = []

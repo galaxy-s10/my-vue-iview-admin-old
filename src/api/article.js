@@ -16,17 +16,11 @@ export function articletypelist() {
     method: 'get',
   })
 }
-export function articlepage(ordername, orderby, type, nowpage, pagesize) {
+export function articlepage(params) {
   return request({
     url: '/api/article/page',
     method: 'get',
-    params: {
-      ordername,
-      orderby,
-      type,
-      nowpage,
-      pagesize
-    }
+    params
   })
 }
 export function findArticle(id, title) {

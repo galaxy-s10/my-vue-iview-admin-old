@@ -54,9 +54,6 @@ router.beforeEach(async (to, from, next) => {
         cache.clearStorage("token")
         next(`/login?direct=${to.path}`)
       }
-
-
-
     }
   } else {
     if (to.path != '/login') {

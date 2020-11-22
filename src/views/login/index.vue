@@ -19,6 +19,7 @@
                 type="password"
                 v-model="form.password"
                 placeholder="Password"
+                
               >
                 <Icon type="ios-lock-outline" slot="prepend"></Icon>
               </i-input>
@@ -48,7 +49,7 @@ export default {
     return {
       form: {
         username: "hss",
-        password: "19990507a",
+        password: "227475",
       },
       redirect: "",
     };
@@ -107,6 +108,7 @@ export default {
       } catch (err) {
         console.log('???00')
         console.log(err)
+        console.log(err.response)
         this.$Message.error({
           content: err.message,
         });
