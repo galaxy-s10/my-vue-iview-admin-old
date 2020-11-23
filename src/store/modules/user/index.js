@@ -49,6 +49,7 @@ const user = {
                 login(userInfo).then(res => {
                     reslove(res)
                 }).catch(err => {
+                    console.log('errerr')
                     console.log(err)
                     reject(err)
                 })

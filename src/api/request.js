@@ -1,13 +1,21 @@
 import axios from 'axios'
-import store from '@/store'
 import router from "../router";
 import cache from '@/libs/cache'
 import { Message } from 'iview'
 
+let companyUrl = 'https://voiceapi.tsiji.com'
+let myUrl = 'https://www.zhengbeining.com'
 
 const service = axios.create({
+  // baseURL: myUrl,
   timeout: 5000
 })
+const service1 = axios.create({
+  baseURL: companyUrl,
+  timeout: 5000
+})
+
+
 
 // 请求拦截
 service.interceptors.request.use(
@@ -31,22 +39,35 @@ service.interceptors.response.use(
     return response.data
   },
   error => {
-    if (error.response.status == 401 || error.response.status == 403) {
-      cache.clearStorage("token")
-      if (router.currentRoute.path != '/login') {
-        router.push('/login')
+    console.log(error.message);
+    console.log(error.response);
+    console.log('object');
+    if (error.response) {
+      if (error.response.status == 401 || error.response.status == 403) {
+        cache.clearStorage("token")
+        if (router.currentRoute.path != '/login') {
+          router.push('/login')
+        }
+        console.log(error.response.data.message)
+        Message.error({
+          content: error.response.status + "：" + error.response.data.message
+          // content: '401错误：' + error.response.data.message
+        })
+        // 下面有个return，代表不会继续向下执行
+        // 也就是说，如果网络请求报了401，有return，就不会继续执行axios，就不会返回reject
+        return
       }
-      console.log(error.response.data.message)
-      Message.error({
-        content: error.response.data.message
-        // content: '401错误：' + error.response.data.message
-      })
-      // 下面有个return，代表不会继续向下执行
-      // 也就是说，如果网络请求报了401，axios就不会返回reject
-      return
+      return Promise.reject(error.response.data)
     }
-    return Promise.reject(error.response.data)
+    return Promise.reject(error)
   }
 )
+
+
+export function aaa() {
+
+}
+
+export { service1 }
 
 export default service

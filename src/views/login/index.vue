@@ -19,7 +19,6 @@
                 type="password"
                 v-model="form.password"
                 placeholder="Password"
-                
               >
                 <Icon type="ios-lock-outline" slot="prepend"></Icon>
               </i-input>
@@ -55,6 +54,43 @@ export default {
     };
   },
   created() {
+    console.log(this.$axios);
+    console.log(this.$http);
+    console.log(this.$http1);
+    this.$http({
+      url: "/api/article/typelist",
+      method: "get",
+      data: {
+        undercarriage: 1,
+        belong_type: "self",
+        total: 0,
+        per_page: 10,
+        currentPage: 1,
+      },
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    this.$http1({
+      url: "/voiceuser/getuserinfo",
+      method: "post",
+      data: {
+        undercarriage: 1,
+        belong_type: "self",
+        total: 0,
+        per_page: 10,
+        currentPage: 1,
+      },
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     // console.log(this.remember);
   },
   mounted() {},
@@ -92,6 +128,8 @@ export default {
     async handleSubmit() {
       try {
         let res = await this.login(this.form);
+        console.log('res');
+        console.log(res);
         if (res) {
           if (this.remember) {
             // let exp = 5000;
@@ -106,9 +144,9 @@ export default {
           });
         }
       } catch (err) {
-        console.log('???00')
-        console.log(err)
-        console.log(err.response)
+        console.log("???00");
+        console.log(err);
+        console.log(err.response);
         this.$Message.error({
           content: err.message,
         });

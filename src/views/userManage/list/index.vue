@@ -379,8 +379,8 @@ export default {
         },
         [
           h("span", [
-            h("span", data.role_name),
-            // h("span", data.role_name + "（" + data.role_description + "）"),
+            // h("span", data.role_name),
+            h("span", data.role_name + "（" + data.role_description + "）"),
           ]),
           h("span", {
             style: {
