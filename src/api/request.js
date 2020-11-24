@@ -42,7 +42,7 @@ service.interceptors.response.use(
     console.log(error.message);
     console.log(error.response);
     console.log('object');
-    if (error.response) {
+    if (error.response && error.response.status != 500) {
       if (error.response.status == 401 || error.response.status == 403) {
         cache.clearStorage("token")
         if (router.currentRoute.path != '/login') {

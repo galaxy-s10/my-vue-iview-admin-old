@@ -71,7 +71,28 @@ export default {
         {
           title: "角色",
           render: (h, params) => {
-            return h("span", "sdf");
+            console.log(params.row.roles);
+            // this.flatTree(params.row)
+            let data = params.row.roles;
+            let role;
+            if (data.length) {
+              let res = this.translateTree(params.row.roles);
+              console.log(res);
+              role = this.flatTree(res);
+              console.log(role);
+              let temp = [];
+              role.forEach((item) => {
+                temp.push(item.parent + "-" + item.role_name);
+              });
+              role = temp.join(',')
+              console.log(role);
+            }
+            else {
+              role = "无";
+            }
+
+            // return h("span", "无");
+            return h("span", role);
           },
         },
         {
@@ -164,6 +185,49 @@ export default {
     ...mapState("user", ["id", "role"]),
   },
   methods: {
+    flatTree(tree, role_name = "") {
+      return tree.reduce((res, item) => {
+        let val;
+        if (item.children && item.children.length) {
+          val = res.concat(
+            this.flatTree(item.children, role_name + "-" + item.role_name)
+          );
+        } else {
+          res.push({
+            id: item.id,
+            role_name: item.role_name,
+            parent: role_name.slice(1),
+          });
+          val = res;
+        }
+        return val;
+      }, []);
+    },
+    translateTree(data) {
+      let temp = [];
+      data.forEach((item) => {
+        if (item.p_id == 0) {
+          temp.push(item);
+        }
+      });
+      function digui(data, temp) {
+        temp.forEach((tempItem, tempIndex) => {
+          let children = [];
+          data.forEach((dataItem, dataIndex) => {
+            if (tempItem.id == dataItem.p_id) {
+              // let children = tempItem.children ? tempItem.children : [];
+              children.push(dataItem);
+            }
+          });
+          if (children.length > 0) {
+            tempItem.children = children;
+            digui(data, children);
+          }
+        });
+      }
+      digui(data, temp);
+      return temp;
+    },
     test() {
       for (let i = 0; i < 100; i++) {
         this.$http("/api/article/typelist")
@@ -203,21 +267,11 @@ export default {
               })
               .catch((err) => {
                 console.log(err);
+                this.$Message.error({
+                  content: err.message,
+                });
                 this.$Modal.remove();
               });
-            // } else {
-            //   editStatus({ id, status: 1 })
-            //     .then((res) => {
-            //       this.$Message.error({
-            //         content: res.message,
-            //       });
-            //       this.$Modal.remove();
-            //       resolve();
-            //     })
-            //     .catch((err) => {
-            //       console.log(err);
-            //     });
-            // }
           },
           onCancel: () => {
             // reject();
@@ -255,8 +309,10 @@ export default {
     async show(v) {
       this.showRole = true;
       this.currentRow = v;
+      let that = this;
       await getRoleList().then((res) => {
         console.log("获取所有角色");
+        // this.translateTree(data);
         function handleRole(data) {
           let temp = [];
           data.forEach((item) => {
@@ -282,7 +338,8 @@ export default {
           digui(data, temp);
           return temp;
         }
-        this.allRole = handleRole(res.rows);
+        // this.allRole = handleRole(res.rows);
+        this.allRole = this.translateTree(res.rows);
       });
       await getAuth(v.id).then((res) => {
         // console.log("获取我的角色");
