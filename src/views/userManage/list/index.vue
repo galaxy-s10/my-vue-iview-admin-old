@@ -46,6 +46,7 @@ export default {
   components: {},
   data() {
     return {
+      flatRole: [],
       loading: true,
       showEditStatus: false,
       currentUser: {},
@@ -71,23 +72,37 @@ export default {
         {
           title: "角色",
           render: (h, params) => {
+            console.log("000000000");
             console.log(params.row.roles);
             // this.flatTree(params.row)
             let data = params.row.roles;
-            let role;
+            let role = [];
             if (data.length) {
-              let res = this.translateTree(params.row.roles);
-              console.log(res);
-              role = this.flatTree(res);
-              console.log(role);
-              let temp = [];
+              this.flatRole.forEach((item) => {
+                data.forEach((item1) => {
+                  if (item.id == item1.id) {
+                    role.push(item);
+                  }
+                });
+              });
+              console.log("rolerole");
+              console.log(role);  
+              let temp =[]
               role.forEach((item) => {
                 temp.push(item.parent + "-" + item.role_name);
               });
-              role = temp.join(',')
-              console.log(role);
-            }
-            else {
+
+              // let res = this.translateTree(params.row.roles);
+              // console.log(res);
+              // role = this.flatTree(res);
+              // console.log(role);
+              // let temp = [];
+              // role.forEach((item) => {
+              //   temp.push(item.parent + "-" + item.role_name);
+              // });
+              role = temp.join(",");
+              // console.log(role);
+            } else {
               role = "无";
             }
 
@@ -306,13 +321,54 @@ export default {
       this.roles = getAllRoleId(v);
       // console.log(getAllRoleId(v));
     },
+    // 获取所有角色
+    getRoleList() {
+      getRoleList().then((res) => {
+        console.log("获取所有角色");
+        // this.translateTree(data);
+        function handleRole(data) {
+          let temp = [];
+          data.forEach((item) => {
+            if (item.p_id == 0) {
+              temp.push(item);
+            }
+          });
+          function digui(data, temp) {
+            temp.forEach((tempItem, tempIndex) => {
+              let children = [];
+              data.forEach((dataItem, dataIndex) => {
+                if (tempItem.id == dataItem.p_id) {
+                  // let children = tempItem.children ? tempItem.children : [];
+                  children.push(dataItem);
+                }
+              });
+              if (children.length > 0) {
+                tempItem.children = children;
+                digui(data, children);
+              }
+            });
+          }
+          digui(data, temp);
+          return temp;
+        }
+        let tree = handleRole(res.rows);
+        console.log(tree);
+        let flat1 = this.flatTree(tree);
+        this.flatRole = flat1;
+        console.log("flat1");
+        // console.log(flat1);
+        // console.log(this.flatRole);
+      });
+    },
     async show(v) {
       this.showRole = true;
       this.currentRow = v;
       let that = this;
       await getRoleList().then((res) => {
         console.log("获取所有角色");
-        // this.translateTree(data);
+        let data = res.rows
+        console.log(data)
+        this.translateTree(data);
         function handleRole(data) {
           let temp = [];
           data.forEach((item) => {
@@ -364,6 +420,9 @@ export default {
       }
       let depData = JSON.parse(JSON.stringify(this.allRole));
       digui(depData, this.currentRole);
+      console.log("depData");
+      console.log(this.currentRole);
+      console.log(depData);
       this.allRole = depData;
     },
     ok() {
@@ -381,20 +440,6 @@ export default {
         .catch((err) => {
           console.log(err);
         });
-      // this.$http({
-      //   url: "/api/role/editRole",
-      //   method: "put",
-      //   data: {
-      //     id: this.currentRow.id,
-      //     roles: this.roles,
-      //   },
-      // })
-      //   .then((res) => {
-      //     console.log(res);
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
     },
     cancel() {
       // this.showRole = false
@@ -452,6 +497,7 @@ export default {
   },
   created() {},
   mounted() {
+    this.getRoleList();
     getUserRoleList().then((res) => {
       this.userList = res.rows;
     });
