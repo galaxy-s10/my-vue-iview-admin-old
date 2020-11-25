@@ -17,3 +17,12 @@ export function getUserAuth(id) {
     })
 }
 
+// 新增权限
+export function addAuth(data) {
+    return request({
+        url: '/api/auth/addAuth',
+        method: 'post',
+        data,
+    })
+}
+

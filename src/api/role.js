@@ -25,3 +25,21 @@ export function editRoleAuth(val) {
         data: { ...val }
     })
 }
+
+// 添加角色
+export function addRole(val) {
+    return request({
+        url: '/api/role/addRole',
+        method: 'post',
+        data: { ...val }
+    })
+}
+
+// 删除角色
+export function deleteRole(id) {
+    return request({
+        url: '/api/role/deleteRole',
+        method: 'delete',
+        data: { id }
+    })
+}

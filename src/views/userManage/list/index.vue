@@ -60,17 +60,21 @@ export default {
         {
           title: "id",
           key: "id",
-          width: "60",
+          width: 80,
+          align: "center",
         },
         {
           title: "用户名",
-          width: "80",
+          width: 100,
+          align: "center",
           render: (h, params) => {
             return h("span", params.row.username);
           },
         },
         {
           title: "角色",
+          width: 280,
+          align: "center",
           render: (h, params) => {
             console.log("000000000");
             console.log(params.row.roles);
@@ -86,32 +90,27 @@ export default {
                 });
               });
               console.log("rolerole");
-              console.log(role);  
-              let temp =[]
+              console.log(role);
+              let temp = [];
               role.forEach((item) => {
-                temp.push(item.parent + "-" + item.role_name);
+                temp.push(h("Tag", [item.parent + "-" + item.role_name]));
               });
-
-              // let res = this.translateTree(params.row.roles);
-              // console.log(res);
-              // role = this.flatTree(res);
-              // console.log(role);
-              // let temp = [];
-              // role.forEach((item) => {
-              //   temp.push(item.parent + "-" + item.role_name);
-              // });
-              role = temp.join(",");
-              // console.log(role);
+              console.log(role);
+              role = temp;
             } else {
               role = "无";
             }
-
+            console.log("iuyiuyiy");
+            console.log(role);
             // return h("span", "无");
-            return h("span", role);
+            // return h("span", role);
+            return h("div", role);
           },
         },
         {
           title: "状态",
+          width: 100,
+          align: "center",
           render: (h, params) => {
             console.log(params.row.status);
             // this.status = params.row.status == 1 ? true : false;
@@ -141,20 +140,22 @@ export default {
           },
         },
         {
+          align: "center",
           title: "创建时间",
           render: (h, params) => {
             return h("span", this.formateDate(params.row.createdAt));
           },
         },
         {
+          align: "center",
           title: "更新时间",
           render: (h, params) => {
             return h("span", this.formateDate(params.row.updatedAt));
           },
         },
         {
+          align: "center",
           title: "操作",
-          width: "130",
           render: (h, params) => {
             return h("div", [
               h(
@@ -366,8 +367,8 @@ export default {
       let that = this;
       await getRoleList().then((res) => {
         console.log("获取所有角色");
-        let data = res.rows
-        console.log(data)
+        let data = res.rows;
+        console.log(data);
         this.translateTree(data);
         function handleRole(data) {
           let temp = [];

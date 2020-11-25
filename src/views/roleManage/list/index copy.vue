@@ -32,9 +32,8 @@
 
 <script>
 import hssTable from "./component/table";
-import hssTree from "./component/tree";
 import { getAuthList } from "../../../api/auth";
-import { getRoleList, editRoleAuth,deleteRole } from "../../../api/role";
+import { getRoleList, editRoleAuth } from "../../../api/role";
 import { getAuth, getOneRoleAuth } from "../../../api/roleauth";
 export default {
   components: {},
@@ -46,7 +45,7 @@ export default {
       currentAuth: [],
       showRole: false,
       roleList: [],
-      columns: [
+      columns1: [
         {
           type: "expand",
           width: 50,
@@ -55,14 +54,10 @@ export default {
             console.log(params.row.children);
             if (params.row.children) {
               // return h("span", params.row.children[1].role_name);
-              return h(hssTree, {
+              return h(hssTable, {
                 props: {
-                  treeData1: params.row.children,
-                },
-                on: {
-                  refresh: () => {
-                    this.getRoleList();
-                  },
+                  columns1: this.columns1,
+                  data1: params.row.children,
                 },
               });
             }
@@ -126,7 +121,93 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.deleteRole(params.row);
+                      this.remove(params.row);
+                    },
+                  },
+                },
+                "删除"
+              ),
+            ]);
+          },
+        },
+      ],
+      columns: [
+        {
+          type: "expand",
+          width: 50,
+          render: (h, params) => {
+            console.log("params.row.children");
+            console.log(params.row.children);
+            if (params.row.children) {
+              // return h("span", params.row.children[1].role_name);
+              return h(hssTable, {
+                props: {
+                  columns1: this.columns1,
+                  data1: params.row.children,
+                },
+              });
+            }
+          },
+        },
+        {
+          title: "id",
+          key: "id",
+          width: "60",
+        },
+        {
+          title: "角色名",
+          width: "150",
+          render: (h, params) => {
+            console.log(params);
+            // if (!params.row.children) {
+            return h("span", params.row.role_name);
+          },
+        },
+        {
+          title: "创建时间",
+          render: (h, params) => {
+            return h("span", this.formateDate(params.row.createdAt));
+          },
+        },
+        {
+          title: "更新时间",
+          render: (h, params) => {
+            return h("span", this.formateDate(params.row.updatedAt));
+          },
+        },
+        {
+          title: "操作",
+          width: "130",
+          render: (h, params) => {
+            return h("div", [
+              h(
+                "Button",
+                {
+                  props: {
+                    type: "primary",
+                    size: "small",
+                  },
+                  style: {
+                    marginRight: "5px",
+                  },
+                  on: {
+                    click: () => {
+                      this.show(params.row);
+                    },
+                  },
+                },
+                "编辑"
+              ),
+              h(
+                "Button",
+                {
+                  props: {
+                    type: "error",
+                    size: "small",
+                  },
+                  on: {
+                    click: () => {
+                      this.remove(params.row);
                     },
                   },
                 },
@@ -140,14 +221,6 @@ export default {
   },
   computed: {},
   methods: {
-    deleteRole(v){
-      console.log(v)
-      deleteRole(v.id).then(res=>{
-        console.log(res)
-      }).catch(err=>{
-        console.log(err)
-      })
-    },
     getChecked(v) {
       console.log(v);
       function getAllAuthId(data) {
@@ -286,52 +359,49 @@ export default {
         ]
       );
     },
-    getRoleList() {
-      getRoleList().then((res) => {
-        let { rows } = res;
-        function handleRole(data) {
-          let temp = [];
-          data.forEach((item) => {
-            if (item.p_id == 0) {
-              temp.push(item);
-            }
-          });
-          function digui(data, temp) {
-            temp.forEach((tempItem, tempIndex) => {
-              let children = [];
-              data.forEach((dataItem, dataIndex) => {
-                if (tempItem.id == dataItem.p_id) {
-                  // let children = tempItem.children ? tempItem.children : [];
-                  children.push(dataItem);
-                }
-                // if (children.length > 0) {
-                //   digui(dataItem[1]);
-                // }
-              });
-              console.log(tempItem);
-              if (children.length > 0) {
-                tempItem.children = children;
-                digui(data, children);
-              }
-            });
-          }
-          digui(data, temp);
-          return temp;
-        }
-        let temp = handleRole(rows);
-        temp.forEach((item) => {
-          console.log(temp);
-          if (!item.children) {
-            item._disableExpand = true;
-          }
-        });
-        console.log(temp);
-        this.roleList = temp;
-      });
-    },
   },
   created() {
-    this.getRoleList();
+    getRoleList().then((res) => {
+      let { rows } = res;
+      function handleRole(data) {
+        let temp = [];
+        data.forEach((item) => {
+          if (item.p_id == 0) {
+            temp.push(item);
+          }
+        });
+        function digui(data, temp) {
+          temp.forEach((tempItem, tempIndex) => {
+            let children = [];
+            data.forEach((dataItem, dataIndex) => {
+              if (tempItem.id == dataItem.p_id) {
+                // let children = tempItem.children ? tempItem.children : [];
+                children.push(dataItem);
+              }
+              // if (children.length > 0) {
+              //   digui(dataItem[1]);
+              // }
+            });
+            console.log(tempItem);
+            if (children.length > 0) {
+              tempItem.children = children;
+              digui(data, children);
+            }
+          });
+        }
+        digui(data, temp);
+        return temp;
+      }
+      let temp = handleRole(rows);
+      temp.forEach((item) => {
+        console.log(temp);
+        if (!item.children) {
+          item._disableExpand = true;
+        }
+      });
+      console.log(temp);
+      this.roleList = temp;
+    });
   },
   mounted() {},
 };
