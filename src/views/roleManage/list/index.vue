@@ -31,6 +31,7 @@
 </template>
 
 <script>
+import hssTable from "./component/table";
 import { getAuthList } from "../../../api/auth";
 import { getRoleList, editRoleAuth } from "../../../api/role";
 import { getAuth, getOneRoleAuth } from "../../../api/roleauth";
@@ -44,7 +45,7 @@ export default {
       currentAuth: [],
       showRole: false,
       roleList: [],
-      columns: [
+      columns1: [
         {
           type: "expand",
           width: 50,
@@ -52,9 +53,11 @@ export default {
             console.log("params.row.children");
             console.log(params.row.children);
             if (params.row.children) {
-              return h("span", {
+              // return h("span", params.row.children[1].role_name);
+              return h(hssTable, {
                 props: {
-                  row: params.row,
+                  columns1: this.columns1,
+                  data1: params.row.children,
                 },
               });
             }
@@ -72,32 +75,92 @@ export default {
             console.log(params);
             // if (!params.row.children) {
             return h("span", params.row.role_name);
-            // } else {
-            //   return h("span", [
-            //     h(
-            //       "Button",
-            //       {
-            //         props: {
-            //           size: "small",
-            //         },
-            //         on: {
-            //           click: () => {
-            //             console.log(params.row);
-            //           },
-            //         },
-            //       },
-            //       [
-            //         h("Icon", {
-            //           props: {
-            //             type: "md-add",
-            //             size: "small",
-            //           },
-            //         }),
-            //       ]
-            //     ),
-            //     h("span", params.row.role_name),
-            //   ]);
-            // }
+          },
+        },
+        {
+          title: "创建时间",
+          render: (h, params) => {
+            return h("span", this.formateDate(params.row.createdAt));
+          },
+        },
+        {
+          title: "更新时间",
+          render: (h, params) => {
+            return h("span", this.formateDate(params.row.updatedAt));
+          },
+        },
+        {
+          title: "操作",
+          width: "130",
+          render: (h, params) => {
+            return h("div", [
+              h(
+                "Button",
+                {
+                  props: {
+                    type: "primary",
+                    size: "small",
+                  },
+                  style: {
+                    marginRight: "5px",
+                  },
+                  on: {
+                    click: () => {
+                      this.show(params.row);
+                    },
+                  },
+                },
+                "编辑"
+              ),
+              h(
+                "Button",
+                {
+                  props: {
+                    type: "error",
+                    size: "small",
+                  },
+                  on: {
+                    click: () => {
+                      this.remove(params.row);
+                    },
+                  },
+                },
+                "删除"
+              ),
+            ]);
+          },
+        },
+      ],
+      columns: [
+        {
+          type: "expand",
+          width: 50,
+          render: (h, params) => {
+            console.log("params.row.children");
+            console.log(params.row.children);
+            if (params.row.children) {
+              // return h("span", params.row.children[1].role_name);
+              return h(hssTable, {
+                props: {
+                  columns1: this.columns1,
+                  data1: params.row.children,
+                },
+              });
+            }
+          },
+        },
+        {
+          title: "id",
+          key: "id",
+          width: "60",
+        },
+        {
+          title: "角色名",
+          width: "150",
+          render: (h, params) => {
+            console.log(params);
+            // if (!params.row.children) {
+            return h("span", params.row.role_name);
           },
         },
         {
