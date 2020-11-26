@@ -34,7 +34,7 @@
 import hssTable from "./component/table";
 import hssTree from "./component/tree";
 import { getAuthList } from "../../../api/auth";
-import { getRoleList, editRoleAuth,deleteRole } from "../../../api/role";
+import { getRoleList, editRoleAuth, deleteRole } from "../../../api/role";
 import { getAuth, getOneRoleAuth } from "../../../api/roleauth";
 export default {
   components: {},
@@ -49,7 +49,8 @@ export default {
       columns: [
         {
           type: "expand",
-          width: 50,
+          // width: 50,
+          align: "center",
           render: (h, params) => {
             console.log("params.row.children");
             console.log(params.row.children);
@@ -71,11 +72,13 @@ export default {
         {
           title: "id",
           key: "id",
-          width: "60",
+          // width: "60",
+          align: "center",
         },
         {
           title: "角色名",
-          width: "150",
+          // width: "150",
+          align: "center",
           render: (h, params) => {
             console.log(params);
             // if (!params.row.children) {
@@ -84,26 +87,28 @@ export default {
         },
         {
           title: "创建时间",
+          align: "center",
           render: (h, params) => {
             return h("span", this.formateDate(params.row.createdAt));
           },
         },
         {
           title: "更新时间",
+          align: "center",
           render: (h, params) => {
             return h("span", this.formateDate(params.row.updatedAt));
           },
         },
         {
           title: "操作",
-          width: "130",
+          align: "center",
           render: (h, params) => {
             return h("div", [
               h(
                 "Button",
                 {
                   props: {
-                    type: "primary",
+                    type: "warning",
                     size: "small",
                   },
                   style: {
@@ -116,6 +121,24 @@ export default {
                   },
                 },
                 "编辑"
+              ),
+              h(
+                "Button",
+                {
+                  props: {
+                    type: "info",
+                    size: "small",
+                  },
+                  style: {
+                    marginRight: "5px",
+                  },
+                  on: {
+                    click: () => {
+                      this.deleteRole(params.row);
+                    },
+                  },
+                },
+                "新增"
               ),
               h(
                 "Button",
@@ -140,13 +163,15 @@ export default {
   },
   computed: {},
   methods: {
-    deleteRole(v){
-      console.log(v)
-      deleteRole(v.id).then(res=>{
-        console.log(res)
-      }).catch(err=>{
-        console.log(err)
-      })
+    deleteRole(v) {
+      console.log(v);
+      deleteRole(v.id)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     getChecked(v) {
       console.log(v);
@@ -282,7 +307,7 @@ export default {
               float: "right",
               marginRight: "32px",
             },
-          }),
+          },"预备接口"),
         ]
       );
     },

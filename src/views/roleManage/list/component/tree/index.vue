@@ -40,7 +40,7 @@ export default {
   },
   data() {
     return {
-      currentAuth:[],
+      currentAuth: [],
       auths: [],
       roleList: [],
       showRole: false,
@@ -62,7 +62,7 @@ export default {
       console.log("ok");
       this.allAuth = [];
       this.currentAuth = [];
-      console.log(this.currentRow.id)
+      console.log(this.currentRow.id);
       addAuth({
         id: this.currentRow.id,
         authList: this.auths,
@@ -131,14 +131,14 @@ export default {
         },
         [
           h("span", [
-            h("Icon", {
-              props: {
-                type: "ios-paper-outline",
-              },
-              style: {
-                marginRight: "8px",
-              },
-            }),
+            // h("Icon", {
+            //   props: {
+            //     type: "md-key",
+            //   },
+            //   style: {
+            //     marginRight: "8px",
+            //   },
+            // }),
             h("span", data.role_name),
           ]),
           h(
@@ -154,6 +154,10 @@ export default {
               h(
                 "Button",
                 {
+                  props: {
+                    type: "warning",
+                    size: "small",
+                  },
                   // props: Object.assign({}, this.buttonProps, {
                   //   icon: "ios-add",
                   // }),
@@ -169,81 +173,97 @@ export default {
                 },
                 "编辑"
               ),
-              h("Button", {
-                props: Object.assign({}, this.buttonProps, {
-                  icon: "ios-add",
-                }),
-                style: {
-                  marginRight: "8px",
-                },
-                on: {
-                  click: () => {
-                    console.log(data);
-                    this.$Modal.confirm({
-                      render: (h) => {
-                        return h("div", [
-                          h("Input", {
-                            props: {
-                              value: this.value,
-                              autofocus: true,
-                              placeholder: "请输入新增的角色名",
-                            },
-                            on: {
-                              input: (val) => {
-                                this.newRoleName = val;
+              h(
+                "Button",
+                {
+                  // props: Object.assign({}, this.buttonProps, {
+                  //   icon: "ios-add",
+                  // }),
+                  props: {
+                    type: "info",
+                    size: "small",
+                  },
+                  style: {
+                    marginRight: "8px",
+                  },
+                  on: {
+                    click: () => {
+                      console.log(data);
+                      this.$Modal.confirm({
+                        render: (h) => {
+                          return h("div", [
+                            h("Input", {
+                              props: {
+                                value: this.value,
+                                autofocus: true,
+                                placeholder: "请输入新增的角色名",
                               },
-                            },
-                          }),
-                          h("Input", {
-                            props: {
-                              value: this.value,
-                              autofocus: true,
-                              placeholder: "请输入角色描述",
-                            },
-                            on: {
-                              input: (val) => {
-                                this.newRoleDescription = val;
+                              on: {
+                                input: (val) => {
+                                  this.newRoleName = val;
+                                },
                               },
-                            },
-                          }),
-                        ]);
-                      },
-                      onOk: () => {
-                        console.log(this.newRoleName);
-                        console.log(this.newRoleDescription);
-                        addRole({
-                          p_id: data.id,
-                          role_name: this.newRoleName,
-                          role_description: this.newRoleDescription,
-                        })
-                          .then((res) => {
-                            console.log(res);
-                            this.$emit("refresh");
-                            this.$Message.success({
-                              content: res.message,
-                            });
+                            }),
+                            h("Input", {
+                              props: {
+                                value: this.value,
+                                autofocus: true,
+                                placeholder: "请输入角色描述",
+                              },
+                              on: {
+                                input: (val) => {
+                                  this.newRoleDescription = val;
+                                },
+                              },
+                            }),
+                          ]);
+                        },
+                        onOk: () => {
+                          console.log(this.newRoleName);
+                          console.log(this.newRoleDescription);
+                          addRole({
+                            p_id: data.id,
+                            role_name: this.newRoleName,
+                            role_description: this.newRoleDescription,
                           })
-                          .catch((err) => {
-                            console.log(err);
-                          });
-                        console.log();
-                        this.append(data);
-                      },
-                    });
-                    // this.append(data);
+                            .then((res) => {
+                              console.log(res);
+                              this.$emit("refresh");
+                              this.$Message.success({
+                                content: res.message,
+                              });
+                            })
+                            .catch((err) => {
+                              console.log(err);
+                            });
+                          console.log();
+                          this.append(data);
+                        },
+                      });
+                      // this.append(data);
+                    },
                   },
                 },
-              }),
-              h("Button", {
-                props: Object.assign({}, this.buttonProps, {
-                  icon: "ios-remove",
-                }),
-                on: {
-                  click: () => {
-                    this.deleteRole(data);
+                "新增"
+              ),
+              h(
+                "Button",
+                {
+                  // props: Object.assign({}, this.buttonProps, {
+                  //   icon: "ios-remove",
+                  // }),
+                  props: {
+                    type: "error",
+                    size: "small",
+                  },
+                  on: {
+                    click: () => {
+                      this.deleteRole(data);
+                    },
                   },
                 },
-              }),
+                "删除"
+              ),
             ]
           ),
         ]
@@ -286,7 +306,7 @@ export default {
         console.log(res);
         if (res.count > 0) {
           res.rows.forEach((item) => {
-            this.currentAuth.push(item.auth_id);  
+            this.currentAuth.push(item.auth_id);
           });
         }
       });
