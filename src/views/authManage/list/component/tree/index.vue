@@ -120,6 +120,7 @@ export default {
       );
     },
     renderContent(h, { root, node, data }) {
+      console.log('renderContent');
       console.log(data);
       return h(
         "span",
@@ -139,7 +140,7 @@ export default {
             //     marginRight: "8px",
             //   },
             // }),
-            h("span", data.role_name + "-" + data.role_description),
+            h("span", data.auth_name + "-" + data.auth_description),
           ]),
           h(
             "span",
