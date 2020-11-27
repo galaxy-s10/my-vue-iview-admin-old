@@ -27,15 +27,20 @@
       </div> -->
     </Modal>
     <!-- <Tree :data="roleList" :render="renderContent" show-checkbox></Tree> -->
+    <hss-popup :isShow="false" title="aaa">
+      fsf
+      fasd
+    </hss-popup>
   </div>
 </template>
 
 <script>
+import hssPopup from "./component/popup";
 import hssTable from "./component/table";
 import hssTree from "./component/tree";
 import { getAuthList, getUserAuth } from "../../../api/auth";
 export default {
-  components: { hssTable, hssTree },
+  components: { hssTable, hssTree, hssPopup },
   data() {
     return {
       roleList: [],
