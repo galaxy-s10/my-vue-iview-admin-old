@@ -1,6 +1,5 @@
 <template>
   <div>
-    sss
     <Modal v-model="isShow" :title="title" @on-ok="ok" @on-cancel="cancel">
       <slot></slot>
     </Modal>
@@ -11,7 +10,7 @@
 export default {
   components: {},
   props: {
-    isShow: {
+    show: {
       type: Boolean,
       default: false,
     },
@@ -21,17 +20,25 @@ export default {
     },
   },
   data() {
-    return {
-      //   isShow: true,
-      //   title: "fasfsdaf",
-    };
+    return {};
   },
   created() {},
   mounted() {},
-  computed: {},
+  computed: {
+    isShow: {
+      get() {
+        return this.show;
+      },
+      set() {},
+    },
+  },
   methods: {
-    ok() {},
-    cancel() {},
+    ok() {
+      this.$emit("okk");
+    },
+    cancel() {
+      this.$emit("cancell");
+    },
   },
 };
 </script>

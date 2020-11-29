@@ -108,6 +108,16 @@ export default {
           },
         },
         {
+          title: "收到赞",
+          width: "100",
+          align: "center",
+          render: (h, params) => {
+            console.log(params);
+            // if (!params.row.children) {
+            return h("span", params.row.stars.length);
+          },
+        },
+        {
           title: "状态",
           width: 100,
           align: "center",

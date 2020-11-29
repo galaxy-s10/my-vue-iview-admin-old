@@ -15,11 +15,7 @@ const app = {
     },
     mutations: {
         addTagOpenPage(state, item) {
-            // console.log('vuex')
-            // console.log(item);
-            // console.log(state.tagOpenPageList);
             state.tagOpenPageList.push(item)
-            // utils.oneOf(item,state.tagOpenPageList)
         }
     },
     actions: {

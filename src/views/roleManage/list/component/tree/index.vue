@@ -25,8 +25,12 @@
 </template>
 
 <script>
-import { getAuthList, addAuth } from "../../../../../api/auth";
-import { getAuth, getOneRoleAuth } from "../../../../../api/roleauth";
+import { getAuthList, addAuthForRole } from "../../../../../api/auth";
+import {
+  getAuth,
+  getOneRoleAuth,
+  addAuthForRoleForRole,
+} from "../../../../../api/roleauth";
 import { getRoleList, addRole, deleteRole } from "../../../../../api/role";
 export default {
   components: {},
@@ -59,11 +63,9 @@ export default {
   methods: {
     ok() {
       // this.showRole = false
-      console.log("ok");
       this.allAuth = [];
       this.currentAuth = [];
-      console.log(this.currentRow.id);
-      addAuth({
+      addAuthForRole({
         id: this.currentRow.id,
         authList: this.auths,
       })
@@ -76,12 +78,10 @@ export default {
     },
     cancel() {
       // this.showRole = false
-      console.log("quxiao");
       this.allAuth = [];
       this.currentAuth = [];
     },
     getChecked(v) {
-      console.log(v);
       function getAllAuthId(data) {
         let temp = [];
         function digui(data) {
@@ -96,7 +96,6 @@ export default {
         return [...new Set(temp)];
       }
       this.auths = getAllAuthId(v);
-      console.log(this.auths);
     },
     renderContent1(h, { root, node, data }) {
       return h(
@@ -120,7 +119,6 @@ export default {
       );
     },
     renderContent(h, { root, node, data }) {
-      console.log(data);
       return h(
         "span",
         {
@@ -166,7 +164,6 @@ export default {
                   },
                   on: {
                     click: () => {
-                      console.log(data);
                       this.show(data);
                     },
                   },

@@ -1,7 +1,11 @@
 import axios from 'axios'
+import NProgress from 'nprogress' // progress bar
+import 'nprogress/nprogress.css' // progress bar style
 import router from "../router";
 import cache from '@/libs/cache'
 import { Message } from 'iview'
+
+NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 let companyUrl = 'https://voiceapi.tsiji.com'
 let myUrl = 'https://www.zhengbeining.com'
@@ -20,6 +24,7 @@ const service1 = axios.create({
 // 请求拦截
 service.interceptors.request.use(
   config => {
+    NProgress.start()
     let token = cache.getStorageExt("token")
     // console.log(token)
     if (token) {
@@ -28,6 +33,7 @@ service.interceptors.request.use(
     return config
   },
   error => {
+    NProgress.done()
     console.log(error) // for debug
     return Promise.reject(error)
   }
@@ -36,9 +42,11 @@ service.interceptors.request.use(
 // 响应拦截
 service.interceptors.response.use(
   response => {
+    NProgress.done()
     return response.data
   },
   error => {
+    NProgress.done()
     console.log(error.message);
     console.log(error.response);
     console.log('object');

@@ -28,7 +28,7 @@
                 >七天内免登陆</Checkbox
               >
               <Button type="primary" long @click="handleSubmit">登录</Button>
-              <Button type="primary" long @click="aaa">aaa</Button>
+              <!-- <Button type="primary" long @click="aaa">aaa</Button> -->
             </FormItem>
           </i-form>
         </Card>
@@ -116,10 +116,10 @@ export default {
     },
   },
   methods: {
-    aaa() {
-      let res = cache.getStorageExt("token");
-      // console.log(res);
-    },
+      // aaa() {
+      //   let res = cache.getStorageExt("token");
+      //   // console.log(res);
+      // },
     ...mapMutations("user", ["editRemember"]),
     ...mapActions("user", ["login", "getUserInfo", "getAuth"]),
     edit(e) {
@@ -128,7 +128,7 @@ export default {
     async handleSubmit() {
       try {
         let res = await this.login(this.form);
-        console.log('res');
+        console.log("res");
         console.log(res);
         if (res) {
           if (this.remember) {

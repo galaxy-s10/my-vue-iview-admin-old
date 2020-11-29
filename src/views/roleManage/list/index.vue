@@ -35,7 +35,7 @@ import hssTable from "./component/table";
 import hssTree from "./component/tree";
 import { getAuthList } from "../../../api/auth";
 import { getRoleList, editRoleAuth, deleteRole } from "../../../api/role";
-import { getAuth, getOneRoleAuth } from "../../../api/roleauth";
+import { getAuth, getOneRoleAuth, addAuthForRole } from "../../../api/roleauth";
 export default {
   components: {},
   data() {
@@ -85,6 +85,7 @@ export default {
             return h("span", params.row.role_name);
           },
         },
+
         {
           title: "创建时间",
           align: "center",
@@ -301,13 +302,17 @@ export default {
         },
         [
           h("span", [h("span", data.auth_name + "-" + data.auth_description)]),
-          h("span", {
-            style: {
-              display: "inline-block",
-              float: "right",
-              marginRight: "32px",
+          h(
+            "span",
+            {
+              style: {
+                display: "inline-block",
+                float: "right",
+                marginRight: "32px",
+              },
             },
-          },"预备接口"),
+            "预备接口"
+          ),
         ]
       );
     },

@@ -2,7 +2,6 @@ import request from './request'
 
 // 获取某个用户的角色以及权限
 export function getOneRoleAuth(id) {
-    console.log(id)
     return request({
         url: '/api/roleauth/oneRoleAuth',
         method: 'get',
@@ -12,7 +11,6 @@ export function getOneRoleAuth(id) {
 
 // 获取某个用户的角色以及权限
 export function getAuth(id) {
-    console.log(id)
     return request({
         url: '/api/roleauth/getUserAuth',
         method: 'get',
@@ -25,5 +23,14 @@ export function getUserRoleList() {
     return request({
         url: '/api/roleauth/userRoleList',
         method: 'get',
+    })
+}
+
+// 给某个角色新增权限
+export function addAuthForRole(data) {
+    return request({
+        url: '/api/auth/addAuth',
+        method: 'post',
+        data,
     })
 }

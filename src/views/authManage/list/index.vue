@@ -6,11 +6,11 @@
       :columns="columns"
       :data="roleList"
     ></Table>
-    <Modal v-model="showRole" title="编辑权限" @on-ok="ok" @on-cancel="cancel">
+    <!-- <Modal v-model="showRole" title="编辑权限" @on-ok="ok" @on-cancel="cancel">
       <div>
         {{ showRole && currentRow && currentRow.username }}
       </div>
-      <!-- <div class="aaa">
+      <div class="aaa">
         <div v-if="allAuth.length == 0" style="position: relative">
           <Spin size="large">
             <Icon type="ios-loading" class="demo-spin-icon-load"></Icon>
@@ -24,12 +24,47 @@
           show-checkbox
           @on-check-change="getChecked"
         ></Tree>
-      </div> -->
-    </Modal>
+      </div>
+    </Modal> -->
     <!-- <Tree :data="roleList" :render="renderContent" show-checkbox></Tree> -->
-    <hss-popup :isShow="false" title="aaa">
-      fsf
-      fasd
+    <hss-popup
+      :show="hssShow"
+      :title="hssTitle"
+      @okk="popOk"
+      @cancell="popCancel"
+    >
+      <Form :model="authInfo" :label-width="80">
+        <FormItem label="id">
+          <Input v-model="authInfo.id" placeholder="id" disabled></Input>
+        </FormItem>
+        <FormItem label="父级">
+          <Select
+            v-if="action == 'edit'"
+            v-model="authInfo.p_id"
+            style="width: 200px"
+          >
+            <Option
+              v-for="item in parentAuth"
+              :value="item.id"
+              :key="item.id"
+              >{{ item.auth_name + "-" + item.auth_description }}</Option
+            >
+          </Select>
+          <span v-else-if="action == 'add'">{{ authInfo.p }}</span>
+        </FormItem>
+        <FormItem label="权限名">
+          <Input
+            v-model="authInfo.auth_name"
+            placeholder="请输入权限名"
+          ></Input>
+        </FormItem>
+        <FormItem label="权限描述">
+          <Input
+            v-model="authInfo.auth_description"
+            placeholder="请输入权限描述"
+          ></Input>
+        </FormItem>
+      </Form>
     </hss-popup>
   </div>
 </template>
@@ -38,11 +73,28 @@
 import hssPopup from "./component/popup";
 import hssTable from "./component/table";
 import hssTree from "./component/tree";
-import { getAuthList, getUserAuth } from "../../../api/auth";
+import {
+  getAuthList,
+  getUserAuth,
+  findParentAuth,
+  addAuth,
+  editAuth,
+  deleteAuth,
+} from "../../../api/auth";
 export default {
   components: { hssTable, hssTree, hssPopup },
   data() {
     return {
+      action: "", //编辑/新增
+      parentAuth: [],
+      authInfo: {
+        input: "",
+        auth_name: "",
+        auth_description: "",
+        p_id: "",
+      },
+      hssShow: false,
+      hssTitle: "",
       roleList: [],
       columns: [
         {
@@ -50,8 +102,6 @@ export default {
           width: 50,
           align: "center",
           render: (h, params) => {
-            console.log("params.row.children");
-            console.log(params.row.children);
             if (params.row.children) {
               // return h("span", params.row.children[1].role_name);
               return h(hssTree, {
@@ -60,7 +110,16 @@ export default {
                 },
                 on: {
                   refresh: () => {
-                    this.getRoleList();
+                    this.getAuthList();
+                  },
+                  delAuth: (v) => {
+                    this.deleteAuth(v);
+                  },
+                  addAuth: (v) => {
+                    this.addAuth(v);
+                  },
+                  editAuth: (v) => {
+                    this.editAuth(v);
                   },
                 },
               });
@@ -78,8 +137,6 @@ export default {
           width: "150",
           align: "center",
           render: (h, params) => {
-            console.log(params);
-            // if (!params.row.children) {
             return h("span", params.row.auth_name);
           },
         },
@@ -88,8 +145,6 @@ export default {
           width: "150",
           align: "center",
           render: (h, params) => {
-            console.log(params);
-            // if (!params.row.children) {
             return h("span", params.row.auth_description);
           },
         },
@@ -125,7 +180,30 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.show(params.row);
+                      let {
+                        id,
+                        auth_name,
+                        auth_description,
+                        p_id,
+                      } = params.row;
+                      findParentAuth(id).then((res) => {
+                        this.parentAuth = res.list.rows;
+                        this.parentAuth.unshift({
+                          id: 0,
+                          auth_name: "无",
+                          auth_description: "无",
+                          p_id: 0,
+                        });
+                        this.authInfo = {
+                          id,
+                          auth_name,
+                          auth_description,
+                          p_id: p_id,
+                        };
+                      });
+                      this.action = "edit";
+                      this.hssTitle = "编辑权限";
+                      this.hssShow = true;
                     },
                   },
                 },
@@ -143,7 +221,27 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.deleteRole(params.row);
+                      // this.deleteAuth(params.row);
+                      let {
+                        id,
+                        auth_name,
+                        auth_description,
+                        p_id,
+                      } = params.row;
+                      this.authInfo = {
+                        id,
+                        auth_name: "",
+                        auth_description: "",
+                        p_id: id,
+                      };
+                      this.$set(
+                        this.authInfo,
+                        "p",
+                        auth_name + "-" + auth_description
+                      );
+                      this.action = "add";
+                      this.hssTitle = "新增权限";
+                      this.hssShow = true;
                     },
                   },
                 },
@@ -158,7 +256,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.deleteRole(params.row);
+                      this.deleteAuth(params.row);
                     },
                   },
                 },
@@ -172,6 +270,69 @@ export default {
   },
   computed: {},
   methods: {
+    addAuth(v) {
+      addAuth({
+        p_id: v.p_id,
+        auth_name: v.auth_name,
+        auth_description: v.auth_description,
+      })
+        .then((res) => {
+          this.$Message.success({
+            content: res.message,
+          });
+          this.getAuthList();
+        })
+        .catch((err) => {
+          this.$Message.error({
+            content: err.message,
+          });
+        });
+    },
+    deleteAuth(v) {
+      if (v.children) {
+        this.$Message.warning({
+          content: "该权限下有子权限，不能删除!",
+        });
+      } else {
+        deleteAuth(v.id)
+          .then((res) => {
+            this.$Message.success({
+              content: res.message,
+            });
+            this.getAuthList();
+          })
+          .catch((err) => {
+            this.$Message.error({
+              content: err.message,
+            });
+          });
+      }
+    },
+    editAuth(v) {
+      editAuth(v)
+        .then((res) => {
+          this.$Message.success({
+            content: res.message,
+          });
+          this.getAuthList();
+        })
+        .catch((err) => {
+          this.$Message.error({
+            content: res.message,
+          });
+        });
+    },
+    popOk(v) {
+      if (this.action == "add") {
+        this.addAuth(this.authInfo);
+      } else if (this.action == "edit") {
+        this.editAuth(this.authInfo);
+      }
+      this.hssShow = false;
+    },
+    popCancel() {
+      this.hssShow = false;
+    },
     //转换时间格式
     formateDate(datetime) {
       function addDateZero(num) {
@@ -218,57 +379,51 @@ export default {
     // 获取所有权限列表
     getAuthList() {
       getAuthList().then((res) => {
-        console.log(res);
         let { rows } = res;
         let temp = [];
-        function digui() {
+        function wrap() {
           rows.forEach((item) => {
             if (item.p_id == 0) {
               temp.push(item);
             }
           });
         }
-        digui();
-        console.log(temp);
-        temp.forEach((tempItem) => {
-          rows.forEach((rowsItem) => {
-            if (tempItem.id == rowsItem.p_id) {
-              if (tempItem.children) {
-                tempItem.children.push(rowsItem);
-              } else {
-                tempItem.children = [];
-                tempItem.children.push(rowsItem);
+        wrap();
+        function digui(data, temp) {
+          temp.forEach((tempItem, tempIndex) => {
+            let children = [];
+            data.forEach((dataItem, dataIndex) => {
+              if (tempItem.id == dataItem.p_id) {
+                // let children = tempItem.children ? tempItem.children : [];
+                children.push(dataItem);
               }
+            });
+            if (children.length > 0) {
+              tempItem.children = children;
+              digui(data, children);
             }
           });
-        });
+        }
+        digui(rows, temp);
         temp.forEach((item) => {
-          console.log(temp);
           if (!item.children) {
             item._disableExpand = true;
           }
         });
-        console.log(temp);
         this.roleList = temp;
       });
     },
     // 获取某个用户的所有权限
     getUserAuth(id) {
-      console.log(id);
       let temp = [];
       getUserAuth(id)
         .then((res) => {
-          console.log("获取某个用户的所有权限");
-          console.log(res);
           let { count, rows } = res;
           rows.forEach((item) => {
-            console.log(item.role.auths);
             item.role.auths.forEach((val) => {
               temp.push(val.id);
             });
           });
-          console.log(temp);
-          console.log([...new Set(temp)]);
         })
         .catch((err) => {
           console.log(err);
@@ -277,7 +432,7 @@ export default {
   },
   created() {
     this.getAuthList();
-    this.getUserAuth(1);
+    // this.getUserAuth(1);
   },
   mounted() {},
 };

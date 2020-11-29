@@ -38,7 +38,8 @@ export default {
         },
         {
           title: "标题",
-          width: "80",
+          width: "150",
+          align: "center",
           render: (h, params) => {
             console.log(params);
             return h("span", params.row.title);
@@ -46,6 +47,7 @@ export default {
         },
         {
           title: "封面图",
+          width:"90",
           align: "center",
           render: (h, params) => {
             return h("img", {
@@ -57,7 +59,23 @@ export default {
           },
         },
         {
+          title: "浏览数",
+          key: "click",
+          width: "80",
+          align: "center",
+        },
+        {
+          title: "点赞数",
+          width: "80",
+          align: "center",
+          render: (h, params) => {
+            return h("span", params.row.stars.length);
+          },
+        },
+        {
           title: "状态",
+          width: 100,
+          align: "center",
           render: (h, params) => {
             console.log(params.row.status);
             // this.status = params.row.status == 1 ? true : false;
@@ -88,6 +106,8 @@ export default {
         },
         {
           title: "评论",
+          width: 100,
+          align: "center",
           render: (h, params) => {
             console.log(params.row.status);
             // this.status = params.row.status == 1 ? true : false;
@@ -118,12 +138,14 @@ export default {
         },
         {
           title: "创建时间",
+          align: "center",
           render: (h, params) => {
             return h("span", this.formateDate(params.row.createdAt));
           },
         },
         {
           title: "更新时间",
+          align: "center",
           render: (h, params) => {
             return h("span", this.formateDate(params.row.updatedAt));
           },
@@ -131,6 +153,7 @@ export default {
         {
           title: "操作",
           width: "130",
+          align: "center",
           render: (h, params) => {
             return h("div", [
               h(

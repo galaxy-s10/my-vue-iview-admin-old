@@ -49,7 +49,6 @@ const user = {
                 login(userInfo).then(res => {
                     reslove(res)
                 }).catch(err => {
-                    console.log('errerr')
                     console.log(err)
                     reject(err)
                 })
@@ -59,10 +58,7 @@ const user = {
         getUserInfo({ commit, state }) {
             // let res = cache.getStorageExt('token')
             return new Promise((resolve, reject) => {
-                // console.log(state.token)
                 getUserInfo(state.token).then(res => {
-                    console.log('resresres')
-                    console.log(res)
                     const { userInfo } = res
                     commit('setUser', userInfo)
                     if (res.code == 0) {
@@ -71,7 +67,6 @@ const user = {
                         resolve(userInfo)
                     }
                 }).catch(err => {
-                    console.log('errerrerrerr')
                     console.log(err)
                     reject(err)
                 })
@@ -80,11 +75,9 @@ const user = {
         // 获取用户角色以及权限
         getAuth({ commit, state }) {
             let id = state.id
-            // console.log(id)
             return new Promise((resolve, reject) => {
                 getAuth(id).then(res => {
                     const { count, rows } = res
-                    console.log(res)
                     if (count == 0) {
                         reject({ message: '你没有任何权限！' })
                     } else {
