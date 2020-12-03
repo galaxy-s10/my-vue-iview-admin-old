@@ -31,7 +31,7 @@ export function addRole(val) {
     return request({
         url: '/api/role/addRole',
         method: 'post',
-        data: { ...val }
+        data: val
     })
 }
 

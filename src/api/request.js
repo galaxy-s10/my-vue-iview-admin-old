@@ -43,6 +43,7 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     NProgress.done()
+    console.log('333')
     return response.data
   },
   error => {
@@ -63,10 +64,13 @@ service.interceptors.response.use(
         })
         // 下面有个return，代表不会继续向下执行
         // 也就是说，如果网络请求报了401，有return，就不会继续执行axios，就不会返回reject
-        return
+        return  "不返回reject！"
+        // return Promise.reject(error.response.data)
       }
+      console.log('11')
       return Promise.reject(error.response.data)
     }
+    console.log('22')
     return Promise.reject(error)
   }
 )

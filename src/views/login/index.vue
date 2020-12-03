@@ -54,43 +54,43 @@ export default {
     };
   },
   created() {
-    console.log(this.$axios);
-    console.log(this.$http);
-    console.log(this.$http1);
-    this.$http({
-      url: "/api/article/typelist",
-      method: "get",
-      data: {
-        undercarriage: 1,
-        belong_type: "self",
-        total: 0,
-        per_page: 10,
-        currentPage: 1,
-      },
-    })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    this.$http1({
-      url: "/voiceuser/getuserinfo",
-      method: "post",
-      data: {
-        undercarriage: 1,
-        belong_type: "self",
-        total: 0,
-        per_page: 10,
-        currentPage: 1,
-      },
-    })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    // console.log(this.$axios);
+    // console.log(this.$http);
+    // console.log(this.$http1);
+    // this.$http({
+    //   url: "/api/article/typelist",
+    //   method: "get",
+    //   data: {
+    //     undercarriage: 1,
+    //     belong_type: "self",
+    //     total: 0,
+    //     per_page: 10,
+    //     currentPage: 1,
+    //   },
+    // })
+    //   .then((res) => {
+    //     console.log(res);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+    // this.$http1({
+    //   url: "/voiceuser/getuserinfo",
+    //   method: "post",
+    //   data: {
+    //     undercarriage: 1,
+    //     belong_type: "self",
+    //     total: 0,
+    //     per_page: 10,
+    //     currentPage: 1,
+    //   },
+    // })
+    //   .then((res) => {
+    //     console.log(res);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
     // console.log(this.remember);
   },
   mounted() {},

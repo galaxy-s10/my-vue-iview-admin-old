@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- <Tree :data="roleList" :render="renderContent" show-checkbox></Tree> -->
+    <i-button @click="hssShow = !hssShow">新增角色</i-button>
     <Table
       border
       :loading="roleList.length == 0"
@@ -27,19 +27,54 @@
         ></Tree>
       </div>
     </Modal>
+    <hss-popup
+      :show="hssShow"
+      :title="hssTitle"
+      @okk="popOk"
+      @cancell="popCancel"
+    >
+      <Form :model="roleInfo" :label-width="80">
+        <FormItem label="父级"> 无 </FormItem>
+        <FormItem label="角色名">
+          <Input
+            v-model="roleInfo.role_name"
+            placeholder="请输入角色名"
+          ></Input>
+        </FormItem>
+        <FormItem label="角色描述">
+          <Input
+            v-model="roleInfo.role_description"
+            placeholder="请输入角色描述"
+          ></Input>
+        </FormItem>
+      </Form>
+    </hss-popup>
   </div>
 </template>
 
 <script>
+import hssPopup from "./component/popup";
 import hssTable from "./component/table";
 import hssTree from "./component/tree";
 import { getAuthList } from "../../../api/auth";
-import { getRoleList, editRoleAuth, deleteRole } from "../../../api/role";
+import {
+  addRole,
+  getRoleList,
+  editRoleAuth,
+  deleteRole,
+} from "../../../api/role";
 import { getAuth, getOneRoleAuth, addAuthForRole } from "../../../api/roleauth";
 export default {
-  components: {},
+  components: { hssPopup },
   data() {
     return {
+      roleInfo: {
+        role_name: "",
+        role_description: "",
+        p_id: 0,
+      },
+      hssShow: false,
+      hssTitle: "新增角色",
       currentRow: {},
       allAuth: [],
       auths: [],
@@ -135,7 +170,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.deleteRole(params.row);
+                      // this.deleteRole(params.row);
                     },
                   },
                 },
@@ -164,11 +199,31 @@ export default {
   },
   computed: {},
   methods: {
+    addRole() {
+      // addRole(p_id, role_name, role_description).then((res) => {
+      //   this.$message.success({
+      //     message: res.message,
+      //   });
+      // })
+    },
+    popOk() {
+      addRole({ ...this.roleInfo }).then((res) => {
+        this.$Message.success({
+          content: res.message,
+        });
+        this.getRoleList();
+      });
+    },
+    popCancel() {},
     deleteRole(v) {
       console.log(v);
       deleteRole(v.id)
         .then((res) => {
           console.log(res);
+          this.$Message.success({
+            content: res.message,
+          });
+          this.getRoleList();
         })
         .catch((err) => {
           console.log(err);
