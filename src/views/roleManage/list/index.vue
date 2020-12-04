@@ -84,7 +84,7 @@ export default {
       columns: [
         {
           type: "expand",
-          // width: 50,
+          width: 50,
           align: "center",
           render: (h, params) => {
             console.log("params.row.children");
@@ -107,12 +107,12 @@ export default {
         {
           title: "id",
           key: "id",
-          // width: "60",
+          width: "100",
           align: "center",
         },
         {
           title: "角色名",
-          // width: "150",
+          width: "150",
           align: "center",
           render: (h, params) => {
             console.log(params);
@@ -120,9 +120,19 @@ export default {
             return h("span", params.row.role_name);
           },
         },
+        {
+          title: "角色描述",
+          align: "center",
+          width: "150",
+          render: (h, params) => {
+            console.log(params);
+            return h("span", params.row.role_description);
+          },
+        },
 
         {
           title: "创建时间",
+          width: "150",
           align: "center",
           render: (h, params) => {
             return h("span", this.formateDate(params.row.createdAt));
@@ -130,6 +140,7 @@ export default {
         },
         {
           title: "更新时间",
+          width: "150",
           align: "center",
           render: (h, params) => {
             return h("span", this.formateDate(params.row.updatedAt));
@@ -314,7 +325,10 @@ export default {
         auths: this.auths,
       })
         .then((res) => {
-          console.log(res);
+          this.$Message.success({
+            content: res.message,
+          });
+          this.getRoleList()
         })
         .catch((err) => {
           console.log(err);
@@ -357,17 +371,6 @@ export default {
         },
         [
           h("span", [h("span", data.auth_name + "-" + data.auth_description)]),
-          h(
-            "span",
-            {
-              style: {
-                display: "inline-block",
-                float: "right",
-                marginRight: "32px",
-              },
-            },
-            "预备接口"
-          ),
         ]
       );
     },

@@ -29,7 +29,7 @@ export function getUserRoleList() {
 // 给某个角色新增权限
 export function addAuthForRole(data) {
     return request({
-        url: '/api/auth/addAuth',
+        url: '/api/roleauth/addAuth',
         method: 'post',
         data,
     })

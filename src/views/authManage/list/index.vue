@@ -296,14 +296,14 @@ export default {
       } else {
         deleteAuth(v.id)
           .then((res) => {
-            console.log('oo')
+            console.log("oo");
             this.$Message.success({
               content: res.message,
             });
             this.getAuthList();
           })
           .catch((err) => {
-            console.log(err)
+            console.log(err);
             this.$Message.error({
               content: err.message,
             });
@@ -311,19 +311,19 @@ export default {
       }
     },
     editAuth(v) {
-      console.log('修改权限')
+      console.log("修改权限");
       editAuth(v)
         .then((res) => {
           console.log(res);
-          console.log('???')
-          // this.$Message.success({
-          //   content: res.message,
-          // });
-          // this.getAuthList();
+          console.log("???");
+          this.$Message.success({
+            content: res.message,
+          });
+          this.getAuthList();
         })
         .catch((err) => {
           console.log(err);
-          console.log('pppp')
+          console.log("pppp");
           this.$Message.error({
             content: err.message,
           });

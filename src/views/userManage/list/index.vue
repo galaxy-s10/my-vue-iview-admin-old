@@ -308,11 +308,6 @@ export default {
     changeStatus(status, user) {
       console.log("改变switch");
       console.log(status, user);
-      // console.log(this);
-      // this.showEditStatus = true;
-      // this.currentUser = params.row;
-      // console.log(params.row);
-      // console.log(status);
     },
     getChecked(v) {
       console.log(v);
@@ -446,10 +441,12 @@ export default {
         roles: this.roles,
       })
         .then((res) => {
-          console.log(res);
+          this.$Message.success({
+            content: res.message,
+          });
           getUserRoleList().then((res) => {
-      this.userList = res.rows;
-    });
+            this.userList = res.rows;
+          });
         })
         .catch((err) => {
           console.log(err);

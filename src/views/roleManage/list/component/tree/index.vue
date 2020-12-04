@@ -25,11 +25,11 @@
 </template>
 
 <script>
-import { getAuthList, addAuthForRole } from "../../../../../api/auth";
+import { getAuthList } from "../../../../../api/auth";
 import {
   getAuth,
   getOneRoleAuth,
-  addAuthForRoleForRole,
+  addAuthForRole,
 } from "../../../../../api/roleauth";
 import { getRoleList, addRole, deleteRole } from "../../../../../api/role";
 export default {
@@ -65,6 +65,7 @@ export default {
       // this.showRole = false
       this.allAuth = [];
       this.currentAuth = [];
+      console.log("sss");
       addAuthForRole({
         id: this.currentRow.id,
         authList: this.auths,
@@ -107,7 +108,9 @@ export default {
           },
         },
         [
-          h("span", [h("span", data.auth_name + "-" + data.auth_description)]),
+          h("span", [
+            h("span", data.auth_name + "(" + data.auth_description + ")"),
+          ]),
           h("span", {
             style: {
               display: "inline-block",
@@ -137,7 +140,7 @@ export default {
             //     marginRight: "8px",
             //   },
             // }),
-            h("span", data.role_name + "-" + data.role_description),
+            h("span", data.role_name + "(" + data.role_description + ")"),
           ]),
           h(
             "span",
@@ -225,19 +228,17 @@ export default {
                           })
                             .then((res) => {
                               console.log(res);
-                              this.$emit("refresh");
                               this.$Message.success({
                                 content: res.message,
                               });
+                              this.$emit("refresh");
                             })
                             .catch((err) => {
                               console.log(err);
                             });
                           console.log();
-                          this.append(data);
                         },
                       });
-                      // this.append(data);
                     },
                   },
                 },
@@ -327,29 +328,20 @@ export default {
       console.log(this.allAuth);
     },
     deleteRole(v) {
-      console.log(v);
       deleteRole(v.id)
         .then((res) => {
-          console.log(res);
+          this.$Message.success({
+            content: res.message,
+          });
+          this.$emit("refresh");
         })
         .catch((err) => {
           console.log(err);
+          this.$Message.error({
+            content: err.message,
+          });
+          this.$emit("refresh");
         });
-    },
-    append(data) {
-      const children = data.children || [];
-      console.log((data.expand = true));
-      children.push({
-        role_name: "appended node",
-        expand: true,
-      });
-      this.$set(data, "children", children);
-    },
-    remove(root, node, data) {
-      const parentKey = root.find((el) => el === node).parent;
-      const parent = root.find((el) => el.nodeKey === parentKey).node;
-      const index = parent.children.indexOf(data);
-      parent.children.splice(index, 1);
     },
     getRoleList() {
       getRoleList().then((res) => {
