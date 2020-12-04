@@ -1,9 +1,8 @@
 <template>
   <div>
-    dashboard
-    <Tree :data="tree" show-checkbox></Tree>
-
-    <span v-for="(item, index) in auth" :key="index">{{ item }},</span>
+    <h1>dashboard</h1>
+    
+    <!-- <Tree :data="tree" show-checkbox></Tree> -->
 
     <!-- <Dropdown trigger="hover" placement="right-start">
       <a href="javascript:void(0)">

@@ -45,4 +45,27 @@ export default {
 </script>
 
 <style>
+/*滚动条*/
+::-webkit-scrollbar {
+  /* 这个width决定纵向滚动条宽度 */
+  width: 10px;
+  /* 这个width决定横向滚动条宽度 */
+  height: 10px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+}
+
+/*定义滚动条轨道 内阴影+圆角*/
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  /* background: skyblue; */
+}
+
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.5);
+}
 </style>

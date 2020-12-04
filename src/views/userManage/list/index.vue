@@ -447,6 +447,9 @@ export default {
       })
         .then((res) => {
           console.log(res);
+          getUserRoleList().then((res) => {
+      this.userList = res.rows;
+    });
         })
         .catch((err) => {
           console.log(err);
