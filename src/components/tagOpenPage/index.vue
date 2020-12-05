@@ -30,6 +30,7 @@
               :closable="isClosable(item.name)"
               :color="activeColor(item.path)"
               @click.native="onChangeTag(item.name)"
+              @on-close="closeTag(item)"
             >
               {{ item.meta.title }}
             </Tag>
@@ -62,7 +63,7 @@ export default {
   data() {
     return {
       active: true,
-      currentTag: null,
+      currentPage: null,
       menuList: [],
       offset: 0,
       alltime: "all .3s",
@@ -74,9 +75,14 @@ export default {
         return state.app.tagOpenPageList;
       },
     }),
+    // ...mapState({
+    //   activeTagOpenPage: (state) => {
+    //     return state.app.activeTagOpenPage;
+    //   },
+    // }),
     activeColor() {
       return (v) => {
-        if (v == this.currentTag) {
+        if (v == this.currentPage) {
           return "#41b883";
         } else {
           return "#e8eaec";
@@ -92,7 +98,7 @@ export default {
   },
   watch: {
     $route() {
-      this.currentTag = this.$route.path;
+      this.currentPage = this.$route.path;
       // console.log("999999999", this.$route.name);
     },
     tagOpenPageList() {
@@ -103,7 +109,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["addTagOpenPage"]),
+    ...mapMutations(["addTagOpenPage", "changeActiveTagOpenPage"]),
     // ...mapMutations({
 
     // }),
@@ -146,9 +152,24 @@ export default {
         // console.log(this.offset);
       }
     },
+    closeTag(v) {
+      console.log('关闭');
+      console.log(v);
+      console.log(this.$route);
+      console.log(this.currentPage);
+      console.log(this.tagOpenPageList);
+      this.$store.commit("delTagOpenPage", v.name);
+      if (v.name == this.$route.name) {
+        console.log("删了当前页面");
+      } else {
+        console.log("删了其他页面");
+      }
+    },
     onChangeTag(v) {
+      console.log('改变');
       // console.log(v);
       this.$router.push({ name: v });
+      this.changeActiveTagOpenPage(v);
     },
     findItem(source, target) {
       var res = false;
@@ -179,17 +200,19 @@ export default {
 
   created() {
     this.menuList = this.$router.options.routes;
-    this.currentTag = this.$route.path;
+    this.currentPage = this.$route.path;
     // console.log(this);
-    // console.log(this.currentTag);
+    // console.log(this.currentPage);
     // console.log(this.tagOpenPageList);
-    let target = this.findItem(this.menuList, this.currentTag);
+    let target = this.findItem(this.menuList, this.currentPage);
     console.log(target);
     let bool = utils.exist(this.tagOpenPageList, target.path);
     console.log(this.tagOpenPageList);
-    console.log(bool)
+    console.log(bool);
     if (!bool) {
-      this["addTagOpenPage"](target);
+      // this["addTagOpenPage"](target);
+      this.addTagOpenPage(target);
+      this.changeActiveTagOpenPage(target.name);
     }
   },
   mounted() {

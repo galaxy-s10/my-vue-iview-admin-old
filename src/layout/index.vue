@@ -199,7 +199,7 @@ export default {
       cache.clearStorage("token");
       this.$router.push({ path: `/login?redirect=${this.$route.path}` });
     },
-    ...mapMutations(["addTagOpenPage"]),
+    ...mapMutations(["addTagOpenPage", "changeActiveTagOpenPage"]),
     // ...mapMutations("app", ["addTagOpenPage"]),
     collapsedSider() {
       this.isCollapsed = !this.isCollapsed;
@@ -235,6 +235,7 @@ export default {
       if (!bool) {
         console.log("点击判断，没有就插入");
         this.addTagOpenPage(target);
+        this.changeActiveTagOpenPage(target.name);
       }
       this.$router.push({ path });
       // .catch((err) => {

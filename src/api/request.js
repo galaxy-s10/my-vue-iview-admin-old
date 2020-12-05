@@ -43,14 +43,10 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     NProgress.done()
-    console.log('333')
     return response.data
   },
   error => {
     NProgress.done()
-    console.log(error.message);
-    console.log(error.response);
-    console.log('object');
     if (error.response && error.response.status != 500) {
       if (error.response.status == 401 || error.response.status == 403) {
         cache.clearStorage("token")
@@ -64,13 +60,13 @@ service.interceptors.response.use(
         })
         // 下面有个return，代表不会继续向下执行
         // 也就是说，如果网络请求报了401，有return，就不会继续执行axios，就不会返回reject
-        return  "不返回reject！"
+        return "请求失败，axios执行到这里，直接返回return的数据（不走reject，因此axios错误不会被catch，会被then）"
         // return Promise.reject(error.response.data)
       }
-      console.log('11')
       return Promise.reject(error.response.data)
     }
-    console.log('22')
+    console.log(error)
+    console.log(error.response.data)
     return Promise.reject(error)
   }
 )
