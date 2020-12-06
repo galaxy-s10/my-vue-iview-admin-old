@@ -28,7 +28,7 @@
               :key="index"
               type="dot"
               :closable="isClosable(item.name)"
-              :color="activeColor(item.path)"
+              :color="activeTagOpenPage == item.name ? '#41b883' : '#e8eaec'"
               @click.native="onChangeTag(item.name)"
               @on-close="closeTag(item)"
             >
@@ -72,17 +72,21 @@ export default {
   computed: {
     ...mapState({
       tagOpenPageList(state) {
+        console.log(state.app);
         return state.app.tagOpenPageList;
       },
     }),
-    // ...mapState({
-    //   activeTagOpenPage: (state) => {
-    //     return state.app.activeTagOpenPage;
-    //   },
-    // }),
+    ...mapState({
+      activeTagOpenPage: (state) => {
+        return state.app.activeTagOpenPage;
+      },
+    }),
     activeColor() {
       return (v) => {
-        if (v == this.currentPage) {
+        console.log("---");
+        console.log(this.currentPage);
+        console.log(this.activeTagOpenPage);
+        if (v == this.activeTagOpenPage) {
           return "#41b883";
         } else {
           return "#e8eaec";
@@ -153,23 +157,39 @@ export default {
       }
     },
     closeTag(v) {
-      console.log('关闭');
+      console.log("关闭");
       console.log(v);
       console.log(this.$route);
       console.log(this.currentPage);
       console.log(this.tagOpenPageList);
-      this.$store.commit("delTagOpenPage", v.name);
+
       if (v.name == this.$route.name) {
         console.log("删了当前页面");
+        this.tagOpenPageList.forEach((item, index) => {
+          if (item.name == this.$route.name) {
+            let newIndex =
+              index + 1 == this.tagOpenPageList.length ? index - 1 : index + 1;
+            console.log(newIndex);
+            console.log(this.tagOpenPageList[newIndex].name);
+            this.changeActiveTagOpenPage(this.tagOpenPageList[newIndex].name);
+
+            console.log(this.tagOpenPageList[newIndex]);
+            this.$router.push({ name: this.tagOpenPageList[newIndex].name });
+            this.$store.commit("delTagOpenPage", v.name);
+          }
+        });
       } else {
         console.log("删了其他页面");
+        this.$store.commit("delTagOpenPage", v.name);
       }
     },
     onChangeTag(v) {
-      console.log('改变');
-      // console.log(v);
-      this.$router.push({ name: v });
-      this.changeActiveTagOpenPage(v);
+      console.log("改变");
+      console.log(v);
+      if (this.$route.name != v) {
+        this.$router.push({ name: v });
+        this.changeActiveTagOpenPage(v);
+      }
     },
     findItem(source, target) {
       var res = false;
@@ -206,7 +226,7 @@ export default {
     // console.log(this.tagOpenPageList);
     let target = this.findItem(this.menuList, this.currentPage);
     console.log(target);
-    let bool = utils.exist(this.tagOpenPageList, target.path);
+    let bool = utils.exist(this.tagOpenPageList, target.name);
     console.log(this.tagOpenPageList);
     console.log(bool);
     if (!bool) {

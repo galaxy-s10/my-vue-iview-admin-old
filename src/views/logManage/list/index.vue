@@ -55,6 +55,7 @@ export default {
         {
           title: "请求方式",
           align: "center",
+          width: "100",
           render: (h, params) => {
             return h("span", params.row.api_method);
           },
@@ -77,19 +78,19 @@ export default {
           },
         },
         {
-          title: "创建时间",
+          title: "请求时间",
           align: "center",
           render: (h, params) => {
             return h("span", this.formateDate(params.row.createdAt));
           },
         },
-        {
-          title: "更新时间",
-          align: "center",
-          render: (h, params) => {
-            return h("span", this.formateDate(params.row.updatedAt));
-          },
-        },
+        // {
+        //   title: "更新时间",
+        //   align: "center",
+        //   render: (h, params) => {
+        //     return h("span", this.formateDate(params.row.updatedAt));
+        //   },
+        // },
       ],
     };
   },

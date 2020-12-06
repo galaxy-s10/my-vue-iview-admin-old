@@ -5,14 +5,14 @@ const app = {
     state: {
         title: 'Vue-iview-admin',
         tagOpenPageList: [
-            // {
-            //     name: 'dashboard',
-            //     meta: {
-            //         title: '首页'
-            //     },
-            // },
+            {
+                name: 'dashboard',
+                meta: {
+                    title: '控制台'
+                },
+            },
         ],
-        activeTagOpenPage: ""
+        activeTagOpenPage: "dashboard"
     },
     mutations: {
         changeActiveTagOpenPage(state, v) {
@@ -22,11 +22,15 @@ const app = {
             state.tagOpenPageList.push(item)
         },
         delTagOpenPage(state, name) {
+            // 删除打开的页面tag，并更新当前页面tag
             state.tagOpenPageList.forEach((item, index) => {
                 if (item.name == name) {
                     console.log('object');
+                    console.log(state.tagOpenPageList)
                     state.tagOpenPageList.splice(index, 1)
-                    state.activeTagOpenPage = state.tagOpenPageList[index].name
+                    console.log(state.tagOpenPageList)
+                    // index == state.tagOpenPageList.length ? state.tagOpenPageList.length - 1 : index
+                    // state.activeTagOpenPage = state.tagOpenPageList[index].name
                 }
 
             })

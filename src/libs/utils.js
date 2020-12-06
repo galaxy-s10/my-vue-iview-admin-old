@@ -11,7 +11,7 @@ utils.oneOf = (a, b) => {
 // 判断数组里是否有某个值
 utils.exist = (arr, val) => {
     for (let i = 0; i < arr.length; i++) {
-        if (arr[i].path == val) {
+        if (arr[i].name == val) {
             return true
         }
     }

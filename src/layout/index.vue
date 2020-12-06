@@ -22,7 +22,7 @@
           <template v-for="(item, index) in menuList">
             <Submenu
               v-if="item.children && item.children.length > 1"
-              :name="item.path"
+              :name="item.name"
               :key="index"
               v-auth="item.authKey"
             >
@@ -32,7 +32,7 @@
               </template>
               <template v-for="(itemm, indexx) in item.children">
                 <MenuItem
-                  :name="itemm.path"
+                  :name="itemm.name"
                   :key="indexx"
                   v-auth="itemm.authKey"
                 >
@@ -43,7 +43,7 @@
 
             <MenuItem
               v-if="item.children && item.children.length <= 1"
-              :name="item.redirect"
+              :name="item.children[0].name"
               :key="index"
             >
               <Icon :type="item.meta.icon" />
@@ -84,10 +84,15 @@
               size="24"
             ></Icon>
             <Breadcrumb>
-              <BreadcrumbItem
+              <!-- <BreadcrumbItem
                 v-for="(item, index) in breadList"
                 :key="index"
                 :to="item.path"
+                >{{ item.meta.title }}</BreadcrumbItem
+              > -->
+              <BreadcrumbItem
+                v-for="(item, index) in breadList"
+                :key="index"
                 >{{ item.meta.title }}</BreadcrumbItem
               >
             </Breadcrumb>
@@ -188,7 +193,8 @@ export default {
       },
     }),
     activeName() {
-      return this.$route.path;
+      console.log(this.$route.name);
+      return this.$route.name;
     },
     rotateIcon() {
       return ["menu-icon", this.isCollapsed ? "rotate-icon" : ""];
@@ -210,7 +216,7 @@ export default {
         let ress = "";
         try {
           source.forEach((item) => {
-            if (item.path == target) {
+            if (item.name == target) {
               ress = item;
               throw new Error();
             } else {
@@ -226,18 +232,22 @@ export default {
       digui(source, target);
       return res;
     },
-    changeMenu(path) {
+    changeMenu(name) {
       // 判断当前跳转页面有没有在tagOpenPageList里面
       // 查询点击跳转的路由信息
-      let target = this.findItem(this.menuList, path);
+      console.log(name);
+      let target = this.findItem(this.menuList, name);
       let tag;
-      let bool = utils.exist(this.tagList, path);
+      let bool = utils.exist(this.tagList, name);
       if (!bool) {
-        console.log("点击判断，没有就插入");
+        console.log("点击判断，没有就插入1");
+        console.log(target);
         this.addTagOpenPage(target);
         this.changeActiveTagOpenPage(target.name);
+      }else{
+        this.changeActiveTagOpenPage(target.name);
       }
-      this.$router.push({ path });
+      this.$router.push({ name: name });
       // .catch((err) => {
       //   console.log(err);
       // });
@@ -265,6 +275,7 @@ export default {
       // console.log(this.$route.matched);
       // console.log('】】】】】】】】】】】】】】】】】】】】】】】】】')
       // console.log(matched)
+      console.log(matched)
       this.breadList = matched;
     },
   },

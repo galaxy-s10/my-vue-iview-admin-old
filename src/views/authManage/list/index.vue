@@ -1,5 +1,6 @@
 <template>
   <div>
+    <i-button @click="hssShow = !hssShow">新增权限</i-button>
     <Table
       border
       :loading="roleList.length == 0"
