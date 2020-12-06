@@ -1,33 +1,12 @@
 <template>
   <div>
-    <i-button @click="hssShow = !hssShow">新增权限</i-button>
+    <i-button @click="addParentAuth">新增权限</i-button>
     <Table
       border
       :loading="roleList.length == 0"
       :columns="columns"
       :data="roleList"
     ></Table>
-    <!-- <Modal v-model="showRole" title="编辑权限" @on-ok="ok" @on-cancel="cancel">
-      <div>
-        {{ showRole && currentRow && currentRow.username }}
-      </div>
-      <div class="aaa">
-        <div v-if="allAuth.length == 0" style="position: relative">
-          <Spin size="large">
-            <Icon type="ios-loading" class="demo-spin-icon-load"></Icon>
-            <div>加载中...</div>
-          </Spin>
-        </div>
-        <Tree
-          v-else
-          :data="allAuth"
-          :render="renderContent"
-          show-checkbox
-          @on-check-change="getChecked"
-        ></Tree>
-      </div>
-    </Modal> -->
-    <!-- <Tree :data="roleList" :render="renderContent" show-checkbox></Tree> -->
     <hss-popup
       :show="hssShow"
       :title="hssTitle"
@@ -89,6 +68,7 @@ export default {
       action: "", //编辑/新增
       parentAuth: [],
       authInfo: {
+        id: "",
         input: "",
         auth_name: "",
         auth_description: "",
@@ -271,6 +251,18 @@ export default {
   },
   computed: {},
   methods: {
+    addParentAuth() {
+      this.action = "add";
+      this.authInfo = {
+        id: null,
+        p_id: 0,
+        p: "无",
+        auth_name: "",
+        auth_description: "",
+      };
+      this.hssTitle = "新增权限";
+      this.hssShow = true;
+    },
     addAuth(v) {
       addAuth({
         p_id: v.p_id,
