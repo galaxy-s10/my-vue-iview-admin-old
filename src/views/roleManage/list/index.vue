@@ -9,7 +9,20 @@
     ></Table>
     <Modal v-model="showRole" title="编辑角色" @on-ok="ok" @on-cancel="cancel">
       <div>
-        {{ showRole && currentRow && currentRow.username }}
+        <Form :model="roleInfo" :label-width="80">
+          <FormItem label="id">
+            <Input v-model="roleInfo.id" placeholder="id" disabled></Input>
+          </FormItem>
+          <FormItem label="角色名">
+            <Input v-model="roleInfo.role_name" placeholder="id"></Input>
+          </FormItem>
+          <FormItem label="角色描述">
+            <Input
+              v-model="roleInfo.role_description"
+              placeholder="请输入角色描述"
+            ></Input>
+          </FormItem>
+        </Form>
       </div>
       <div class="aaa">
         <div v-if="allAuth.length == 0" style="position: relative">
@@ -69,13 +82,14 @@ export default {
   data() {
     return {
       roleInfo: {
+        id: "",
         role_name: "",
         role_description: "",
         p_id: 0,
       },
       hssShow: false,
       hssTitle: "新增角色",
-      currentRow: {},
+      roleInfo: {},
       allAuth: [],
       auths: [],
       currentAuth: [],
@@ -260,7 +274,7 @@ export default {
     },
     async show(v) {
       this.showRole = true;
-      this.currentRow = v;
+      this.roleInfo = v;
       await getAuthList().then((res) => {
         console.log("获取所有权限");
         function handleAuth(data) {
@@ -321,14 +335,14 @@ export default {
       this.allAuth = [];
       this.currentAuth = [];
       editRoleAuth({
-        id: this.currentRow.id,
+        id: this.roleInfo.id,
         auths: this.auths,
       })
         .then((res) => {
           this.$Message.success({
             content: res.message,
           });
-          this.getRoleList()
+          this.getRoleList();
         })
         .catch((err) => {
           console.log(err);
@@ -369,9 +383,7 @@ export default {
             width: "100%",
           },
         },
-        [
-          h("span", [h("span", data.auth_name + "-" + data.auth_description)]),
-        ]
+        [h("span", [h("span", data.auth_name + "-" + data.auth_description)])]
       );
     },
     getRoleList() {
