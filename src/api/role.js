@@ -35,6 +35,15 @@ export function addRole(val) {
     })
 }
 
+// 查询某个角色的父级
+export function findParentRole(id) {
+    return request({
+        url: '/api/role/findParentRole',
+        method: 'get',
+        params: { id }
+    })
+}
+
 // 删除角色
 export function deleteRole(id) {
     return request({

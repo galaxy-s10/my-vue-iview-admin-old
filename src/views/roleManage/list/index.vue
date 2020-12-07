@@ -1,6 +1,6 @@
 <template>
   <div>
-    <i-button @click="hssShow = !hssShow">新增角色</i-button>
+    <i-button @click="addParentRole">新增角色</i-button>
     <Table
       border
       :loading="roleList.length == 0"
@@ -13,8 +13,26 @@
           <FormItem label="id">
             <Input v-model="roleInfo.id" placeholder="id" disabled></Input>
           </FormItem>
+          <FormItem label="父级">
+            <Select
+              v-if="action == 'edit'"
+              v-model="roleInfo.p_id"
+              style="width: 200px"
+            >
+              <Option
+                v-for="item in parentRole"
+                :value="item.id"
+                :key="item.id"
+                >{{ item.role_name + "-" + item.role_description }}</Option
+              >
+            </Select>
+            <span v-else-if="action == 'add'">{{ roleInfo.p }}</span>
+          </FormItem>
           <FormItem label="角色名">
-            <Input v-model="roleInfo.role_name" placeholder="id"></Input>
+            <Input
+              v-model="roleInfo.role_name"
+              placeholder="请输入角色名"
+            ></Input>
           </FormItem>
           <FormItem label="角色描述">
             <Input
@@ -22,22 +40,24 @@
               placeholder="请输入角色描述"
             ></Input>
           </FormItem>
+          <FormItem label="拥有权限">
+            <div class="aaa">
+              <div v-if="allAuth.length == 0" style="position: relative">
+                <Spin size="large">
+                  <Icon type="ios-loading" class="demo-spin-icon-load"></Icon>
+                  <div>加载中...</div>
+                </Spin>
+              </div>
+              <Tree
+                v-else
+                :data="allAuth"
+                :render="renderContent"
+                show-checkbox
+                @on-check-change="getChecked"
+              ></Tree>
+            </div>
+          </FormItem>
         </Form>
-      </div>
-      <div class="aaa">
-        <div v-if="allAuth.length == 0" style="position: relative">
-          <Spin size="large">
-            <Icon type="ios-loading" class="demo-spin-icon-load"></Icon>
-            <div>加载中...</div>
-          </Spin>
-        </div>
-        <Tree
-          v-else
-          :data="allAuth"
-          :render="renderContent"
-          show-checkbox
-          @on-check-change="getChecked"
-        ></Tree>
       </div>
     </Modal>
     <hss-popup
@@ -60,6 +80,23 @@
             placeholder="请输入角色描述"
           ></Input>
         </FormItem>
+        <FormItem label="拥有权限">
+          <div class="aaa">
+            <div v-if="allAuth.length == 0" style="position: relative">
+              <Spin size="large">
+                <Icon type="ios-loading" class="demo-spin-icon-load"></Icon>
+                <div>加载中...</div>
+              </Spin>
+            </div>
+            <Tree
+              v-else
+              :data="allAuth"
+              :render="renderContent"
+              show-checkbox
+              @on-check-change="getChecked"
+            ></Tree>
+          </div>
+        </FormItem>
       </Form>
     </hss-popup>
   </div>
@@ -75,12 +112,15 @@ import {
   getRoleList,
   editRoleAuth,
   deleteRole,
+  findParentRole,
 } from "../../../api/role";
 import { getAuth, getOneRoleAuth, addAuthForRole } from "../../../api/roleauth";
 export default {
   components: { hssPopup },
   data() {
     return {
+      action: "edit",
+      parentRole: [],
       roleInfo: {
         id: "",
         role_name: "",
@@ -89,7 +129,7 @@ export default {
       },
       hssShow: false,
       hssTitle: "新增角色",
-      roleInfo: {},
+      // roleInfo: {},
       allAuth: [],
       auths: [],
       currentAuth: [],
@@ -177,7 +217,10 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.show(params.row);
+                      let newParams = { ...params.row };
+                      delete newParams.children;
+                      console.log(newParams);
+                      this.show(newParams);
                     },
                   },
                 },
@@ -210,7 +253,7 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.deleteRole(params.row);
+                      this.deleteRole({ ...params.row });
                     },
                   },
                 },
@@ -224,6 +267,30 @@ export default {
   },
   computed: {},
   methods: {
+    findParentRole(id) {
+      findParentRole(id).then((res) => {
+        this.parentRole = res.list.rows;
+        this.parentRole.unshift({
+          id: 0,
+          role_name: "无",
+          role_description: "无",
+          p_id: 0,
+        });
+        console.log(res);
+      });
+    },
+    async addParentRole() {
+      this.roleInfo = {
+        id: "",
+        role_name: "",
+        role_description: "",
+        p_id: 0,
+        p: "无",
+      };
+      this.action = "add";
+      this.showRole = true;
+      await this.getAuthList();
+    },
     addRole() {
       // addRole(p_id, role_name, role_description).then((res) => {
       //   this.$message.success({
@@ -272,9 +339,43 @@ export default {
       this.auths = getAllAuthId(v);
       console.log(this.auths);
     },
+    async getAuthList() {
+      await getAuthList().then((res) => {
+        console.log("获取所有权限");
+        function handleAuth(data) {
+          let temp = [];
+          data.forEach((item) => {
+            if (item.p_id == 0) {
+              temp.push(item);
+            }
+          });
+          function digui(data, temp) {
+            temp.forEach((tempItem, tempIndex) => {
+              let children = [];
+              data.forEach((dataItem, dataIndex) => {
+                if (tempItem.id == dataItem.p_id) {
+                  // let children = tempItem.children ? tempItem.children : [];
+                  children.push(dataItem);
+                }
+              });
+              if (children.length > 0) {
+                tempItem.children = children;
+                digui(data, children);
+              }
+            });
+          }
+          digui(data, temp);
+          return temp;
+        }
+        this.allAuth = handleAuth(res.rows);
+      });
+    },
     async show(v) {
+      this.action= 'edit'
       this.showRole = true;
       this.roleInfo = v;
+      console.log(v);
+      this.findParentRole(v.id);
       await getAuthList().then((res) => {
         console.log("获取所有权限");
         function handleAuth(data) {
@@ -335,7 +436,7 @@ export default {
       this.allAuth = [];
       this.currentAuth = [];
       editRoleAuth({
-        id: this.roleInfo.id,
+        ...this.roleInfo,
         auths: this.auths,
       })
         .then((res) => {
