@@ -60,6 +60,7 @@
         </Form>
       </div>
     </Modal>
+
     <hss-popup
       :show="hssShow"
       :title="hssTitle"
@@ -113,11 +114,25 @@
         </FormItem>
       </Form>
     </hss-popup>
+
+    <!-- <hss-popupa :request="request">
+      <hss-form :fromData="columnForm"></hss-form>
+    </hss-popupa> -->
+    <!-- <component v-bind:is="comments" :request="request"></component> -->
+    <component
+      v-bind:is="comments"
+      :request="request"
+      @on-cancel="comments = ''"
+      @on-ok="onSelect"
+    ></component>
+    <i-button @click="comments = 'hssPopupa'">aa</i-button>
   </div>
 </template>
 
 <script>
+import hssForm from "./component/form";
 import hssPopup from "./component/popup";
+import hssPopupa from "./component/hss-popup";
 import hssTable from "./component/table";
 import hssTree from "./component/tree";
 import { getAuthList } from "../../../api/auth";
@@ -130,9 +145,39 @@ import {
 } from "../../../api/role";
 import { getAuth, getOneRoleAuth, addAuthForRole } from "../../../api/roleauth";
 export default {
-  components: { hssPopup },
+  components: { hssPopup, hssForm, hssPopupa },
   data() {
     return {
+      comments: "", //动态模块
+      request: {
+        title: "啊啊",
+        size: "centre",
+      },
+      columnForm: {
+        list: [
+          {
+            type: "Input",
+            name: "角色名",
+            prop: "role_name",
+            placeholder: "请输入角色名",
+            required: true,
+          },
+          {
+            name: "角色描述",
+            type: "Input",
+            prop: "role_description",
+            placeholder: "请输入角色描述",
+            required: true,
+          },
+          {
+            name: "父级",
+            type: "Select",
+            prop: "role_pid",
+            data: [],
+            required: true,
+          },
+        ],
+      },
       action: "edit",
       parentRole: [],
       roleInfo: {
@@ -183,7 +228,6 @@ export default {
           width: "150",
           align: "center",
           render: (h, params) => {
-            console.log(params);
             // if (!params.row.children) {
             return h("span", params.row.role_name);
           },
@@ -289,6 +333,12 @@ export default {
   },
   computed: {},
   methods: {
+    /*动态组件处理完回调*/
+    onSelect() {
+      this.comments = "";
+      console.log('pp')
+      // this.handleRefresh();
+    },
     findParentRole(id) {
       findParentRole(id).then((res) => {
         this.parentRole = res.list.rows;
@@ -298,6 +348,15 @@ export default {
           role_description: "无",
           p_id: 0,
         });
+        console.log(this.columnForm.list[2]);
+        let newTemp = [];
+        res.list.rows.forEach((item) => {
+          let temp = {};
+          temp.label = item.role_name;
+          temp.value = item.id;
+          newTemp.push(temp);
+        });
+        this.columnForm.list[2].data = newTemp;
         console.log(res);
       });
     },
@@ -556,6 +615,7 @@ export default {
   },
   created() {
     this.getRoleList();
+    this.findParentRole(1);
   },
   mounted() {},
 };
