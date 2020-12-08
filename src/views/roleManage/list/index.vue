@@ -67,7 +67,21 @@
       @cancell="popCancel"
     >
       <Form :model="roleInfo" :label-width="80">
-        <FormItem label="父级"> 无 </FormItem>
+        <FormItem label="父级">
+          <Select
+            v-if="action == 'edit'"
+            v-model="roleInfo.p_id"
+            style="width: 200px"
+          >
+            <Option
+              v-for="item in parentRole"
+              :value="item.id"
+              :key="item.id"
+              >{{ item.role_name + "-" + item.role_description }}</Option
+            >
+          </Select>
+          <span v-else-if="action == 'add'">{{ roleInfo.p }}</span>
+        </FormItem>
         <FormItem label="角色名">
           <Input
             v-model="roleInfo.role_name"
@@ -217,6 +231,7 @@ export default {
                   },
                   on: {
                     click: () => {
+                      this.action = "edit";
                       let newParams = { ...params.row };
                       delete newParams.children;
                       console.log(newParams);
@@ -239,6 +254,13 @@ export default {
                   on: {
                     click: () => {
                       // this.deleteRole(params.row);
+                      // this.action = "add";
+                      let newParams = { ...params.row };
+                      delete newParams.children;
+                      this.hssShow = true;
+                      this.hssTitle = "新增权限";
+                      // console.log(newParams);
+                      // this.show(newParams);
                     },
                   },
                 },
@@ -371,13 +393,14 @@ export default {
       });
     },
     async show(v) {
-      this.action= 'edit'
+      // this.action= 'edit'
       this.showRole = true;
       this.roleInfo = v;
       console.log(v);
       this.findParentRole(v.id);
       await getAuthList().then((res) => {
         console.log("获取所有权限");
+        console.log(res);
         function handleAuth(data) {
           let temp = [];
           data.forEach((item) => {
@@ -405,6 +428,7 @@ export default {
         }
         this.allAuth = handleAuth(res.rows);
       });
+
       await getOneRoleAuth(v.id).then((res) => {
         console.log("获取当前角色的权限");
         console.log(res);
@@ -423,7 +447,6 @@ export default {
             digui(item1.children, val);
           }
         });
-        // });
       }
       let depData = JSON.parse(JSON.stringify(this.allAuth));
       digui(depData, this.currentAuth);
