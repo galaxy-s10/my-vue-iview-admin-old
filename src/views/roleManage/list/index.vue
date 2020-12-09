@@ -122,14 +122,18 @@
     <component
       v-bind:is="comments"
       :request="request"
+      :fromData="columnForm"
+      :initData="roleInfo"
+      :isInit="true"
       @on-cancel="comments = ''"
       @on-ok="onSelect"
     ></component>
-    <i-button @click="comments = 'hssPopupa'">aa</i-button>
+    <i-button @click="addRole">添加角色</i-button>
   </div>
 </template>
 
 <script>
+import hssPopupForm from "../../../components/hssComponents/form/popup-form/index";
 import hssForm from "./component/form";
 import hssPopup from "./component/popup";
 import hssPopupa from "./component/hss-popup";
@@ -145,7 +149,7 @@ import {
 } from "../../../api/role";
 import { getAuth, getOneRoleAuth, addAuthForRole } from "../../../api/roleauth";
 export default {
-  components: { hssPopup, hssForm, hssPopupa },
+  components: { hssPopup, hssForm, hssPopupa, hssPopupForm },
   data() {
     return {
       comments: "", //动态模块
@@ -155,6 +159,14 @@ export default {
       },
       columnForm: {
         list: [
+          {
+            type: "Input",
+            name: "id",
+            prop: "id",
+            placeholder: "id",
+            // required: true,
+            disabled: true,
+          },
           {
             type: "Input",
             name: "角色名",
@@ -172,7 +184,7 @@ export default {
           {
             name: "父级",
             type: "Select",
-            prop: "role_pid",
+            prop: "p_id",
             data: [],
             required: true,
           },
@@ -181,9 +193,9 @@ export default {
       action: "edit",
       parentRole: [],
       roleInfo: {
-        id: "",
-        role_name: "",
-        role_description: "",
+        id: 1,
+        role_name: "2",
+        role_description: "3",
         p_id: 0,
       },
       hssShow: false,
@@ -333,32 +345,54 @@ export default {
   },
   computed: {},
   methods: {
+    async addRole() {
+      await this.findParentRole(1);
+      console.log(this.columnForm.list);
+      console.log(this.roleInfo);
+      this.comments = "hssPopupForm";
+    },
     /*动态组件处理完回调*/
     onSelect() {
       this.comments = "";
-      console.log('pp')
+      console.log("pp");
       // this.handleRefresh();
     },
-    findParentRole(id) {
-      findParentRole(id).then((res) => {
-        this.parentRole = res.list.rows;
-        this.parentRole.unshift({
-          id: 0,
-          role_name: "无",
-          role_description: "无",
-          p_id: 0,
-        });
-        console.log(this.columnForm.list[2]);
-        let newTemp = [];
-        res.list.rows.forEach((item) => {
-          let temp = {};
-          temp.label = item.role_name;
-          temp.value = item.id;
-          newTemp.push(temp);
-        });
-        this.columnForm.list[2].data = newTemp;
-        console.log(res);
+    async findParentRole(id) {
+      let res = await findParentRole(id);
+      // .then((res) => {
+      res.list.rows.unshift({
+        id: 0,
+        role_name: "无",
+        role_description: "无",
+        p_id: 0,
       });
+      this.parentRole = res.list.rows;
+      // this.parentRole = res.list.rows;
+      // this.parentRole.unshift({
+      //   id: 0,
+      //   role_name: "无",
+      //   role_description: "无",
+      //   p_id: 0,
+      // });
+      // findParentRole(id).then((res) => {
+      //   this.parentRole = res.list.rows;
+      //   this.parentRole.unshift({
+      //     id: 0,
+      //     role_name: "无",
+      //     role_description: "无",
+      //     p_id: 0,
+      //   });
+      console.log(this.columnForm.list[2]);
+      let newTemp = [];
+      res.list.rows.forEach((item) => {
+        let temp = {};
+        temp.label = item.role_name;
+        temp.value = item.id;
+        newTemp.push(temp);
+      });
+      this.columnForm.list[3].data = newTemp;
+      console.log(res);
+      // });
     },
     async addParentRole() {
       this.roleInfo = {
@@ -372,13 +406,7 @@ export default {
       this.showRole = true;
       await this.getAuthList();
     },
-    addRole() {
-      // addRole(p_id, role_name, role_description).then((res) => {
-      //   this.$message.success({
-      //     message: res.message,
-      //   });
-      // })
-    },
+
     popOk() {
       addRole({ ...this.roleInfo }).then((res) => {
         this.$Message.success({
