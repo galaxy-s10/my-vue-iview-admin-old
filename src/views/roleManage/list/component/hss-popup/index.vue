@@ -9,16 +9,17 @@
     >
       <template slot="footer">
         <i-button type="text" @click.native="cancel">取消</i-button>
-        <i-button type="primary" @click.native="ok">确定</i-button>
-      </template>66666
-      <slot></slot>
+        <i-button type="primary" @click.native="ok">确定</i-button> </template
+      >66666
+      <hss-form></hss-form>
     </Modal>
   </div>
 </template>
 
 <script>
+import hssForm from "../form/index";
 export default {
-  components: {},
+  components: { hssForm },
   props: {
     request: {
       type: Object,
@@ -50,13 +51,13 @@ export default {
     },
     ok() {
       console.log("ok");
-      this.popup.is_show = false
-      this.$emit('on-ok')
+      this.popup.is_show = false;
+      this.$emit("on-ok");
     },
     cancel() {
       console.log("cancel");
-      this.popup.is_show = false
-      this.$emit('on-cancel')
+      this.popup.is_show = false;
+      this.$emit("on-cancel");
     },
     onVisibleChange() {
       console.log("onVisibleChange");
