@@ -163,7 +163,7 @@ export default {
             //   }
             //   this.fromDataNew.list[i].val = ids;
             // } else {
-              this.fromDataNew.list[i].val = data[item.prop];
+            this.fromDataNew.list[i].val = data[item.prop];
             // }
           }
         } else {
@@ -184,11 +184,11 @@ export default {
     handleFromCol() {
       for (let i in this.fromData.list) {
         let item = this.fromData.list[i];
-        console.log(item);
-        if (!item.primaryKey) {
-          // console.log(object)
-          this.$set(this.fromCol, item.prop, item.val ? item.val : "");
-        }
+        this.$set(this.fromCol, item.prop, item.val);
+        // if (!item.primaryKey) {
+        // console.log(object)
+        // this.$set(this.fromCol, item.prop, item.val ? item.val : "");
+        // }
       }
     },
   },

@@ -7,7 +7,12 @@
       :columns="columns"
       :data="roleList"
     ></Table>
-    <Modal v-model="showRole" title="编辑角色" @on-ok="ok" @on-cancel="cancel">
+    <Modal
+      v-model="showRole"
+      title="编辑角色"
+      @on-ok="ok"
+      @on-cancel="onCancel"
+    >
       <div>
         <Form :model="roleInfo" :label-width="80">
           <FormItem label="id">
@@ -124,9 +129,9 @@
       :request="request"
       :fromData="columnForm"
       :initData="roleInfo"
-      :isInit="true"
-      @on-cancel="comments = ''"
-      @on-ok="onSelect"
+      :isInit="isInit"
+      @on-cancel="onCancel"
+      @on-ok="onOk"
     ></component>
     <i-button @click="addRole">添加角色</i-button>
   </div>
@@ -152,11 +157,9 @@ export default {
   components: { hssPopup, hssForm, hssPopupa, hssPopupForm },
   data() {
     return {
+      isInit: false,
       comments: "", //动态模块
-      request: {
-        title: "啊啊",
-        size: "centre",
-      },
+      request: {},
       columnForm: {
         list: [
           {
@@ -347,12 +350,14 @@ export default {
   methods: {
     async addRole() {
       await this.findParentRole(1);
-      console.log(this.columnForm.list);
-      console.log(this.roleInfo);
+      this.request = {
+        title: "新增角色",
+        size: "centre",
+      };
       this.comments = "hssPopupForm";
     },
     /*动态组件处理完回调*/
-    onSelect() {
+    onOk() {
       this.comments = "";
       console.log("pp");
       // this.handleRefresh();
@@ -559,8 +564,9 @@ export default {
           console.log(err);
         });
     },
-    cancel() {
+    onCancel() {
       // this.showRole = false
+      this.comments = "";
       console.log("quxiao");
       this.allAuth = [];
       this.currentAuth = [];
