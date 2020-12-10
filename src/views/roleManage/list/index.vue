@@ -191,6 +191,31 @@ export default {
             data: [],
             required: true,
           },
+          {
+            name: "权限",
+            type: "Tree",
+            prop: "auths",
+            data: [],
+            renderContent: function renderContent(h, { root, node, data }) {
+              return h(
+                "span",
+                {
+                  style: {
+                    display: "inline-block",
+                    width: "100%",
+                  },
+                },
+                [
+                  h("span", [
+                    h(
+                      "span",
+                      data.auth_name + "(" + data.auth_description + ")"
+                    ),
+                  ]),
+                ]
+              );
+            },
+          },
         ],
       },
       action: "edit",
@@ -350,6 +375,7 @@ export default {
   methods: {
     async addRole() {
       await this.findParentRole(1);
+      this.columnForm.list[4].data = this.allAuth;
       this.request = {
         title: "新增角色",
         size: "centre",
@@ -650,6 +676,7 @@ export default {
   created() {
     this.getRoleList();
     this.findParentRole(1);
+    this.getAuthList();
   },
   mounted() {},
 };

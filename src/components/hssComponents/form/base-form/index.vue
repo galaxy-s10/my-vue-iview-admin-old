@@ -30,26 +30,25 @@
             }}</Option>
           </Select>
           <!-- 单选框 -->
-          <RadioGroup
-            v-else-if="item.type == 'Radio'"
-            v-model="fromCol[item.prop]"
-          >
+          <RadioGroup v-else-if="item.type == 'Radio'" v-model="fromCol[item.prop]">
             <Radio :label="el.value" v-for="el in item.data" :key="el.value">{{
               el.label
             }}</Radio>
           </RadioGroup>
           <!-- 多选框 -->
-          <CheckboxGroup
-            v-else-if="item.type == 'Check'"
-            v-model="fromCol[item.prop]"
-          >
-            <Checkbox
-              :label="el.value"
-              v-for="el in item.data"
-              :key="el.value"
-              >{{ el.label }}</Checkbox
-            >
+          <CheckboxGroup v-else-if="item.type == 'Check'" v-model="fromCol[item.prop]">
+            <Checkbox :label="el.value" v-for="el in item.data" :key="el.value">{{
+              el.label
+            }}</Checkbox>
           </CheckboxGroup>
+          <!-- 树结构 -->
+          <hss-tree
+            v-else-if="item.type == 'Tree'"
+            :treeData="item"
+            :renderContent="item.renderContent"
+            v-model="fromCol[item.prop]"
+            @on-check-change="handleChoice"
+          ></hss-tree>
         </template>
       </FormItem>
     </Form>
@@ -58,8 +57,9 @@
 
 <script>
 import fromRules from "./rules";
+import hssTree from "../../tree/index";
 export default {
-  components: {},
+  components: { hssTree },
   props: {
     fromData: {
       type: Object,
@@ -86,6 +86,7 @@ export default {
   mounted() {},
   computed: {},
   methods: {
+    handleChoice() {},
     handleRule() {
       for (let i in this.fromData.list) {
         let item = this.fromData.list[i];
@@ -105,11 +106,7 @@ export default {
                 message: item.name + "不能为空",
                 trigger: "change",
                 // trigger: "blur",
-                type: item.isArray
-                  ? "array"
-                  : item.isObject
-                  ? "object"
-                  : "number",
+                type: item.isArray ? "array" : item.isObject ? "object" : "number",
               },
             ];
           } else {
@@ -213,5 +210,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
