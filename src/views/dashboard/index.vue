@@ -1,112 +1,26 @@
 <template>
   <div>
     <h1>dashboard</h1>
-    
-    <!-- <Tree :data="tree" show-checkbox></Tree> -->
-
-    <!-- <Dropdown trigger="hover" placement="right-start">
-      <a href="javascript:void(0)">
-        菜单(左)
-        <Icon type="ios-arrow-down"></Icon>
-      </a>
-      <DropdownMenu slot="list">
-        <DropdownItem>驴打滚</DropdownItem>
-        <DropdownItem>炸酱面</DropdownItem>
-        <DropdownItem>豆汁儿</DropdownItem>
-        <DropdownItem>冰糖葫芦</DropdownItem>
-        <DropdownItem>北京烤鸭</DropdownItem>
-      </DropdownMenu>
-    </Dropdown>
-    <div>
-      当前权限：
-      <span v-for="(item, index) in auth" :key="index">{{ item }},</span>
-    </div>
-    <div>
-      文章权限：
-      <div>
-        ARTICLE_LIST
-        <i-switch
-          :value="checkRole('ARTICLE_LIST')"
-          @on-change="(e) => change(e, 'ARTICLE_LIST')"
-        ></i-switch>
-      </div>
-      <div>
-        ADD_ARTICLE
-        <i-switch
-          :value="checkRole('ADD_ARTICLE')"
-          @on-change="(e) => change(e, 'ADD_ARTICLE')"
-        ></i-switch>
-      </div>
-      <div>
-        DELETE_ARTICLE
-        <i-switch
-          :value="checkRole('DELETE_ARTICLE')"
-          @on-change="(e) => change(e, 'DELETE_ARTICLE')"
-        ></i-switch>
-      </div>
-      <div>
-        UPDATE_ARTICLE
-        <i-switch
-          :value="checkRole('UPDATE_ARTICLE')"
-          @on-change="change($event, 'UPDATE_ARTICLE')"
-        ></i-switch>
-      </div>
-      <div>
-        SELECT_ARTICLE
-        <i-switch
-          :value="checkRole('SELECT_ARTICLE')"
-          @on-change="change($event, 'SELECT_ARTICLE')"
-        ></i-switch>
-      </div>
-    </div>
-    <hr />
-    <div>
-      标签权限：
-      <div>
-        TAG_LIST
-        <i-switch
-          :value="checkRole('TAG_LIST')"
-          @on-change="(e) => change(e, 'TAG_LIST')"
-        ></i-switch>
-      </div>
-      <div>
-        ADD_TAG
-        <i-switch
-          :value="checkRole('ADD_TAG')"
-          @on-change="(e) => change(e, 'ADD_TAG')"
-        ></i-switch>
-      </div>
-      <div>
-        DELETE_TAG
-        <i-switch
-          :value="checkRole('DELETE_TAG')"
-          @on-change="(e) => change(e, 'DELETE_TAG')"
-        ></i-switch>
-      </div>
-      <div>
-        UPDATE_TAG
-        <i-switch
-          :value="checkRole('UPDATE_TAG')"
-          @on-change="change($event, 'UPDATE_TAG')"
-        ></i-switch>
-      </div>
-      <div>
-        SELECT_TAG
-        <i-switch
-          :value="checkRole('SELECT_TAG')"
-          @on-change="change($event, 'SELECT_TAG')"
-        ></i-switch>
-      </div>
-    </div> -->
+    <hss-input v-model="val"></hss-input>
+    <!-- <hss-input
+      :vals="val"
+      @input="
+        (v) => {
+          val = v;
+        }
+      "
+    ></hss-input> -->
   </div>
 </template>
 
 <script>
+import hssInput from "./custom/hssInput";
 import { mapState } from "vuex";
 export default {
-  components: {},
+  components: { hssInput },
   data() {
     return {
+      val: 10,
       tree: [
         {
           auth_id: 118,
@@ -2373,7 +2287,6 @@ export default {
     },
   },
   created() {
-
     // this.$http({
     //   url: "https://voiceapi.tsiji.com/voiceuser/getuserinfo",
     //   method: "post",
