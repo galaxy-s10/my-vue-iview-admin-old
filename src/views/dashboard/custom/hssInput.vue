@@ -1,39 +1,32 @@
 <template>
   <div>
-    <input type="text" @input="changeIpt" :value="num" />
+    <!-- 第一种情况（报警告），hssIptVal未定义在实例上 -->
+    <!-- <input type="text" @input="changeIpt" :value="hssIptVal" /> -->
+    <!-- 第二种情况 -->
+    <input type="text" @input="changeIpt" :value="val" />
   </div>
 </template>
 
 <script>
 export default {
-  components: {},
   props: {
-    num: {
-      type: Number,
-      default: 0,
+    val: {
+      type: String,
+      default: "",
     },
   },
   model: {
-    prop: "vals",
-    event: "input",
+    prop: "hssIptVal",
+    event: "hssChangeIpt",
   },
   data() {
-    return {
-      val: 10,
-    };
+    return {};
   },
-  created() {},
-  mounted() {},
-  computed: {},
   methods: {
     changeIpt(e) {
-      console.log(e.target.value);
-      this.$emit("input", e.target.value);
+      console.log("子组件input");
+      this.$emit("hssChangeIpt", e.target.value);
     },
   },
-  watch: {},
 };
 </script>
-
-<style scoped>
-</style>
