@@ -49,6 +49,13 @@
             v-model="fromCol[item.prop]"
             @on-check-change="handleChoice"
           ></hss-tree>
+          <!-- <hss-tree
+            v-else-if="item.type == 'Tree'"
+            :treeData="item"
+            :renderContent="item.renderContent"
+            v-model="fromCol[item.prop]"
+            @on-check-change="handleChoice"
+          ></hss-tree> -->
         </template>
       </FormItem>
     </Form>

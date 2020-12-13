@@ -374,7 +374,7 @@ export default {
   computed: {},
   methods: {
     async addRole() {
-      await this.findParentRole(1);
+      await this.getAuthList();
       this.columnForm.list[4].data = this.allAuth;
       this.request = {
         title: "新增角色",
@@ -391,6 +391,7 @@ export default {
     async findParentRole(id) {
       let res = await findParentRole(id);
       // .then((res) => {
+        console.log(res)
       res.list.rows.unshift({
         id: 0,
         role_name: "无",

@@ -39,20 +39,27 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      data1: "",
+    };
   },
-    model:{
-      prop:'val',
-      event:"change"
+  model: {
+    prop: "treeData.data",
+    event: "change",
   },
+  // model: {
+  //   prop: "val",
+  //   event: "change",
+  // },
   created() {},
   mounted() {},
   computed: {},
   methods: {
-    handleChoice(v){
-      console.log(v)
-      this.$emit('change',v)
-    }
+    handleChoice(v) {
+      console.log(v);
+      // this.data1 = v;
+      this.$emit("change", v);
+    },
   },
 };
 </script>
