@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Form :model="fromCol" ref="hssForm" :rules="rules" :label-width="100">
+    <Form :model="fromCol" :rules="rules" :label-width="100" ref="hssForm1">
       <FormItem
         :label="item.name"
         :prop="item.prop"
@@ -98,30 +98,34 @@ export default {
   computed: {},
   methods: {
     /*提交表单*/
-    submit() {
+    submit(cb) {
       let that = this;
       //返回表单数据，如果验证不通过返回false
       let res = false;
-      console.log('99')
-      this.$refs["hssForm"].validate((valid) => {
+      this.$refs.hssForm1.validate((valid) => {
         console.log(valid)
-        console.log(that.fromCol)
         if (valid) {
           res = that.fromCol;
+          cb(res)
         } else {
           for (let j in this.fromData.list) {
             let is_break = false;
-            this.$refs["hssForm"].validateField(this.fromData.list[j].prop, (valid) => {
-              if (valid) {
-                this.$Message.error(valid);
-                is_break = true;
+            console.log(this.fromData.list[j].prop)
+            this.$refs["hssForm1"].validateField(
+              this.fromData.list[j].prop,
+              (valid) => {
+                if (valid) {
+                  console.log(valid)
+                  this.$Message.error(valid);
+                  is_break = true;
+                }
               }
-            });
+            );
             if (is_break == true) break;
           }
         }
       });
-      return res;
+      // return res;
     },
     handleChoice() {},
     handleRule() {

@@ -12,7 +12,7 @@
         <i-button type="primary" @click.native="ok">确定</i-button>
       </template>
       <base-form
-        ref="baseFrom"
+        ref="hssBaseFrom"
         :fromData="fromData"
         :initData="initData"
         :init="isInit"
@@ -64,10 +64,14 @@ export default {
     },
     ok() {
       console.log("hss-ok");
-      this.popup.is_show = false;
+      // this.popup.is_show = false;
 
-      let data = this.$refs.baseFrom.submit();
-      console.log(data);
+      this.$refs.hssBaseFrom.submit((v) => {
+        console.log('ppp');
+        console.log(v);
+      });
+      // console.log(data);
+      console.log("最后");
       // this.$emit("on-ok");
     },
     cancel() {

@@ -3,7 +3,7 @@
     <Tree :data="treeData1" :render="renderContent"></Tree>
     <Modal v-model="showRole" title="编辑角色" @on-ok="ok" @on-cancel="cancel">
       <div>
-        {{ showRole && currentRow && currentRow.username }}
+        {{ stRow && currentRow.username }}
       </div>
       <div class="aaa">
         <div v-if="allAuth.length == 0" style="position: relative">

@@ -3,7 +3,7 @@
     <!-- 第一种情况（报警告），将val作为hssIpt的model里hssIptVal的值 -->
     <!-- <hss-input v-model="val"></hss-input> -->
     <!-- 第二种情况 -->
-    <hss-input :val="val" v-model="val"></hss-input>
+    <hss-input :val="val" v-model="val" ref="form1"></hss-input>
     <!-- 等价于 -->
     <!-- <hss-input :val="val" v-model="val" @hssChangeIpt="input1"></hss-input> -->
     <!-- 等价于 -->
@@ -19,6 +19,7 @@
       "
     ></hss-input> -->
 
+    <i-button @click="ppp">ppp</i-button>
     <i-button @click="modal1">a</i-button>
     <hss-modal :val="modalVal" @hssModalOk="ok" @hssModalCancel="cancel"></hss-modal>
   </div>
@@ -36,12 +37,23 @@ export default {
     };
   },
   methods: {
+    ppp() {
+      this.$refs.form1.handleSubmit((x) => {
+        console.log("ooo");
+        console.log(x);
+      });
+      // console.log(this.$refs.form1.handleSubmit())
+      // console.log(this.$refs.form1.handleSubmit(x=>{
+      //   console.log(x)
+      // }))
+      console.log("最后");
+    },
     ok() {
-      console.log('ok')
+      console.log("ok");
       this.modalVal = false;
     },
     cancel() {
-      console.log('cancel')
+      console.log("cancel");
       this.modalVal = false;
     },
     modal1() {

@@ -419,39 +419,39 @@ export default {
             required: true,
           },
 
-          {
-            name: "权限",
-            type: "Tree",
-            prop: "auths",
-            data: [],
-            renderContent: function renderContent(h, { root, node, data }) {
-              return h(
-                "span",
-                {
-                  style: {
-                    display: "inline-block",
-                    width: "100%",
-                  },
-                },
-                [
-                  h("span", [
-                    h("span", data.auth_name + "(" + data.auth_description + ")"),
-                  ]),
-                ]
-              );
-            },
-          },
+          // {
+          //   name: "权限",
+          //   type: "Tree",
+          //   prop: "auths",
+          //   data: [],
+          //   renderContent: function renderContent(h, { root, node, data }) {
+          //     return h(
+          //       "span",
+          //       {
+          //         style: {
+          //           display: "inline-block",
+          //           width: "100%",
+          //         },
+          //       },
+          //       [
+          //         h("span", [
+          //           h("span", data.auth_name + "(" + data.auth_description + ")"),
+          //         ]),
+          //       ]
+          //     );
+          //   },
+          // },
         ],
       };
-      let newTemp = [];
-      this.parentRole.forEach((item) => {
-        let temp = {};
-        temp.label = item.role_name;
-        temp.value = item.id;
-        newTemp.push(temp);
-      });
-      this.columnForm.list[2].data = newTemp;
-      this.columnForm.list[3].data = this.allAuth;
+      // let newTemp = [];
+      // this.parentRole.forEach((item) => {
+      //   let temp = {};
+      //   temp.label = item.role_name;
+      //   temp.value = item.id;
+      //   newTemp.push(temp);
+      // });
+      // this.columnForm.list[2].data = newTemp;
+      // this.columnForm.list[3].data = this.allAuth;
       this.request = {
         title: "新增角色",
         size: "centre",
