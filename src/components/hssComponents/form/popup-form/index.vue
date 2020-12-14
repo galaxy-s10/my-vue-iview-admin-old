@@ -12,6 +12,7 @@
         <i-button type="primary" @click.native="ok">确定</i-button>
       </template>
       <base-form
+        ref="baseFrom"
         :fromData="fromData"
         :initData="initData"
         :init="isInit"
@@ -58,27 +59,26 @@ export default {
         is_show: true,
         title: this.request.title ? this.request.title : "",
         width:
-          this.request.size == "small"
-            ? 300
-            : this.request.size == "centre"
-            ? 520
-            : 900,
+          this.request.size == "small" ? 300 : this.request.size == "centre" ? 520 : 900,
       };
     },
     ok() {
-      console.log("ok");
+      console.log("hss-ok");
       this.popup.is_show = false;
-      this.$emit("on-ok");
+
+      let data = this.$refs.baseFrom.submit();
+      console.log(data);
+      // this.$emit("on-ok");
     },
     cancel() {
-      console.log("cancel");
+      console.log("hss-cancel");
       this.popup.is_show = false;
       this.$emit("on-cancel");
     },
     onVisibleChange() {
-      this.popup.is_show = false;
-      this.$emit("on-cancel");
-      console.log("onVisibleChange");
+      // this.popup.is_show = false;
+      // this.$emit("on-cancel");
+      console.log("hss-onVisibleChange");
     },
   },
   watch: {
@@ -89,5 +89,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

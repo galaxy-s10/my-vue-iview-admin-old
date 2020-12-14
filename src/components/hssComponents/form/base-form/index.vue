@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Form :model="fromCol" :rules="rules" :label-width="100">
+    <Form :model="fromCol" ref="hssForm" :rules="rules" :label-width="100">
       <FormItem
         :label="item.name"
         :prop="item.prop"
@@ -8,6 +8,9 @@
         :key="index"
       >
         <template>
+          <div v-if="item.render">
+            <hss-render :render="item.render" :row="item" :index="index"></hss-render>
+          </div>
           <Input
             v-if="item.type == 'Input'"
             clearable
@@ -63,10 +66,11 @@
 </template>
 
 <script>
+import hssRender from "./render.js";
 import fromRules from "./rules";
 import hssTree from "../../tree/index";
 export default {
-  components: { hssTree },
+  components: { hssTree, hssRender },
   props: {
     fromData: {
       type: Object,
@@ -93,6 +97,32 @@ export default {
   mounted() {},
   computed: {},
   methods: {
+    /*提交表单*/
+    submit() {
+      let that = this;
+      //返回表单数据，如果验证不通过返回false
+      let res = false;
+      console.log('99')
+      this.$refs["hssForm"].validate((valid) => {
+        console.log(valid)
+        console.log(that.fromCol)
+        if (valid) {
+          res = that.fromCol;
+        } else {
+          for (let j in this.fromData.list) {
+            let is_break = false;
+            this.$refs["hssForm"].validateField(this.fromData.list[j].prop, (valid) => {
+              if (valid) {
+                this.$Message.error(valid);
+                is_break = true;
+              }
+            });
+            if (is_break == true) break;
+          }
+        }
+      });
+      return res;
+    },
     handleChoice() {},
     handleRule() {
       for (let i in this.fromData.list) {
