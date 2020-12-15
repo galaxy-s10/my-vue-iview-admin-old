@@ -8,11 +8,11 @@
       @on-visible-change="onVisibleChange"
     >
       <template slot="footer">
-        <i-button type="text" @click.native="cancel">取消</i-button>
-        <i-button type="primary" @click.native="ok">确定</i-button>
+        <i-button type="text" @click="cancel">取消</i-button>
+        <i-button type="primary" @click="ok">确定</i-button>
       </template>
       <base-form
-        ref="hssBaseFrom"
+        ref="baseFrom"
         :fromData="fromData"
         :initData="initData"
         :init="isInit"
@@ -54,23 +54,25 @@ export default {
   computed: {},
   methods: {
     init() {
-      /*初始化弹窗*/
+      // 初始化弹窗
       this.popup = {
         is_show: true,
         title: this.request.title ? this.request.title : "",
         width:
-          this.request.size == "small" ? 300 : this.request.size == "centre" ? 520 : 900,
+          this.request.size == "small"
+            ? 300
+            : this.request.size == "centre"
+            ? 520
+            : 900,
       };
     },
     ok() {
       console.log("hss-ok");
       // this.popup.is_show = false;
-
-      this.$refs.hssBaseFrom.submit((v) => {
-        console.log('ppp');
+      this.$refs.baseFrom.submit((v) => {
+        console.log("ppp");
         console.log(v);
       });
-      // console.log(data);
       console.log("最后");
       // this.$emit("on-ok");
     },
@@ -87,6 +89,7 @@ export default {
   },
   watch: {
     data() {
+      console.log('data-watch');
       this.init();
     },
   },

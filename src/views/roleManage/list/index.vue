@@ -7,22 +7,37 @@
       :columns="columns"
       :data="roleList"
     ></Table>
-    <Modal v-model="showRole" title="编辑角色" @on-ok="ok" @on-cancel="onCancel">
+    <Modal
+      v-model="showRole"
+      title="编辑角色"
+      @on-ok="ok"
+      @on-cancel="onCancel"
+    >
       <div>
         <Form :model="roleInfo" :label-width="80">
           <FormItem label="id">
             <Input v-model="roleInfo.id" placeholder="id" disabled></Input>
           </FormItem>
           <FormItem label="父级">
-            <Select v-if="action == 'edit'" v-model="roleInfo.p_id" style="width: 200px">
-              <Option v-for="item in parentRole" :value="item.id" :key="item.id">{{
-                item.role_name + "-" + item.role_description
-              }}</Option>
+            <Select
+              v-if="action == 'edit'"
+              v-model="roleInfo.p_id"
+              style="width: 200px"
+            >
+              <Option
+                v-for="item in parentRole"
+                :value="item.id"
+                :key="item.id"
+                >{{ item.role_name + "-" + item.role_description }}</Option
+              >
             </Select>
             <span v-else-if="action == 'add'">{{ roleInfo.p }}</span>
           </FormItem>
           <FormItem label="角色名">
-            <Input v-model="roleInfo.role_name" placeholder="请输入角色名"></Input>
+            <Input
+              v-model="roleInfo.role_name"
+              placeholder="请输入角色名"
+            ></Input>
           </FormItem>
           <FormItem label="角色描述">
             <Input
@@ -51,21 +66,39 @@
       </div>
     </Modal>
 
-    <hss-popup :show="hssShow" :title="hssTitle" @okk="popOk" @cancell="popCancel">
+    <hss-popup
+      :show="hssShow"
+      :title="hssTitle"
+      @okk="popOk"
+      @cancell="popCancel"
+    >
       <Form :model="roleInfo" :label-width="80">
         <FormItem label="父级">
-          <Select v-if="action == 'edit'" v-model="roleInfo.p_id" style="width: 200px">
-            <Option v-for="item in parentRole" :value="item.id" :key="item.id">{{
-              item.role_name + "-" + item.role_description
-            }}</Option>
+          <Select
+            v-if="action == 'edit'"
+            v-model="roleInfo.p_id"
+            style="width: 200px"
+          >
+            <Option
+              v-for="item in parentRole"
+              :value="item.id"
+              :key="item.id"
+              >{{ item.role_name + "-" + item.role_description }}</Option
+            >
           </Select>
           <span v-else-if="action == 'add'">{{ roleInfo.p }}</span>
         </FormItem>
         <FormItem label="角色名">
-          <Input v-model="roleInfo.role_name" placeholder="请输入角色名"></Input>
+          <Input
+            v-model="roleInfo.role_name"
+            placeholder="请输入角色名"
+          ></Input>
         </FormItem>
         <FormItem label="角色描述">
-          <Input v-model="roleInfo.role_description" placeholder="请输入角色描述"></Input>
+          <Input
+            v-model="roleInfo.role_description"
+            placeholder="请输入角色描述"
+          ></Input>
         </FormItem>
         <FormItem label="拥有权限">
           <div class="aaa">
@@ -175,7 +208,10 @@ export default {
                 },
                 [
                   h("span", [
-                    h("span", data.auth_name + "(" + data.auth_description + ")"),
+                    h(
+                      "span",
+                      data.auth_name + "(" + data.auth_description + ")"
+                    ),
                   ]),
                 ]
               );
@@ -351,7 +387,7 @@ export default {
     /*动态组件处理完回调*/
     onOk() {
       this.comments = "";
-      console.log(object)
+      console.log(object);
       // console.log("pp");
       // this.handleRefresh();
     },
@@ -419,39 +455,44 @@ export default {
             required: true,
           },
 
-          // {
-          //   name: "权限",
-          //   type: "Tree",
-          //   prop: "auths",
-          //   data: [],
-          //   renderContent: function renderContent(h, { root, node, data }) {
-          //     return h(
-          //       "span",
-          //       {
-          //         style: {
-          //           display: "inline-block",
-          //           width: "100%",
-          //         },
-          //       },
-          //       [
-          //         h("span", [
-          //           h("span", data.auth_name + "(" + data.auth_description + ")"),
-          //         ]),
-          //       ]
-          //     );
-          //   },
-          // },
+          {
+            name: "权限",
+            type: "Tree",
+            prop: "auths",
+            required: true,
+            isArray: true,
+            data: [],
+            renderContent: function renderContent(h, { root, node, data }) {
+              return h(
+                "span",
+                {
+                  style: {
+                    display: "inline-block",
+                    width: "100%",
+                  },
+                },
+                [
+                  h("span", [
+                    h(
+                      "span",
+                      data.auth_name + "(" + data.auth_description + ")"
+                    ),
+                  ]),
+                ]
+              );
+            },
+          },
         ],
       };
-      // let newTemp = [];
-      // this.parentRole.forEach((item) => {
-      //   let temp = {};
-      //   temp.label = item.role_name;
-      //   temp.value = item.id;
-      //   newTemp.push(temp);
-      // });
-      // this.columnForm.list[2].data = newTemp;
-      // this.columnForm.list[3].data = this.allAuth;
+      let newTemp = [];
+      this.parentRole.forEach((item) => {
+        let temp = {};
+        temp.label = item.role_name;
+        temp.value = item.id;
+        newTemp.push(temp);
+      });
+      this.columnForm.list[2].data = newTemp;
+      this.columnForm.list[3].data = this.allAuth;
       this.request = {
         title: "新增角色",
         size: "centre",

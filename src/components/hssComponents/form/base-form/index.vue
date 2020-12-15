@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Form :model="fromCol" :rules="rules" :label-width="100" ref="hssForm1">
+    <Form :model="fromCol" :rules="rules" :label-width="100" ref="hssForm">
       <FormItem
         :label="item.name"
         :prop="item.prop"
@@ -9,7 +9,11 @@
       >
         <template>
           <div v-if="item.render">
-            <hss-render :render="item.render" :row="item" :index="index"></hss-render>
+            <hss-render
+              :render="item.render"
+              :row="item"
+              :index="index"
+            ></hss-render>
           </div>
           <Input
             v-if="item.type == 'Input'"
@@ -33,16 +37,25 @@
             }}</Option>
           </Select>
           <!-- 单选框 -->
-          <RadioGroup v-else-if="item.type == 'Radio'" v-model="fromCol[item.prop]">
+          <RadioGroup
+            v-else-if="item.type == 'Radio'"
+            v-model="fromCol[item.prop]"
+          >
             <Radio :label="el.value" v-for="el in item.data" :key="el.value">{{
               el.label
             }}</Radio>
           </RadioGroup>
           <!-- 多选框 -->
-          <CheckboxGroup v-else-if="item.type == 'Check'" v-model="fromCol[item.prop]">
-            <Checkbox :label="el.value" v-for="el in item.data" :key="el.value">{{
-              el.label
-            }}</Checkbox>
+          <CheckboxGroup
+            v-else-if="item.type == 'Check'"
+            v-model="fromCol[item.prop]"
+          >
+            <Checkbox
+              :label="el.value"
+              v-for="el in item.data"
+              :key="el.value"
+              >{{ el.label }}</Checkbox
+            >
           </CheckboxGroup>
           <!-- 树结构 -->
           <hss-tree
@@ -97,43 +110,59 @@ export default {
   mounted() {},
   computed: {},
   methods: {
-    /*提交表单*/
+    // 提交表单
     submit(cb) {
       let that = this;
-      //返回表单数据，如果验证不通过返回false
+      // 返回表单数据，如果验证不通过返回false
       let res = false;
-      this.$refs.hssForm1.validate((valid) => {
-        console.log(valid)
+      this.$refs["hssForm"].validate(async (valid) => {
+        console.log(valid);
         if (valid) {
+          console.log("表单验证成功");
           res = that.fromCol;
-          cb(res)
+          cb(res);
         } else {
+          console.log("表单验证失败");
+          // var is_break = false;
           for (let j in this.fromData.list) {
-            let is_break = false;
-            console.log(this.fromData.list[j].prop)
-            this.$refs["hssForm1"].validateField(
-              this.fromData.list[j].prop,
-              (valid) => {
-                if (valid) {
-                  console.log(valid)
-                  this.$Message.error(valid);
-                  is_break = true;
-                }
-              }
-            );
-            if (is_break == true) break;
+            console.log("------");
+            // if (is_break == true) {
+            //   console.log("不判断了");
+            //   break;
+            // }
+            try {
+              console.log('object');
+              let ress = await new Promise((resolve, reject) => {
+                this.$refs["hssForm"].validateField(
+                  this.fromData.list[j].prop,
+                  (valid) => {
+                    if (valid) {
+                      console.log("有一个错，不继续判断");
+                      this.$Message.error(valid);
+                      is_break = true;
+                      reject("有一个错，不继续判断");
+                    }
+                  }
+                );
+              });
+              console.log(ress);
+            } catch (err) {
+              console.log(err);
+            }
           }
         }
       });
-      // return res;
     },
     handleChoice() {},
     handleRule() {
       for (let i in this.fromData.list) {
         let item = this.fromData.list[i];
         this.rules[item.prop] = [];
-        /*是否必须*/
+        // 是否必须
         if (item.required) {
+          console.log(item.type);
+          console.log(item.isArray);
+          console.log(item.isObject);
           if (
             item.type === "Select" ||
             item.type === "Radio" ||
@@ -141,16 +170,22 @@ export default {
             item.type === "Tree" ||
             item.isObject
           ) {
+            // 类型为array或object或number
             this.rules[item.prop] = [
               {
                 required: true,
                 message: item.name + "不能为空",
                 trigger: "change",
                 // trigger: "blur",
-                type: item.isArray ? "array" : item.isObject ? "object" : "number",
+                type: item.isArray
+                  ? "array"
+                  : item.isObject
+                  ? "object"
+                  : "number",
               },
             ];
           } else {
+            // 类型为string
             this.rules[item.prop] = [
               {
                 required: true,
@@ -161,8 +196,7 @@ export default {
             ];
           }
         }
-        //验证规则
-        console.log(item.rule);
+        // 验证规则
         if (item.rule) {
           if (typeof item.rule === "string") {
             for (let key in fromRules) {
@@ -179,33 +213,16 @@ export default {
       }
     },
     handleVal(data) {
-      console.log(data);
-      console.log({ ...this.fromData });
       this.fromDataNew = { ...this.fromData };
-      // console.log(fromDataNew);
       if (data) {
         if (this.init) {
-          /*编辑时候格式化数据*/
+          // 编辑时候格式化数据
           for (let i = 0; i < this.fromDataNew.list.length; i++) {
             let item = this.fromDataNew.list[i];
-            console.log(item);
-            // if (item.type === "UploadOne") {
-            //   this.fromDataNew.list[i].show = [data[item.prop]];
-            //   this.fromDataNew.list[i].val = data[item.prop]["image_id"];
-            // } else if (item.type === "UploadMany") {
-            //   let ids = [];
-            //   this.fromDataNew.list[i].show = data[item.prop];
-            //   for (let j = 0; j < data[item.prop].length; j++) {
-            //     let item1 = data[item.prop][j];
-            //     ids.push(item1.image_id);
-            //   }
-            //   this.fromDataNew.list[i].val = ids;
-            // } else {
             this.fromDataNew.list[i].val = data[item.prop];
-            // }
           }
         } else {
-          /*添加置空表单*/
+          // 添加置空表单
           for (let i = 0; i < this.fromDataNew.list.length; i++) {
             let item = this.fromDataNew.list[i];
             if (item.default) {
@@ -215,34 +232,24 @@ export default {
             }
           }
         }
-        // this.hackRest();
       }
     },
-    /*处理表单数据集*/
+    // 处理表单数据集
     handleFromCol() {
       for (let i in this.fromData.list) {
         let item = this.fromData.list[i];
         this.$set(this.fromCol, item.prop, item.val);
-        // if (!item.primaryKey) {
-        // console.log(object)
-        // this.$set(this.fromCol, item.prop, item.val ? item.val : "");
-        // }
       }
     },
   },
   watch: {
-    //处理表单选项发生改变的时候初始化
+    // 处理表单选项发生改变的时候初始化
     "fromData.list": {
       handler() {
         this.fromCol = {};
-        // this.init();
-        // if (this.api) {
-        //   this.handleApiVal();
-        // } else {
         console.log(this.initData);
         this.handleVal(this.initData);
         this.handleFromCol();
-        // }
         this.handleRule();
       },
       immediate: true,
