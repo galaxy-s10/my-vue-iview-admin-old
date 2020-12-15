@@ -59,21 +59,20 @@ export default {
         is_show: true,
         title: this.request.title ? this.request.title : "",
         width:
-          this.request.size == "small"
-            ? 300
-            : this.request.size == "centre"
-            ? 520
-            : 900,
+          this.request.size == "small" ? 300 : this.request.size == "centre" ? 520 : 900,
       };
     },
     ok() {
       console.log("hss-ok");
       // this.popup.is_show = false;
       this.$refs.baseFrom.submit((v) => {
-        console.log("ppp");
-        console.log(v);
+        if (v) {
+          console.log(v);
+          this.$emit("onSubmit", v);
+        } else {
+          console.log("表单验证失败");
+        }
       });
-      console.log("最后");
       // this.$emit("on-ok");
     },
     cancel() {
@@ -89,7 +88,7 @@ export default {
   },
   watch: {
     data() {
-      console.log('data-watch');
+      console.log("data-watch");
       this.init();
     },
   },

@@ -7,37 +7,22 @@
       :columns="columns"
       :data="roleList"
     ></Table>
-    <Modal
-      v-model="showRole"
-      title="编辑角色"
-      @on-ok="ok"
-      @on-cancel="onCancel"
-    >
+    <!-- <Modal v-model="showRole" title="编辑角色" @on-ok="ok" @on-cancel="onCancel">
       <div>
         <Form :model="roleInfo" :label-width="80">
           <FormItem label="id">
             <Input v-model="roleInfo.id" placeholder="id" disabled></Input>
           </FormItem>
           <FormItem label="父级">
-            <Select
-              v-if="action == 'edit'"
-              v-model="roleInfo.p_id"
-              style="width: 200px"
-            >
-              <Option
-                v-for="item in parentRole"
-                :value="item.id"
-                :key="item.id"
-                >{{ item.role_name + "-" + item.role_description }}</Option
-              >
+            <Select v-if="action == 'edit'" v-model="roleInfo.p_id" style="width: 200px">
+              <Option v-for="item in parentRole" :value="item.id" :key="item.id">{{
+                item.role_name + "-" + item.role_description
+              }}</Option>
             </Select>
             <span v-else-if="action == 'add'">{{ roleInfo.p }}</span>
           </FormItem>
           <FormItem label="角色名">
-            <Input
-              v-model="roleInfo.role_name"
-              placeholder="请输入角色名"
-            ></Input>
+            <Input v-model="roleInfo.role_name" placeholder="请输入角色名"></Input>
           </FormItem>
           <FormItem label="角色描述">
             <Input
@@ -64,41 +49,23 @@
           </FormItem>
         </Form>
       </div>
-    </Modal>
+    </Modal> -->
 
-    <hss-popup
-      :show="hssShow"
-      :title="hssTitle"
-      @okk="popOk"
-      @cancell="popCancel"
-    >
+    <!-- <hss-popup :show="hssShow" :title="hssTitle" @okk="popOk" @cancell="popCancel">
       <Form :model="roleInfo" :label-width="80">
         <FormItem label="父级">
-          <Select
-            v-if="action == 'edit'"
-            v-model="roleInfo.p_id"
-            style="width: 200px"
-          >
-            <Option
-              v-for="item in parentRole"
-              :value="item.id"
-              :key="item.id"
-              >{{ item.role_name + "-" + item.role_description }}</Option
-            >
+          <Select v-if="action == 'edit'" v-model="roleInfo.p_id" style="width: 200px">
+            <Option v-for="item in parentRole" :value="item.id" :key="item.id">{{
+              item.role_name + "-" + item.role_description
+            }}</Option>
           </Select>
           <span v-else-if="action == 'add'">{{ roleInfo.p }}</span>
         </FormItem>
         <FormItem label="角色名">
-          <Input
-            v-model="roleInfo.role_name"
-            placeholder="请输入角色名"
-          ></Input>
+          <Input v-model="roleInfo.role_name" placeholder="请输入角色名"></Input>
         </FormItem>
         <FormItem label="角色描述">
-          <Input
-            v-model="roleInfo.role_description"
-            placeholder="请输入角色描述"
-          ></Input>
+          <Input v-model="roleInfo.role_description" placeholder="请输入角色描述"></Input>
         </FormItem>
         <FormItem label="拥有权限">
           <div class="aaa">
@@ -118,7 +85,7 @@
           </div>
         </FormItem>
       </Form>
-    </hss-popup>
+    </hss-popup> -->
 
     <!-- <hss-popupa :request="request">
       <hss-form :fromData="columnForm"></hss-form>
@@ -132,6 +99,7 @@
       :isInit="isInit"
       @on-cancel="onCancel"
       @on-ok="onOk"
+      @onSubmit="onSubmit"
     ></component>
     <i-button @click="addRole">添加角色</i-button>
   </div>
@@ -161,64 +129,61 @@ export default {
       comments: "", //动态模块
       request: {},
       columnForm: {},
-      columnForm: {
-        list: [
-          {
-            type: "Input",
-            name: "id",
-            prop: "id",
-            placeholder: "id",
-            // required: true,
-            disabled: true,
-          },
-          {
-            type: "Input",
-            name: "角色名",
-            prop: "role_name",
-            placeholder: "请输入角色名",
-            required: true,
-          },
-          {
-            name: "角色描述",
-            type: "Input",
-            prop: "role_description",
-            placeholder: "请输入角色描述",
-            required: true,
-          },
-          {
-            name: "父级",
-            type: "Select",
-            prop: "p_id",
-            data: [],
-            required: true,
-          },
-          {
-            name: "权限",
-            type: "Tree",
-            prop: "auths",
-            data: [],
-            renderContent: function renderContent(h, { root, node, data }) {
-              return h(
-                "span",
-                {
-                  style: {
-                    display: "inline-block",
-                    width: "100%",
-                  },
-                },
-                [
-                  h("span", [
-                    h(
-                      "span",
-                      data.auth_name + "(" + data.auth_description + ")"
-                    ),
-                  ]),
-                ]
-              );
-            },
-          },
-        ],
-      },
+      // columnForm: {
+      //   list: [
+      //     {
+      //       type: "Input",
+      //       name: "id",
+      //       prop: "id",
+      //       placeholder: "id",
+      //       // required: true,
+      //       disabled: true,
+      //     },
+      //     {
+      //       type: "Input",
+      //       name: "角色名",
+      //       prop: "role_name",
+      //       placeholder: "请输入角色名",
+      //       required: true,
+      //     },
+      //     {
+      //       name: "角色描述",
+      //       type: "Input",
+      //       prop: "role_description",
+      //       placeholder: "请输入角色描述",
+      //       required: true,
+      //     },
+      //     {
+      //       name: "父级",
+      //       type: "Select",
+      //       prop: "p_id",
+      //       data: [],
+      //       required: true,
+      //     },
+      //     {
+      //       name: "权限",
+      //       type: "Tree",
+      //       prop: "auths",
+      //       data: [],
+      //       renderContent: function renderContent(h, { root, node, data }) {
+      //         return h(
+      //           "span",
+      //           {
+      //             style: {
+      //               display: "inline-block",
+      //               width: "100%",
+      //             },
+      //           },
+      //           [
+      //             h("span", [
+      //               h("span", data.auth_name + "(" + data.auth_description + ")"),
+      //             ]),
+      //           ]
+      //         );
+      //       },
+      //     },
+      //   ],
+      // },
       action: "edit",
       parentRole: [],
       roleInfo: {
@@ -316,11 +281,12 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.action = "edit";
-                      let newParams = { ...params.row };
-                      delete newParams.children;
-                      console.log(newParams);
-                      this.show(newParams);
+                      // this.action = "edit";
+                      // let newParams = { ...params.row };
+                      // delete newParams.children;
+                      // console.log(newParams);
+                      // this.show(newParams);
+                      this.editRole({ ...params.row });
                     },
                   },
                 },
@@ -391,10 +357,9 @@ export default {
       // console.log("pp");
       // this.handleRefresh();
     },
+    // 获取某角色的父级
     async findParentRole(id) {
       let res = await findParentRole(id);
-      // .then((res) => {
-      console.log(res);
       res.list.rows.unshift({
         id: 0,
         role_name: "无",
@@ -402,22 +367,6 @@ export default {
         p_id: 0,
       });
       this.parentRole = res.list.rows;
-      // this.parentRole = res.list.rows;
-      // this.parentRole.unshift({
-      //   id: 0,
-      //   role_name: "无",
-      //   role_description: "无",
-      //   p_id: 0,
-      // });
-      // findParentRole(id).then((res) => {
-      //   this.parentRole = res.list.rows;
-      //   this.parentRole.unshift({
-      //     id: 0,
-      //     role_name: "无",
-      //     role_description: "无",
-      //     p_id: 0,
-      //   });
-      console.log(this.columnForm.list[2]);
       let newTemp = [];
       res.list.rows.forEach((item) => {
         let temp = {};
@@ -425,9 +374,67 @@ export default {
         temp.value = item.id;
         newTemp.push(temp);
       });
-      this.columnForm.list[3].data = newTemp;
-      console.log(res);
-      // });
+      this.parentRole = newTemp;
+    },
+    // 修改某角色
+    async editRole(v) {
+      console.log(v);
+      await this.getAuthList();
+      await this.findParentRole(v.id);
+      this.columnForm = {
+        list: [
+          {
+            type: "Select",
+            name: "父级",
+            prop: "p_id",
+            data: this.parentRole,
+            required: true,
+          },
+          {
+            name: "角色名",
+            type: "Input",
+            prop: "role_name",
+            placeholder: "请输入角色名",
+            required: true,
+          },
+          {
+            name: "角色描述",
+            type: "Input",
+            prop: "role_description",
+            placeholder: "请输入角色描述",
+            required: true,
+          },
+          {
+            name: "权限",
+            type: "Tree",
+            prop: "auths",
+            required: true,
+            isArray: true,
+            data: this.allAuth,
+            renderContent: function renderContent(h, { root, node, data }) {
+              return h(
+                "span",
+                {
+                  style: {
+                    display: "inline-block",
+                    width: "100%",
+                  },
+                },
+                [
+                  h("span", [
+                    h("span", data.auth_name + "(" + data.auth_description + ")"),
+                  ]),
+                ]
+              );
+            },
+          },
+        ],
+      };
+      this.request = {
+        title: "编辑角色",
+        size: "centre",
+      };
+      this.comments = "hssPopupForm";
     },
     async addParentRole() {
       await this.getAuthList();
@@ -439,6 +446,7 @@ export default {
             render: (h, params) => {
               return h("span", "无");
             },
+            // required:true
           },
           {
             type: "Input",
@@ -473,10 +481,7 @@ export default {
                 },
                 [
                   h("span", [
-                    h(
-                      "span",
-                      data.auth_name + "(" + data.auth_description + ")"
-                    ),
+                    h("span", data.auth_name + "(" + data.auth_description + ")"),
                   ]),
                 ]
               );
@@ -668,6 +673,9 @@ export default {
       this.allAuth = [];
       this.currentAuth = [];
     },
+    onSubmit(v) {
+      console.log(v);
+    },
     //转换时间格式
     formateDate(datetime) {
       function addDateZero(num) {
@@ -746,7 +754,7 @@ export default {
   },
   created() {
     this.getRoleList();
-    this.findParentRole(1);
+    // this.findParentRole(1);
     this.getAuthList();
   },
   mounted() {},

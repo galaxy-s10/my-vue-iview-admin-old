@@ -9,11 +9,7 @@
       >
         <template>
           <div v-if="item.render">
-            <hss-render
-              :render="item.render"
-              :row="item"
-              :index="index"
-            ></hss-render>
+            <hss-render :render="item.render" :row="item" :index="index"></hss-render>
           </div>
           <Input
             v-if="item.type == 'Input'"
@@ -25,7 +21,7 @@
           ></Input>
           <!-- 下拉框 -->
           <Select
-            v-else-if="item.type == 'Select'"
+            v-if="item.type == 'Select'"
             v-model="fromCol[item.prop]"
             :placeholder="item.placeholder"
             :multiple="item.isArray"
@@ -37,36 +33,27 @@
             }}</Option>
           </Select>
           <!-- 单选框 -->
-          <RadioGroup
-            v-else-if="item.type == 'Radio'"
-            v-model="fromCol[item.prop]"
-          >
+          <RadioGroup v-if="item.type == 'Radio'" v-model="fromCol[item.prop]">
             <Radio :label="el.value" v-for="el in item.data" :key="el.value">{{
               el.label
             }}</Radio>
           </RadioGroup>
           <!-- 多选框 -->
-          <CheckboxGroup
-            v-else-if="item.type == 'Check'"
-            v-model="fromCol[item.prop]"
-          >
-            <Checkbox
-              :label="el.value"
-              v-for="el in item.data"
-              :key="el.value"
-              >{{ el.label }}</Checkbox
-            >
+          <CheckboxGroup v-if="item.type == 'Check'" v-model="fromCol[item.prop]">
+            <Checkbox :label="el.value" v-for="el in item.data" :key="el.value">{{
+              el.label
+            }}</Checkbox>
           </CheckboxGroup>
           <!-- 树结构 -->
           <hss-tree
-            v-else-if="item.type == 'Tree'"
+            v-if="item.type == 'Tree'"
             :treeData="item"
             :renderContent="item.renderContent"
             v-model="fromCol[item.prop]"
             @on-check-change="handleChoice"
           ></hss-tree>
           <!-- <hss-tree
-            v-else-if="item.type == 'Tree'"
+            v-if="item.type == 'Tree'"
             :treeData="item"
             :renderContent="item.renderContent"
             v-model="fromCol[item.prop]"
@@ -123,33 +110,22 @@ export default {
           cb(res);
         } else {
           console.log("表单验证失败");
-          // var is_break = false;
-          for (let j in this.fromData.list) {
-            console.log("------");
-            // if (is_break == true) {
-            //   console.log("不判断了");
-            //   break;
-            // }
-            try {
-              console.log('object');
-              let ress = await new Promise((resolve, reject) => {
-                this.$refs["hssForm"].validateField(
-                  this.fromData.list[j].prop,
-                  (valid) => {
-                    if (valid) {
-                      console.log("有一个错，不继续判断");
-                      this.$Message.error(valid);
-                      is_break = true;
-                      reject("有一个错，不继续判断");
-                    }
-                  }
-                );
-              });
-              console.log(ress);
-            } catch (err) {
-              console.log(err);
-            }
+          let that = this;
+          function digui(j) {
+            that.$refs["hssForm"].validateField(that.fromData.list[j].prop, (valid) => {
+              if (valid) {
+                that.$Message.error(valid);
+                console.log("cb");
+                // console.log(cb)
+                cb(false);
+              } else {
+                console.log(that.fromData.list[j].prop);
+                digui(j + 1);
+              }
+            });
           }
+
+          digui(0);
         }
       });
     },
@@ -170,22 +146,18 @@ export default {
             item.type === "Tree" ||
             item.isObject
           ) {
-            // 类型为array或object或number
+            // Select,Radio,Check,Tree组件，验证类型为array或object或number
             this.rules[item.prop] = [
               {
                 required: true,
                 message: item.name + "不能为空",
                 trigger: "change",
                 // trigger: "blur",
-                type: item.isArray
-                  ? "array"
-                  : item.isObject
-                  ? "object"
-                  : "number",
+                type: item.isArray ? "array" : item.isObject ? "object" : "number",
               },
             ];
           } else {
-            // 类型为string
+            // 其他组件(如input)，验证类型为string
             this.rules[item.prop] = [
               {
                 required: true,
