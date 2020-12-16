@@ -59,7 +59,11 @@ export default {
         is_show: true,
         title: this.request.title ? this.request.title : "",
         width:
-          this.request.size == "small" ? 300 : this.request.size == "centre" ? 520 : 900,
+          this.request.size == "small"
+            ? 300
+            : this.request.size == "centre"
+            ? 520
+            : 900,
       };
     },
     ok() {
@@ -82,7 +86,7 @@ export default {
     },
     onVisibleChange() {
       // this.popup.is_show = false;
-      // this.$emit("on-cancel");
+      this.$emit("on-cancel");
       console.log("hss-onVisibleChange");
     },
   },
