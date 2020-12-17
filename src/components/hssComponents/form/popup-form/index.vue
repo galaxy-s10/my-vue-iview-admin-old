@@ -64,26 +64,27 @@ export default {
     },
     ok() {
       console.log("hss-ok");
-      // this.popup.is_show = false;
+      
       this.$refs.baseFrom.submit((v) => {
         if (v) {
-          console.log(v);
+          // console.log(v);
           this.$emit("onSubmit", v);
+          this.popup.is_show = false;
         } else {
-          console.log("表单验证失败");
+          // console.log("表单验证失败");
         }
       });
-      // this.$emit("on-ok");
+      // this.$emit("on-ok",this.baseFrom);
     },
     cancel() {
-      console.log("hss-cancel");
+      // console.log("hss-cancel");
       this.popup.is_show = false;
       this.$emit("on-cancel");
     },
     onVisibleChange() {
       // this.popup.is_show = false;
-      // this.$emit("on-cancel");
-      console.log("hss-onVisibleChange");
+      // console.log("hss-onVisibleChange");
+      this.$emit("on-cancel");
     },
   },
   watch: {

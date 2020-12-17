@@ -1,7 +1,7 @@
 import request from './request'
 
 // 获取某个用户的角色以及权限
-export function getOneRoleAuth(id) {
+export function getUserRoleAuth(id) {
     return request({
         url: '/api/roleauth/oneRoleAuth',
         method: 'get',

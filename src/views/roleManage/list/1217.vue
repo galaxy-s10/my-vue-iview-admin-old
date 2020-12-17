@@ -36,7 +36,7 @@ import {
   deleteRole,
   findParentRole,
 } from "../../../api/role";
-import { getAuth, getUserRoleAuth, addAuthForRole } from "../../../api/roleauth";
+import { getAuth, getOneRoleAuth, addAuthForRole } from "../../../api/roleauth";
 export default {
   components: { hssPopup, hssForm, hssPopupa, hssPopupForm },
   data() {
@@ -368,6 +368,16 @@ export default {
         size: "centre",
       };
       this.comments = "hssPopupForm";
+      // this.roleInfo = {
+      //   id: "",
+      //   role_name: "",
+      //   role_description: "",
+      //   p_id: 0,
+      //   p: "无",
+      // };
+      // this.action = "add";
+      // this.showRole = true;
+      // await this.getAuthList();
     },
 
     deleteRole(v) {
@@ -384,7 +394,7 @@ export default {
           console.log(err);
         });
     },
-    // 获取所有权限，且整理成树型
+
     async getAuthList() {
       await getAuthList().then((res) => {
         console.log("获取所有权限");
@@ -416,9 +426,39 @@ export default {
         this.allAuth = handleAuth(res.rows);
       });
     },
-    // 获取当前角色的权限
-    async getUserRoleAuth(id) {
-      await getUserRoleAuth(id).then((res) => {
+    async getTreeAuth(v) {
+      await getAuthList().then((res) => {
+        console.log("获取所有权限");
+        console.log(res);
+        function handleAuth(data) {
+          let temp = [];
+          data.forEach((item) => {
+            if (item.p_id == 0) {
+              temp.push(item);
+            }
+          });
+          function digui(data, temp) {
+            temp.forEach((tempItem, tempIndex) => {
+              let children = [];
+              data.forEach((dataItem, dataIndex) => {
+                if (tempItem.id == dataItem.p_id) {
+                  // let children = tempItem.children ? tempItem.children : [];
+                  children.push(dataItem);
+                }
+              });
+              if (children.length > 0) {
+                tempItem.children = children;
+                digui(data, children);
+              }
+            });
+          }
+          digui(data, temp);
+          return temp;
+        }
+        this.allAuth = handleAuth(res.rows);
+      });
+
+      await getOneRoleAuth(v.id).then((res) => {
         console.log("获取当前角色的权限");
         console.log(res);
         if (res.count > 0) {
@@ -428,30 +468,45 @@ export default {
           });
         }
       });
-    },
-    async getTreeAuth(v) {
-      await this.getAuthList();
-      await this.getUserRoleAuth(v.id);
-      // 递归将当前角色的权限在所有权限里添加checked为true
-      function digui(allAuth, currentAuth) {
+      function digui(data, vall) {
         let val = [];
-        currentAuth.forEach((item) => {
+        vall.forEach((item) => {
           val.push(item.auth_id);
         });
-        allAuth.forEach((item1, index1) => {
+        data.forEach((item1, index1) => {
           if (val.includes(item1.id)) {
             item1.checked = true;
           }
           if (item1.children) {
-            digui(item1.children, currentAuth);
+            digui(item1.children, vall);
           }
         });
       }
+      // 递归将当前角色的权限在所有权限里添加checked为true
       let depData = JSON.parse(JSON.stringify(this.allAuth));
       digui(depData, this.currentAuth);
       this.allAuth = depData;
     },
-
+    
+    ok() {
+      // this.showRole = false
+      console.log("ok");
+      this.allAuth = [];
+      this.currentAuth = [];
+      editRoleAuth({
+        ...this.roleInfo,
+        auths: this.auths,
+      })
+        .then((res) => {
+          this.$Message.success({
+            content: res.message,
+          });
+          this.getRoleList();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     onCancel() {
       // this.showRole = false
       this.comments = "";
@@ -493,7 +548,6 @@ export default {
         [h("span", [h("span", data.auth_name + "-" + data.auth_description)])]
       );
     },
-
     getRoleList() {
       getRoleList().then((res) => {
         let { rows } = res;
