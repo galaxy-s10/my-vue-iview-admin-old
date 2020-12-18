@@ -43,6 +43,14 @@ export function findParentRole(id) {
         params: { id }
     })
 }
+// 查询某个角色的平行父级
+export function findBrotherRole(id) {
+    return request({
+        url: '/api/role/findBrotherRole',
+        method: 'get',
+        params: { id }
+    })
+}
 
 // 删除角色
 export function deleteRole(id) {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <i-button @click="addParentRole">新增角色</i-button>
+    <i-button @click="addNewRole()">新增角色</i-button>
     <Table
       border
       :loading="roleList.length == 0"
@@ -35,13 +35,15 @@ import {
   editRoleAuth,
   deleteRole,
   findParentRole,
+  findBrotherRole,
 } from "../../../api/role";
 import { getAuth, getUserRoleAuth, addAuthForRole } from "../../../api/roleauth";
 export default {
   components: { hssPopup, hssForm, hssPopupa, hssPopupForm },
   data() {
     return {
-      myAuths:"",
+      brotherRole: [],
+      myAuths: "",
       isInit: false,
       comments: "", //动态模块
       request: {},
@@ -49,10 +51,10 @@ export default {
       action: "edit",
       parentRole: [],
       roleInfo: {
-        id: 1,
-        role_name: "2",
-        role_description: "3",
-        p_id: 0,
+        id: "",
+        role_name: "",
+        role_description: "",
+        p_id: "",
       },
       hssShow: false,
       hssTitle: "新增角色",
@@ -149,6 +151,7 @@ export default {
                       // console.log(newParams);
                       // this.show(newParams);
                       console.log("click");
+                      this.action = "edit";
                       this.editRole({ ...params.row });
                     },
                   },
@@ -169,12 +172,14 @@ export default {
                     click: () => {
                       // this.deleteRole(params.row);
                       // this.action = "add";
-                      let newParams = { ...params.row };
-                      delete newParams.children;
-                      this.hssShow = true;
-                      this.hssTitle = "新增权限";
+                      // let newParams = { ...params.row };
+                      // delete newParams.children;
+                      // this.hssShow = true;
+                      // this.hssTitle = "新增权限";
                       // console.log(newParams);
                       // this.show(newParams);
+                      this.action = "add";
+                      this.addNewRole({ ...params.row });
                     },
                   },
                 },
@@ -238,6 +243,25 @@ export default {
       });
       this.parentRole = newTemp;
     },
+    // 查询某个角色的平行父级
+    async findBrotherRole(id) {
+      let res = await findBrotherRole(id);
+      // res.list.rows.unshift({
+      //   id: 0,
+      //   role_name: "无",
+      //   role_description: "无",
+      //   p_id: 0,
+      // });
+      this.brotherRole = res.list.rows;
+      let newTemp = [];
+      res.list.rows.forEach((item) => {
+        let temp = {};
+        temp.label = item.role_name;
+        temp.value = item.id;
+        newTemp.push(temp);
+      });
+      this.brotherRole = newTemp;
+    },
     // 修改某角色
     async editRole(v) {
       console.log(v);
@@ -248,6 +272,13 @@ export default {
       this.roleInfo.auths = this.currentAuth;
       this.columnForm = {
         list: [
+          {
+            // name: "id",
+            // type: "Input",
+            prop: "id",
+            // placeholder: "",
+            // display:'none'
+          },
           {
             type: "Select",
             name: "父级",
@@ -287,10 +318,7 @@ export default {
                 },
                 [
                   h("span", [
-                    h(
-                      "span",
-                      data.auth_name + "(" + data.auth_description + ")"
-                    ),
+                    h("span", data.auth_name + "(" + data.auth_description + ")"),
                   ]),
                 ]
               );
@@ -306,18 +334,10 @@ export default {
       this.comments = "hssPopupForm";
     },
     // 新增角色
-    async addParentRole() {
+    async addNewRole(v) {
       await this.getAuthList();
       this.columnForm = {
         list: [
-          {
-            name: "父级",
-            prop: "p_id",
-            render: (h, params) => {
-              return h("span", "无");
-            },
-            // required:true
-          },
           {
             type: "Input",
             name: "角色名",
@@ -339,7 +359,7 @@ export default {
             prop: "auths",
             required: true,
             isArray: true,
-            data: [],
+            data: this.allAuth,
             renderContent: function renderContent(h, { root, node, data }) {
               return h(
                 "span",
@@ -351,10 +371,7 @@ export default {
                 },
                 [
                   h("span", [
-                    h(
-                      "span",
-                      data.auth_name + "(" + data.auth_description + ")"
-                    ),
+                    h("span", data.auth_name + "(" + data.auth_description + ")"),
                   ]),
                 ]
               );
@@ -362,19 +379,35 @@ export default {
           },
         ],
       };
-      let newTemp = [];
-      this.parentRole.forEach((item) => {
-        let temp = {};
-        temp.label = item.role_name;
-        temp.value = item.id;
-        newTemp.push(temp);
-      });
-      this.columnForm.list[2].data = newTemp;
-      this.columnForm.list[3].data = this.allAuth;
+      let temp;
+      if (v) {
+        await this.findBrotherRole(v.id);
+        this.roleInfo.p_id = v.id;
+        this.isInit = true;
+        temp = {
+          type: "Select",
+          name: "父级",
+          prop: "p_id",
+          data: this.brotherRole,
+          required: true,
+          // disabled: true,
+        };
+      } else {
+        temp = {
+          // type: "Select",
+          name: "父级",
+          prop: "p_id",
+          render: (h, params) => {
+            return h("span", "无");
+          },
+        };
+      }
+      this.columnForm.list.unshift(temp);
       this.request = {
         title: "新增角色",
         size: "centre",
       };
+
       this.comments = "hssPopupForm";
     },
 
@@ -428,7 +461,7 @@ export default {
     async getUserRoleAuth(id) {
       await getUserRoleAuth(id).then((res) => {
         console.log("获取当前角色的权限");
-        this.myAuths = res.rows
+        this.myAuths = res.rows;
         console.log(res);
         if (res.count > 0) {
           res.rows.forEach((item) => {
@@ -464,13 +497,26 @@ export default {
     onCancel() {
       // this.showRole = false
       console.log("onCancel");
-      this.roleInfo = "";
+      this.roleInfo = {};
       this.comments = "";
       this.allAuth = [];
       this.currentAuth = [];
     },
-    onSubmit(v) {
+    async onSubmit(v) {
       console.log(v);
+      let temp = [];
+      v.auths.forEach((item) => {
+        temp.push(item.id);
+      });
+      console.log({ ...v, auths: temp });
+      if (this.action == "edit") {
+        await editRoleAuth({ ...v, auths: temp }).then((res) => {
+          console.log(res);
+          this.$Message.success({
+            content: res.message,
+          });
+        });
+      }
     },
     //转换时间格式
     formateDate(datetime) {
