@@ -14,7 +14,7 @@ export const defaultRoutes = [
         redirect: '/dashboard',
         meta: {
             title: '首页',
-            icon: 'md-speedometer',
+            icon: 'ios-speedometer-outline',
         },
         children: [{
             name: "dashboard",
@@ -43,7 +43,7 @@ export const defaultRoutes = [
         component: Layout,
         meta: {
             title: '前台管理',
-            icon: 'md-home',
+            icon: 'ios-home-outline',
         },
         children: [{
             name: "register",
@@ -72,7 +72,7 @@ export const defaultRoutes = [
         redirect: '/404',
         meta: {
             title: '异常页面',
-            icon: 'md-eye',
+            icon: 'ios-eye-outline',
         },
         children: [{
             name: "authError",
@@ -110,7 +110,7 @@ export const defaultRoutes = [
         redirect: '/setting/profile',
         meta: {
             title: '设置',
-            icon: 'md-settings',
+            icon: 'ios-settings-outline',
         },
         children: [{
             name: "profile",
@@ -137,7 +137,7 @@ export const defaultRoutes = [
         name: 'debug',
         meta: {
             title: 'Debug',
-            icon: 'md-bug'
+            icon: 'ios-bug-outline'
         },
         redirect: '/debug1',
         component: Layout,
@@ -174,7 +174,7 @@ export const roleRoutes = [{
     redirect: '/articleManage/articleList',
     meta: {
         title: '文章管理',
-        icon: 'md-podium',
+        icon: 'ios-podium-outline',
         authKey: ["ARTICLE_LIST", "ADD_ARTICLE", "DELETE_ARTICLE", "SELECT_ARTICLE", "UPDATE_ARTICLE"],
     },
     children: [{
@@ -234,6 +234,73 @@ export const roleRoutes = [{
     ]
 },
 {
+    name: "commentManage",
+    authKey: ["COMMENT_LIST", "ADD_COMMENT", "DELETE_COMMENT", "SELECT_COMMENT", "UPDATE_COMMENT"],
+    path: '/commentManage',
+    component: Layout,
+    redirect: '/commentManage/commentList',
+    meta: {
+        title: '留言管理',
+        icon: 'ios-chatbubbles-outline',
+        authKey: ["COMMENT_LIST", "ADD_COMMENT", "DELETE_TAG", "SELECT_TAG", "UPDATE_TAG"],
+    },
+    children: [{
+        name: "commentList",
+        authKey: "COMMENT_LIST",
+        path: '/commentManage/commentList',
+        component: () => import('@/views/commentManage/list/index'),
+        meta: {
+            title: '留言列表',
+            authKey: "COMMENT_LIST",
+        }
+    },
+    {
+
+        name: "addComment",
+        authKey: "ADD_COMMENT",
+        path: '/commentManage/addComment',
+        component: () => import('@/views/commentManage/add/index'),
+        meta: {
+            title: '添加留言',
+            authKey: "ADD_COMMENT",
+        }
+    },
+    {
+        name: "deleteComment",
+        authKey: "DELETE_COMMENT",
+        path: '/commentManage/deleteComment',
+        component: () => import('@/views/commentManage/delete/index'),
+        meta: {
+            title: '删除留言',
+            authKey: "DELETE_COMMENT",
+        }
+    },
+
+    {
+
+        name: "selectComment",
+        authKey: "SELECT_COMMENT",
+        path: '/commentManage/selectComment',
+        component: () => import('@/views/commentManage/select/index'),
+        meta: {
+            title: '查询留言',
+            authKey: "SELECT_COMMENT",
+        }
+    },
+    {
+
+        name: "updateComment",
+        authKey: "UPDATE_COMMENT",
+        path: '/commentManage/updateComment',
+        component: () => import('@/views/commentManage/update/index'),
+        meta: {
+            title: '修改标签',
+            authKey: "UPDATE_COMMENT",
+        }
+    },
+    ]
+},
+{
     name: "tagManage",
     authKey: ["TAG_LIST", "ADD_TAG", "DELETE_TAG", "SELECT_TAG", "UPDATE_TAG"],
     path: '/tagManage',
@@ -241,7 +308,7 @@ export const roleRoutes = [{
     redirect: '/tagManage/tagList',
     meta: {
         title: '标签管理',
-        icon: 'md-pricetag',
+        icon: 'ios-pricetags-outline',
         authKey: ["TAG_LIST", "ADD_TAG", "DELETE_TAG", "SELECT_TAG", "UPDATE_TAG"],
     },
     children: [{
@@ -301,6 +368,73 @@ export const roleRoutes = [{
     ]
 },
 {
+    name: "linkManage",
+    authKey: ["LINK_LIST", "ADD_LINK", "DELETE_LINK", "SELECT_LINK", "UPDATE_LINK"],
+    path: '/linkManage',
+    component: Layout,
+    redirect: '/linkManage/linkList',
+    meta: {
+        title: '友链管理',
+        icon: 'ios-link-outline',
+        authKey: ["LINK_LIST", "ADD_LINK", "DELETE_LINK", "SELECT_LINK", "UPDATE_LINK"],
+    },
+    children: [{
+        name: "linkList",
+        authKey: "LINK_LIST",
+        path: '/linkManage/linkList',
+        component: () => import('@/views/linkManage/list/index'),
+        meta: {
+            title: '友链列表',
+            authKey: "LINK_LIST",
+        }
+    },
+    {
+
+        name: "addLink",
+        authKey: "ADD_LINK",
+        path: '/linkManage/addLink',
+        component: () => import('@/views/linkManage/add/index'),
+        meta: {
+            title: '添加友链',
+            authKey: "ADD_LINK",
+        }
+    },
+    {
+        name: "deleteLink",
+        authKey: "DELETE_LINK",
+        path: '/linkManage/deleteLink',
+        component: () => import('@/views/linkManage/delete/index'),
+        meta: {
+            title: '删除友链',
+            authKey: "DELETE_LINK",
+        }
+    },
+
+    {
+
+        name: "selectLink",
+        authKey: "SELECT_LINK",
+        path: '/linkManage/selectLink',
+        component: () => import('@/views/linkManage/select/index'),
+        meta: {
+            title: '查询友链',
+            authKey: "SELECT_LINK",
+        }
+    },
+    {
+
+        name: "updateLink",
+        authKey: "UPDATE_LINK",
+        path: '/linkManage/updateLink',
+        component: () => import('@/views/linkManage/update/index'),
+        meta: {
+            title: '修改标签',
+            authKey: "UPDATE_LINK",
+        }
+    },
+    ]
+},
+{
     name: "authManage",
     authKey: [
         "AUTH_LIST", "ADD_AUTH", "DELETE_AUTH", "SELECT_AUTH", "UPDATE_AUTH",
@@ -313,7 +447,7 @@ export const roleRoutes = [{
     redirect: '/authManage/authList',
     meta: {
         title: '权限管理',
-        icon: 'md-lock',
+        icon: 'ios-lock-outline',
         authKey: [
             "AUTH_LIST", "ADD_AUTH", "DELETE_AUTH", "SELECT_AUTH", "UPDATE_AUTH",
             "ROLE_LIST", "ADD_ROLE", "DELETE_ROLE", "SELECT_ROLE", "UPDATE_ROLE",
@@ -362,7 +496,7 @@ export const roleRoutes = [{
     redirect: '/logManage/logList',
     meta: {
         title: '日志管理',
-        icon: 'md-paw',
+        icon: 'ios-paw-outline',
         authKey: ["LOG_LIST", "ADD_AUTH", "DELETE_AUTH", "SELECT_AUTH", "UPDATE_AUTH"],
     },
     children: [

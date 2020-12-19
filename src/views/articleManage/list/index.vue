@@ -17,7 +17,7 @@
 
 <script>
 import { mapState } from "vuex";
-import { articlepage } from "../../../api/article";
+import { articlepage,editArticle } from "../../../api/article";
 export default {
   components: {},
   data() {
@@ -34,7 +34,8 @@ export default {
         {
           title: "id",
           key: "id",
-          width: "60",
+          width: 100,
+          align: "center",
         },
         {
           title: "标题",
@@ -47,7 +48,7 @@ export default {
         },
         {
           title: "封面图",
-          width:"90",
+          width: 100,
           align: "center",
           render: (h, params) => {
             return h("img", {
@@ -61,12 +62,12 @@ export default {
         {
           title: "浏览数",
           key: "click",
-          width: "80",
+          width: 100,
           align: "center",
         },
         {
           title: "点赞数",
-          width: "80",
+          width: 100,
           align: "center",
           render: (h, params) => {
             return h("span", params.row.stars.length);
@@ -139,6 +140,7 @@ export default {
         {
           title: "创建时间",
           align: "center",
+          width: 150,
           render: (h, params) => {
             return h("span", this.formateDate(params.row.createdAt));
           },
@@ -146,13 +148,14 @@ export default {
         {
           title: "更新时间",
           align: "center",
+          width: 150,
           render: (h, params) => {
             return h("span", this.formateDate(params.row.updatedAt));
           },
         },
         {
           title: "操作",
-          width: "130",
+          // width: "130",
           align: "center",
           render: (h, params) => {
             return h("div", [
@@ -197,6 +200,19 @@ export default {
   },
   computed: {},
   methods: {
+    changeStatus(status,row) {
+      console.log(status);
+      console.log(row);
+      console.log("changeStatus");
+    },
+    beforeChangeStatus(row) {
+      //  console.log(row);
+      // console.log("beforeChangeStatus");
+      // let temp =[]
+      // row.tags.forEach(item=>{
+      //   temp.push(item)
+      // })
+    },
     changePage(v) {
       console.log(v);
       this.params.nowPage = v;
