@@ -66,7 +66,7 @@ service.interceptors.response.use(
       return Promise.reject(error.response.data)
     }
     console.log(error)
-    console.log(error.response.data)
+    // console.log(error.response.data)
     return Promise.reject(error)
   }
 )

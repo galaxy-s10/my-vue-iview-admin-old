@@ -224,7 +224,7 @@ export const roleRoutes = [{
 
         name: "updateArticle",
         authKey: "UPDATE_ARTICLE",
-        path: '/articleManage/updateArticle',
+        path: '/articleManage/updateArticle/:id',
         component: () => import('@/views/articleManage/update/index'),
         meta: {
             title: '修改文章',

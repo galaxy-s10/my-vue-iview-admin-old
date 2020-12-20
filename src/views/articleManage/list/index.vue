@@ -6,23 +6,19 @@
       :columns="columns"
       :data="articleList.rows"
     ></Table>
-    <Page
-      :total="articleList.count"
-      show-total
-      show-elevator
-      @on-change="changePage"
-    />
+    <Page :total="articleList.count" show-total show-elevator @on-change="changePage" />
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
-import { articlepage,editArticle } from "../../../api/article";
+import { articlepage, editArticle } from "../../../api/article";
 export default {
   components: {},
   data() {
     return {
       params: {
+        is_admin: 1,
         count: 0,
         pageSize: 10,
         nowPage: 1,
@@ -85,7 +81,7 @@ export default {
               props: {
                 value: params.row.status == 1 ? true : false,
                 size: "large",
-                "before-change": () => this.beforeChangeStatus(params.row),
+                // "before-change": () => this.beforeChangeStatus(params.row),
               },
               on: {
                 "on-change": (status) => this.changeStatus(status, params.row),
@@ -117,10 +113,10 @@ export default {
               props: {
                 value: params.row.is_comment == 1 ? true : false,
                 size: "large",
-                "before-change": () => this.beforeChangeStatus(params.row),
+                // "before-change": () => this.beforeChangeStatus(params.row),
               },
               on: {
-                "on-change": (status) => this.changeStatus(status, params.row),
+                "on-change": (status) => this.changeIsComment(status, params.row),
                 // "on-change": (status) => {
                 //   console.log(params.row);
                 //   console.log(status);
@@ -155,7 +151,8 @@ export default {
         },
         {
           title: "操作",
-          // width: "130",
+          fixed: "right",
+          width: "200",
           align: "center",
           render: (h, params) => {
             return h("div", [
@@ -171,7 +168,11 @@ export default {
                   },
                   on: {
                     click: () => {
-                      this.show(params.row);
+                      // this.show(params.row);
+                      this.$router.push({
+                        name: "updateArticle",
+                        params: { id: params.row.id },
+                      });
                     },
                   },
                 },
@@ -200,10 +201,33 @@ export default {
   },
   computed: {},
   methods: {
-    changeStatus(status,row) {
-      console.log(status);
+    changeStatus(v, row) {
+      console.log(v);
       console.log(row);
       console.log("changeStatus");
+      editArticle({ ...row, status: v ? 1 : 2 })
+        .then((res) => {
+          this.$Message.success({
+            content: res.message,
+          });
+          this.getArticleList(this.params);
+        })
+        .catch((err) => {
+          this.$Message.error({
+            content: err,
+          });
+        });
+    },
+    changeIsComment(v, row) {
+      console.log(v);
+      console.log(row);
+      console.log("changeStatus");
+      editArticle({ ...row, is_comment: v ? 1 : 2 }).then((res) => {
+        this.$Message.success({
+          content: res.message,
+        });
+        this.getArticleList(this.params);
+      });
     },
     beforeChangeStatus(row) {
       //  console.log(row);

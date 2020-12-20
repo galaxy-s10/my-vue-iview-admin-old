@@ -6,40 +6,92 @@
 </template>
 
 <script>
+import utils from "./libs/utils";
+import { mapState, mapMutations } from "vuex";
 export default {
   name: "App",
   components: {},
   data() {
     return {
+      menuList:[],
       roles: ["add", "del"],
       path: "",
     };
   },
   computed: {
+    ...mapState({
+      // title(state) {
+      //   // console.log("titletitle");
+      //   // console.log(state);
+      //   return state.app.title;
+      // },
+      tagList(state) {
+        return state.app.tagOpenPageList;
+      },
+    }),
     checkRole() {
       return (v) => {
         return this.roles.includes(v);
       };
     },
   },
-  methods: {
-    changePath(path) {
-      this.$router.push({name:path})
+  watch: {
+    $route(newVal, oldVal) {
+      console.log("999");
+      console.log(newVal);
+      console.log(oldVal);
+      this.changeMenu(newVal.name);
     },
-    change(e, role) {
-      if (e) {
-        if (!this.roles.includes(role)) {
-          this.roles.push(role);
+  },
+  methods: {
+    ...mapMutations(["addTagOpenPage", "changeActiveTagOpenPage"]),
+    findItem(source, target) {
+      var res = false;
+      function digui(source, target) {
+        let ress = "";
+        try {
+          source.forEach((item) => {
+            if (item.name == target) {
+              ress = item;
+              throw new Error();
+            } else {
+              if (item.children) {
+                digui(item.children, target);
+              }
+            }
+          });
+        } catch (e) {
+          res = ress;
         }
-      } else {
-        const index = this.roles.findIndex((item) => item === role);
-        this.roles.splice(index, 1);
       }
+      digui(source, target);
+      return res;
+    },
+    changeMenu(name) {
+      // 判断当前跳转页面有没有在tagOpenPageList里面
+      // 查询点击跳转的路由信息
+      console.log(name);
+      let target = this.findItem(this.menuList, name);
+      let tag;
+      let bool = utils.exist(this.tagList, name);
+      if (!bool) {
+        console.log("点击判断，没有就插入1");
+        console.log(target);
+        this.addTagOpenPage(target);
+        this.changeActiveTagOpenPage(target.name);
+      } else {
+        this.changeActiveTagOpenPage(target.name);
+      }
+      // this.$router.push({ name: name });
+      // .catch((err) => {
+      //   console.log(err);
+      // });
     },
   },
   created() {},
   mounted() {
     // console.log(this.$router.options.routes);
+    this.menuList = this.$router.options.routes;
   },
 };
 </script>
@@ -59,7 +111,7 @@ export default {
 
 /*定义滚动条轨道 内阴影+圆角*/
 ::-webkit-scrollbar-track {
-  -webkit-box-shadow: rgba(245,247,248,.5);
+  -webkit-box-shadow: rgba(245, 247, 248, 0.5);
   /* -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); */
   /* border-radius: 10px; */
   /* background: skyblue; */

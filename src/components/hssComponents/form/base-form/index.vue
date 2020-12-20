@@ -53,6 +53,20 @@
             v-model="fromCol[item.prop]"
             @on-check-change="handleChoice"
           ></hss-tree>
+          <!-- 日期选择器 -->
+          <DatePicker
+            v-if="item.type == 'Date'"
+            v-model="fromCol[item.prop]"
+            type="datetime"
+            :placeholder="item.placeholder"
+          ></DatePicker>
+          <!-- md富文本 -->
+          <markdown
+            v-if="item.type == 'editor'"
+            :initContent="item.content"
+            v-model="fromCol[item.prop]"
+            :placeholder="item.placeholder"
+          ></markdown>
         </template>
       </FormItem>
     </Form>
@@ -60,11 +74,12 @@
 </template>
 
 <script>
+import markdown from "../../../markdown/index";
 import hssRender from "./render.js";
 import fromRules from "./rules";
 import hssTree from "../../tree/index";
 export default {
-  components: { hssTree, hssRender },
+  components: { hssTree, hssRender, markdown },
   props: {
     fromData: {
       type: Object,
