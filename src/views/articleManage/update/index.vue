@@ -1,26 +1,30 @@
 <template>
   <div>
-    更新文章
     <base-form
+      ref="hssBaseForm"
       v-if="initData.id"
       :fromData="columnForm"
       :initData="initData"
       :init="init"
+      @onSubmit="onSubmit"
     >
     </base-form>
+    <!-- <i-button @click="confirm">修改</i-button> -->
     <!-- <markdown ref="md" v-if="this.form.content != null" /> -->
   </div>
 </template>
 
 <script>
-import markdown from "../../../components/markdown/index";
+// import markdown from "../../../components/markdown/index";
 import hssUpload from "../../../components/upload/index";
 import baseForm from "../../../components/hssComponents/form/base-form/index";
 import { findArticle, editArticle } from "@/api/article";
+import { taglist } from "@/api/tag";
 export default {
-  components: { baseForm, markdown, hssUpload },
+  components: { baseForm, hssUpload },
   data() {
     return {
+      tagList: [],
       form: {
         id: "",
         title: "",
@@ -33,6 +37,7 @@ export default {
       },
       columnForm: {},
       initData: {},
+      // init: false,
       init: true,
       headerImg: [],
       oldImgList: [],
@@ -40,11 +45,26 @@ export default {
     };
   },
   computed: {},
-  methods: {},
-  created() {
+  methods: {
+    onSubmit() {
+      this.$refs.hssBaseForm.submit((v) => {
+        if (v) {
+          console.log(v);
+          // this.$emit("onSubmit", v);
+          // this.popup.is_show = false;
+        } else {
+          // console.log("表单验证失败");
+        }
+      });
+    },
+    confirm() {},
+  },
+  async created() {
     console.log(this.$route);
-
-    findArticle(this.$route.params.id)
+    await taglist().then((res) => {
+      this.tagList = res.rows;
+    });
+    await findArticle(this.$route.params.id)
       .then((res) => {
         this.columnForm = {
           list: [
@@ -52,14 +72,38 @@ export default {
               // name: "id",
               // type: "Input",
               prop: "id",
+              isNumber: true,
               // placeholder: "",
               // display:'none'
             },
+            // {
+            //   name: "标签",
+            //   type: "Check",
+            //   data: [],
+            //   prop: "tags",
+            //   isArray: true,
+            //   // required: true,
+            // },
             {
-              name: "标题",
-              type: "Input",
-              prop: "title",
-              placeholder: "请输入标题",
+              name: "发布状态",
+              type: "Radio",
+              data: [
+                { label: "已发布", value: 1 },
+                { label: "待审核", value: 2 },
+              ],
+              prop: "status",
+              required: true,
+            },
+
+            {
+              name: "评论状态",
+              type: "Select",
+              data: [
+                { label: "开启", value: 1 },
+                { label: "关闭", value: 2 },
+              ],
+              prop: "is_comment",
+              // isString:true,
               required: true,
             },
             {
@@ -74,6 +118,7 @@ export default {
               type: "Input",
               prop: "click",
               placeholder: "请输入角色浏览量",
+              isNumber: true,
               required: true,
             },
             {
@@ -89,6 +134,7 @@ export default {
               type: "Date",
               prop: "createdAt",
               placeholder: "请选择发布时间",
+              isDate: true,
               required: true,
             },
             {
@@ -96,18 +142,42 @@ export default {
               type: "Date",
               prop: "updatedAt",
               placeholder: "请选择最后更新时间",
+              isDate: true,
               required: true,
             },
           ],
         };
+        let tagTemp1 = [];
+        // res.list.rows[0].forEach((item, index) => {
+        // if (item.name == "tags") {
+        res.list.rows[0].tags.forEach((item) => {
+          tagTemp1.push(item.id);
+        });
+        let deepTags = JSON.parse(JSON.stringify(res.list.rows[0].tags));
+        // res.list.rows[0].tags = tagTemp1;
+        // }
+        // });
         this.initData = res.list.rows[0];
-        console.log(this.initData);
+        // console.log(this.initData);
         this.form.id = res.list.rows[0].id;
         this.form.title = res.list.rows[0].title;
         this.form.type = res.list.rows[0].type;
         this.form.tags = res.list.rows[0].tags;
         this.form.content = res.list.rows[0].content;
-        this.columnForm.list[4].content = res.list.rows[0].content;
+        this.columnForm.list[this.columnForm.list.length - 3].content =
+          res.list.rows[0].content;
+        let tagTemp = [];
+        this.tagList.forEach((item) => {
+          console.log(item);
+          let temp = {};
+          temp.label = item.name;
+          temp.value = item.id;
+          tagTemp.push(temp);
+          // tagTemp.push(item.id);
+        });
+        // console.log(tagTemp);
+        // this.columnForm.list[1].data = tagTemp;
+
         // 设置mardown编辑器内容
         // this.$refs["md"].content = res.list.rows[0].content;
         // 保存文章所有图片

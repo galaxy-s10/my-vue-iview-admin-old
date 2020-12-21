@@ -40,7 +40,10 @@ export default {
       get() {
         return this.val;
       },
-      set() {},
+      set() {
+        console.log(this.val1);
+        console.log('set');
+      },
     },
   },
   methods: {

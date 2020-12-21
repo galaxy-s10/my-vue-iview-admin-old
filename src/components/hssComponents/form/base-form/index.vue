@@ -9,12 +9,17 @@
       >
         <template>
           <div v-if="item.render">
-            <hss-render :render="item.render" :row="item" :index="index"></hss-render>
+            <hss-render
+              :render="item.render"
+              :row="item"
+              :index="index"
+            ></hss-render>
           </div>
           <Input
             v-if="item.type == 'Input'"
             :style="{ display: item.display }"
             clearable
+            :number="item.isNumber"
             :disabled="item.disabled"
             :type="item.prop == 'password' ? 'password' : 'text'"
             v-model="fromCol[item.prop]"
@@ -40,10 +45,16 @@
             }}</Radio>
           </RadioGroup>
           <!-- 多选框 -->
-          <CheckboxGroup v-if="item.type == 'Check'" v-model="fromCol[item.prop]">
-            <Checkbox :label="el.value" v-for="el in item.data" :key="el.value">{{
-              el.label
-            }}</Checkbox>
+          <CheckboxGroup
+            v-if="item.type == 'Check'"
+            v-model="fromCol[item.prop]"
+          >
+            <Checkbox
+              :label="el.value"
+              v-for="el in item.data"
+              :key="el.value"
+              >{{ el.label }}</Checkbox
+            >
           </CheckboxGroup>
           <!-- 树结构 -->
           <hss-tree
@@ -61,25 +72,43 @@
             :placeholder="item.placeholder"
           ></DatePicker>
           <!-- md富文本 -->
-          <markdown
+          <hss-markdown
+            v-if="item.type == 'editor'"
+            :initContent="fromCol[item.prop]"
+            v-model="fromCol[item.prop]"
+            :placeholder="item.placeholder"
+            @changeHssMd="changeHssMd"
+          ></hss-markdown>
+          <!-- <hss-markdown
             v-if="item.type == 'editor'"
             :initContent="item.content"
             v-model="fromCol[item.prop]"
             :placeholder="item.placeholder"
-          ></markdown>
+            @changeHssMd="changeHssMd"
+          ></hss-markdown> -->
+          <!-- <hss-markdown
+            v-if="item.type == 'editor'"
+            :initContent="yyy || item.content"
+            :placeholder="item.placeholder"
+            @change111="changeMd"
+          ></hss-markdown> -->
         </template>
+      </FormItem>
+      <FormItem>
+        <Button type="primary" @click="onSubmit()">Submit</Button>
+        <Button @click="handleReset()" style="margin-left: 8px">Reset</Button>
       </FormItem>
     </Form>
   </div>
 </template>
 
 <script>
-import markdown from "../../../markdown/index";
+import hssMarkdown from "../../../hssMarkdown/index";
 import hssRender from "./render.js";
 import fromRules from "./rules";
 import hssTree from "../../tree/index";
 export default {
-  components: { hssTree, hssRender, markdown },
+  components: { hssTree, hssRender, hssMarkdown },
   props: {
     fromData: {
       type: Object,
@@ -97,6 +126,7 @@ export default {
   },
   data() {
     return {
+      yyy: "",
       rules: {}, //验证器
       fromCol: {}, //所有输入字段
       fromDataNew: {},
@@ -106,6 +136,35 @@ export default {
   mounted() {},
   computed: {},
   methods: {
+    changeHssMd(v) {
+      console.log("changeHssMd");
+      // console.log(v);
+    },
+    handleReset() {
+      let temp = [];
+      this.fromDataNew.list.forEach((item) => {
+        if (!item.resetAble) {
+          temp.push(item);
+        }
+      });
+      temp.forEach((item) => {
+        this.fromCol[item.prop] = "";
+      });
+    },
+    // changeMd(v){
+    // console.log(v);
+    // this.yyy = v
+    // },
+    onSubmit() {
+      this.$emit("onSubmit");
+      // this.submit((v) => {
+      //   if (v) {
+      //     // console.log(v);
+      //   } else {
+      //     // console.log("表单验证失败");
+      //   }
+      // });
+    },
     // 提交表单
     submit(cb) {
       let that = this;
@@ -121,17 +180,20 @@ export default {
           console.log("表单验证失败");
           let that = this;
           function digui(j) {
-            that.$refs["hssForm"].validateField(that.fromData.list[j].prop, (valid) => {
-              if (valid) {
-                that.$Message.error(valid);
-                console.log("cb");
-                // console.log(cb)
-                cb(false);
-              } else {
-                console.log(that.fromData.list[j].prop);
-                digui(j + 1);
+            that.$refs["hssForm"].validateField(
+              that.fromData.list[j].prop,
+              (valid) => {
+                if (valid) {
+                  that.$Message.error(valid);
+                  console.log("cb");
+                  // console.log(cb)
+                  cb(false);
+                } else {
+                  console.log(that.fromData.list[j].prop);
+                  digui(j + 1);
+                }
               }
-            });
+            );
           }
 
           digui(0);
@@ -145,9 +207,9 @@ export default {
         this.rules[item.prop] = [];
         // 是否必须
         if (item.required) {
-          console.log(item.type);
-          console.log(item.isArray);
-          console.log(item.isObject);
+          // console.log(item.type);
+          // console.log(item.isArray);
+          // console.log(item.isObject);
           if (
             item.type === "Select" ||
             item.type === "Radio" ||
@@ -162,35 +224,78 @@ export default {
                 message: item.name + "不能为空",
                 trigger: "change",
                 // trigger: "blur",
-                type: item.isArray ? "array" : item.isObject ? "object" : "number",
+                type: item.isArray
+                  ? "array"
+                  : item.isObject
+                  ? "object"
+                  : item.isString
+                  ? "string"
+                  : "number",
               },
             ];
-          } else {
-            // 其他组件(如input)，验证类型为string
+          } else if (item.type == "editor") {
             this.rules[item.prop] = [
               {
                 required: true,
                 message: item.name + "不能为空",
                 trigger: "change",
                 // trigger: "blur",
+                type: "string",
+                // type: "number",
+                min:10,
               },
             ];
+          } else {
+            // 其他组件(如input,picker)，验证类型为strgin或date或number
+            this.rules[item.prop] = [
+              {
+                required: true,
+                message: item.name + "不能为空",
+                // trigger: "change",
+                // trigger: "blur",
+              },
+              {
+                // trigger: "change",
+                // trigger: "blur",
+                message:
+                  item.name +
+                  `必须是${
+                    item.isNumber ? "数字" : item.isDate ? "日期" : "字符串"
+                  }类型`,
+                type: item.isNumber
+                  ? "number"
+                  : item.isDate
+                  ? "date"
+                  : "string",
+              },
+            ];
+            // if (item.isNumber) {
+            //   this.rules[item.prop] = [
+            //     {
+            //       // required: true,
+            //       message: item.name + "数字",
+            //       trigger: "change",
+            //       // trigger: "blur",
+            //       type: "number",
+            //     },
+            //   ];
+            // }
           }
         }
         // 验证规则
-        if (item.rule) {
-          if (typeof item.rule === "string") {
-            for (let key in fromRules) {
-              if (item.rule == key) {
-                this.rules[item.prop] = this.rules[item.prop].concat(
-                  fromRules[item.rule]
-                );
-              }
-            }
-          } else if (item.rule instanceof Object) {
-            this.rules[item.prop].push(item.rule);
-          }
-        }
+        // if (item.rule) {
+        //   if (typeof item.rule === "string") {
+        //     for (let key in fromRules) {
+        //       if (item.rule == key) {
+        //         this.rules[item.prop] = this.rules[item.prop].concat(
+        //           fromRules[item.rule]
+        //         );
+        //       }
+        //     }
+        //   } else if (item.rule instanceof Object) {
+        //     this.rules[item.prop].push(item.rule);
+        //   }
+        // }
       }
     },
     handleVal(data) {
@@ -217,10 +322,14 @@ export default {
     },
     // 处理表单数据集
     handleFromCol() {
+      // console.log(this.fromCol);
+      console.log("处理表单数据集");
       for (let i in this.fromData.list) {
         let item = this.fromData.list[i];
+        // console.log(item);
         this.$set(this.fromCol, item.prop, item.val);
       }
+      // console.log(this.fromCol);
     },
   },
   watch: {
@@ -228,7 +337,7 @@ export default {
     "fromData.list": {
       handler() {
         this.fromCol = {};
-        console.log(this.initData);
+        // console.log(this.initData);
         this.handleVal(this.initData);
         this.handleFromCol();
         this.handleRule();

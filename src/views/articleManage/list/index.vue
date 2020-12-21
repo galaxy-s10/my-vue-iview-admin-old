@@ -60,6 +60,7 @@ export default {
           key: "click",
           width: 100,
           align: "center",
+          
         },
         {
           title: "点赞数",

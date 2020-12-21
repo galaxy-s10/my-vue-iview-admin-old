@@ -1,6 +1,30 @@
 <template>
   <div>
-    <mavon-editor ref="md" v-model="initContent" @imgAdd="imgAdd" @imgDel="imgDel"></mavon-editor>
+    <!-- <mavon-editor
+      style="height: 600px; z-index: 100 !important"
+      ref="md"
+      :value="$attrs.contentp"
+      @change="change1"
+      @imgAdd="imgAdd"
+      @imgDel="imgDel"
+      v-on="$listeners"
+    ></mavon-editor> -->
+    <!-- <mavon-editor
+      style="height: 600px; z-index: 100 !important"
+      ref="md"
+      v-model="$attrs.contentp"
+      @change="change1"
+      @imgAdd="imgAdd"
+      @imgDel="imgDel"
+    ></mavon-editor> -->
+    <mavon-editor
+      style="height: 600px; z-index: 100 !important"
+      ref="md"
+      v-model="content"
+      @change="change1"
+      @imgAdd="imgAdd"
+      @imgDel="imgDel"
+    ></mavon-editor>
   </div>
 </template>
 
@@ -13,24 +37,74 @@ import * as qiniu from "qiniu-js";
 
 import "mavon-editor/dist/css/index.css";
 export default {
+  // inheritAttrs:false,
   components: { mavonEditor },
-  props:{
-    initContent:""
+  props: {
+    initContent: "",
+  },
+  model: {
+    prop: "contentp",
+    event: "changeHssMd",
   },
   data() {
     return {
+      aaa: "aaaa",
       qiniuToken: null,
-      content: "",
+      content: this.initContent,
     };
   },
+  watch: {
+    '$attrs.contentp'(){
+      console.log('attrsattrsattrsattrs');
+      // console.log(this.$attrs.contentp);
+      this.content = this.$attrs.contentp
+    },
+    content(newVal, oldVal) {
+      console.log("newVal================");
+      this.contentp = newVal;
+      this.$emit("changeHssMd", newVal);
+      this.content = newVal;
+    },
+    contentp(newVal, oldVal) {
+      console.log("contentp================");
+      this.content = newVal;
+    },
+    initContent(newVal, oldVal) {
+      console.log("initContent================");
+      this.content = newVal;
+    },
+  },
   computed: {
+    initContent1: {
+      get() {
+        console.log("gett");
+        // console.log(this.contentp);
+        return this.contentp;
+      },
+      set() {
+        console.log("sset");
+        console.log(this.contentp);
+        // console.log(this.initContent);
+        return this.contentp;
+      },
+    },
     ...mapState({
       role: (state) => state.user.role,
     }),
   },
+
   created() {},
   mounted() {},
   methods: {
+    change1(v) {
+      // console.log(v);
+      // console.log('change1change1change1');
+      this.content = v;
+      // this.$emit("changeHssMd", v);
+    },
+    // changeHssMd() {
+    //   console.log("changeHssMdchangeHssMdchangeHssMd");
+    // },
     // 获取七牛云上传凭证
     async getQiniuToken() {
       const res = await getQiniuToken();
