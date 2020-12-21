@@ -139,13 +139,13 @@ export const defaultRoutes = [
             title: 'Debug',
             icon: 'ios-bug-outline'
         },
-        redirect: '/debug1',
+        // redirect: '/debugs',
         component: Layout,
         children: [
             {
-                name: "debug1",
-                path: '/debug1',
-                component: () => import('@/views/test/index'),
+                name: "debugs",
+                path: '/debugs',
+                component: () => import('@/views/debug/index'),
                 meta: {
                     title: '调试页面1',
                     icon: 'ios-bug-outline',

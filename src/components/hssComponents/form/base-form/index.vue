@@ -9,11 +9,7 @@
       >
         <template>
           <div v-if="item.render">
-            <hss-render
-              :render="item.render"
-              :row="item"
-              :index="index"
-            ></hss-render>
+            <hss-render :render="item.render" :row="item" :index="index"></hss-render>
           </div>
           <Input
             v-if="item.type == 'Input'"
@@ -45,16 +41,10 @@
             }}</Radio>
           </RadioGroup>
           <!-- 多选框 -->
-          <CheckboxGroup
-            v-if="item.type == 'Check'"
-            v-model="fromCol[item.prop]"
-          >
-            <Checkbox
-              :label="el.value"
-              v-for="el in item.data"
-              :key="el.value"
-              >{{ el.label }}</Checkbox
-            >
+          <CheckboxGroup v-if="item.type == 'Check'" v-model="fromCol[item.prop]">
+            <Checkbox :label="el.value" v-for="el in item.data" :key="el.value">{{
+              el.label
+            }}</Checkbox>
           </CheckboxGroup>
           <!-- 树结构 -->
           <hss-tree
@@ -94,9 +84,9 @@
           ></hss-markdown> -->
         </template>
       </FormItem>
-      <FormItem>
-        <Button type="primary" @click="onSubmit()">Submit</Button>
-        <Button @click="handleReset()" style="margin-left: 8px">Reset</Button>
+      <FormItem v-if="fromData.submitBtn">
+        <Button type="primary" @click="onSubmit()">确定</Button>
+        <Button @click="handleReset()" style="margin-left: 8px">重置</Button>
       </FormItem>
     </Form>
   </div>
@@ -180,20 +170,17 @@ export default {
           console.log("表单验证失败");
           let that = this;
           function digui(j) {
-            that.$refs["hssForm"].validateField(
-              that.fromData.list[j].prop,
-              (valid) => {
-                if (valid) {
-                  that.$Message.error(valid);
-                  console.log("cb");
-                  // console.log(cb)
-                  cb(false);
-                } else {
-                  console.log(that.fromData.list[j].prop);
-                  digui(j + 1);
-                }
+            that.$refs["hssForm"].validateField(that.fromData.list[j].prop, (valid) => {
+              if (valid) {
+                that.$Message.error(valid);
+                console.log("cb");
+                // console.log(cb)
+                cb(false);
+              } else {
+                console.log(that.fromData.list[j].prop);
+                digui(j + 1);
               }
-            );
+            });
           }
 
           digui(0);
@@ -233,19 +220,18 @@ export default {
                   : "number",
               },
             ];
-          } else if (item.type == "editor") {
-            this.rules[item.prop] = [
-              {
-                required: true,
-                message: item.name + "不能为空",
-                trigger: "change",
-                // trigger: "blur",
-                type: "string",
-                // type: "number",
-                min:10,
-              },
-            ];
-          } else {
+          }
+          //  else if (item.type == "editor") {
+          //   this.rules[item.prop] = [
+          //     {
+          //       required: true,
+          //       message: item.name + "不能为空",
+          //       type: "string",
+          //       // type: "number",
+          //     },
+          //   ];
+          // }
+          else {
             // 其他组件(如input,picker)，验证类型为strgin或date或number
             this.rules[item.prop] = [
               {
@@ -259,14 +245,8 @@ export default {
                 // trigger: "blur",
                 message:
                   item.name +
-                  `必须是${
-                    item.isNumber ? "数字" : item.isDate ? "日期" : "字符串"
-                  }类型`,
-                type: item.isNumber
-                  ? "number"
-                  : item.isDate
-                  ? "date"
-                  : "string",
+                  `必须是${item.isNumber ? "数字" : item.isDate ? "日期" : "字符串"}类型`,
+                type: item.isNumber ? "number" : item.isDate ? "date" : "string",
               },
             ];
             // if (item.isNumber) {

@@ -6,7 +6,7 @@
       :columns="columns"
       :data="articleList.rows"
     ></Table>
-    <Page :total="articleList.count" show-total show-elevator @on-change="changePage" />
+    <Page style="text-align:right" :total="articleList.count" show-total show-elevator @on-change="changePage" />
   </div>
 </template>
 
@@ -18,7 +18,7 @@ export default {
   data() {
     return {
       params: {
-        is_admin: 1,
+        is_admin: 1,  //是否后台，是的话显示所有文章，包括未审核
         count: 0,
         pageSize: 10,
         nowPage: 1,
@@ -47,12 +47,16 @@ export default {
           width: 100,
           align: "center",
           render: (h, params) => {
-            return h("img", {
-              attrs: {
-                src: params.row.img,
-                style: "width:50px;height:50px",
-              },
-            });
+            if (params.row.img) {
+              return h("img", {
+                attrs: {
+                  src: params.row.img,
+                  style: "width:50px;height:50px",
+                },
+              });
+            } else {
+              return h("span", "无");
+            }
           },
         },
         {
@@ -60,7 +64,6 @@ export default {
           key: "click",
           width: 100,
           align: "center",
-          
         },
         {
           title: "点赞数",
@@ -206,7 +209,11 @@ export default {
       console.log(v);
       console.log(row);
       console.log("changeStatus");
-      editArticle({ ...row, status: v ? 1 : 2 })
+      let tagTemp = [];
+      row.tags.forEach((item) => {
+        tagTemp.push(item.id);
+      });
+      editArticle({ ...row, status: v ? 1 : 2, tags: tagTemp })
         .then((res) => {
           this.$Message.success({
             content: res.message,
