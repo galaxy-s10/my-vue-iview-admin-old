@@ -20,6 +20,15 @@ export function tagPageList(params) {
     })
 }
 
+//修改标签
+export function editTag(data) {
+    return request({
+        url: '/api/tag/edit',
+        method: 'put',
+        data
+    })
+}
+
 //添加标签
 export function addtag(data) {
     return request({

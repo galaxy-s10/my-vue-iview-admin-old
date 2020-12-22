@@ -4,8 +4,19 @@
       <!-- <template>
         <a @click="onClick(item)" :style="item.style">{{ item.name[0] }}</a>
       </template> -->
-      <template>
+      <template v-if="item.type == 'CUSTOM'">
         <a @click="onClick(item)" :style="item.style">{{ item.name }}</a>
+      </template>
+      <template v-if="item.type == 'TIP'">
+        <Poptip
+          transfer
+          confirm
+          title="您确认删除这条内容吗？"
+          @on-ok="() => ok(item)"
+          @on-cancel="() => cancel(item)"
+        >
+          <a :style="item.style">{{ item.name }}</a>
+        </Poptip>
       </template>
       <Divider type="vertical" v-if="operationList.length != i + 1" />
     </template>
@@ -48,10 +59,25 @@ export default {
     },
   },
   methods: {
+    ok(v) {
+      this.onClick(v);
+    },
+    cancel(v) {
+      console.log(v);
+      this.$Message.info({
+        content: `你取消了${v.name}操作`,
+      });
+    },
     onClick(item) {
       let that = this;
       switch (item.type) {
         case "CUSTOM":
+          item.custom(this.row);
+          break;
+        case "TIP":
+          item.custom(this.row);
+          break;
+        case "ROUTER":
           item.custom(this.row);
           break;
       }
@@ -62,5 +88,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

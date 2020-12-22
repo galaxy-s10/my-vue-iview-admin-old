@@ -1,5 +1,6 @@
 <template>
   <div>
+    <i-button @click="addTag">新增标签</i-button>
     <div v-if="tableData.list">
       <hss-table
         :tableData="tableData"
@@ -12,25 +13,103 @@
         </template>
       </hss-table>
     </div>
+    <component
+      v-bind:is="comments"
+      :request="request"
+      :fromData="columnForm"
+      :initData="tagInfo"
+      :isInit="isInit"
+      @on-cancel="onCancel"
+      @on-ok="onOk"
+      @onSubmit="onSubmit"
+    ></component>
     <!-- <hss-table v-if="tableData.list.length>0" :tableData="tableData" :columns="columns" :params="params"></hss-table> -->
   </div>
 </template>
 
 <script>
-import { taglist, tagPageList } from "../../../api/tag";
+import { format } from "../../../../../webchat/src/utils/format";
+import { taglist, tagPageList, editTag, deltag, addtag } from "../../../api/tag";
+import hssPopupForm from "../../../components/hssComponents/form/popup-form/index";
 import hssTable from "../../../components/hssComponents/table";
 import hssOperation from "../../../components/hssComponents/table/operation";
+import { mapState } from "vuex";
 export default {
-  components: { hssTable, hssOperation },
+  components: { hssTable, hssOperation, hssPopupForm },
   data() {
     return {
+      action: "", //1:编辑，2:新增
+      columnForm: {},
+      tagInfo: {},
+      comments: "",
+      isInit: false,
+      request: {},
       //表格操作列
       operationData: [
         {
           name: "编辑",
           type: "CUSTOM", //CUSTOM（自定义）、ROUTER（路由方式）、DELETE（删除按钮）、STATUS（双状态切换）
-          custom: (row) => {
+          customStyle: (row) => {
+            // let bool = false;
+            // if (this.auth.includes("UPDATE_TAG")) {
+            //   console.log("yes");
+            //   bool = true;
+            // }
+            // console.log(this.auth);
+            // return {
+            //   "pointer-events": bool ? "none" : "",
+            //   color: "rgb(170, 170, 170)",
+            // };
+          },
+          custom: async (row) => {
             console.log(row);
+            if (!this.auth.includes("UPDATE_TAG")) {
+              this.$Message.error({
+                content: "权限不足！",
+              });
+              return;
+            }
+            this.action = 1;
+            this.tagInfo = { ...row, createdAt: format(row.createdAt) };
+            this.columnForm = {
+              list: [
+                {
+                  // name: "id",
+                  // type: "Input",
+                  prop: "id",
+                  // placeholder: "",
+                  // display:'none'
+                },
+                {
+                  type: "Input",
+                  name: "名称",
+                  prop: "name",
+                  placeholder: "请输入标签名",
+                  required: true,
+                },
+                {
+                  name: "颜色",
+                  type: "Input",
+                  prop: "color",
+                  placeholder: "请输入标签颜色",
+                  required: true,
+                },
+                {
+                  name: "创建时间",
+                  type: "Date",
+                  prop: "createdAt",
+                  isDate: true,
+                  placeholder: "请选择创建时间",
+                  required: true,
+                },
+              ],
+            };
+            this.request = {
+              title: "编辑标签",
+              size: "centre",
+            };
+            this.isInit = true;
+            this.comments = "hssPopupForm";
           },
           // 是否显示
           isShow() {
@@ -39,7 +118,42 @@ export default {
         },
         {
           name: "删除",
-          type: "DELETE",
+          type: "TIP",
+          customStyle: (row) => {
+            return {
+              color: "red",
+            };
+          },
+          custom: (row) => {
+            console.log(row);
+            if (!this.auth.includes("DELETE_TAG")) {
+              this.$Message.error({
+                content: "权限不足！",
+              });
+              return;
+            }
+            if (row.articles.length > 0) {
+              this.$Modal.confirm({
+                title: "提示",
+                content: `${row.name}标签下有${row.articles.length}篇文章，确定删除吗?`,
+                onOk: () => {
+                  deltag(row.id).then((res) => {
+                    this.$Message.success({
+                      content: res.message,
+                    });
+                    this.getTagPageList(this.params);
+                  });
+                },
+              });
+            } else {
+              deltag(row.id).then((res) => {
+                this.$Message.success({
+                  content: res.message,
+                });
+                this.getTagPageList(this.params);
+              });
+            }
+          },
           isShow() {
             return 1;
           },
@@ -58,6 +172,7 @@ export default {
         {
           title: "id",
           key: "id",
+          width: "100",
           align: "center",
         },
         {
@@ -85,9 +200,9 @@ export default {
                 style: {
                   display: "inline-block",
                   background: params.row.color,
-                  padding:'5px 10px',
-                  borderRadius:'5px',
-                  color:'white'
+                  padding: "5px 10px",
+                  borderRadius: "5px",
+                  color: "white",
                 },
               },
               params.row.name
@@ -112,12 +227,14 @@ export default {
           title: "操作",
           align: "center",
           slot: "operation",
-          width: 400,
+          // width: 400,
         },
       ],
     };
   },
-  computed: {},
+  computed: {
+    ...mapState("user", ["auth"]),
+  },
   created() {
     // this.getTagList();
   },
@@ -125,7 +242,80 @@ export default {
     this.getTagPageList();
   },
   methods: {
+    addTag() {
+      this.action = 2;
+      this.columnForm = {
+        list: [
+          {
+            // name: "id",
+            // type: "Input",
+            prop: "id",
+            // placeholder: "",
+            // display:'none'
+          },
+          {
+            type: "Input",
+            name: "名称",
+            prop: "name",
+            placeholder: "请输入标签名",
+            required: true,
+          },
+          {
+            name: "颜色",
+            type: "Input",
+            prop: "color",
+            placeholder: "请输入标签颜色",
+            required: true,
+          },
+          // {
+          //   name: "创建时间",
+          //   type: "Date",
+          //   prop: "createdAt",
+          //   isDate: true,
+          //   placeholder: "请选择创建时间",
+          //   required: true,
+          // },
+        ],
+      };
+      this.request = {
+        title: "新增标签",
+        size: "centre",
+      };
+      // this.isInit = true;
+      this.comments = "hssPopupForm";
+    },
+    onCancel() {
+      // this.showRole = false
+      console.log("onCancel");
+      this.roleInfo = {};
+      this.comments = "";
+    },
+    onOk() {
+      this.comments = "";
+    },
+    async onSubmit(v) {
+      console.log(v);
+      if (this.action == 1) {
+        let temp = [];
+        await editTag(v).then((res) => {
+          console.log(res);
+          this.$Message.success({
+            content: res.message,
+          });
+          this.getTagPageList(this.params);
+        });
+      } else {
+        await addtag(v).then((res) => {
+          console.log(res);
+          this.$Message.success({
+            content: res.message,
+          });
+          this.getTagPageList(this.params);
+        });
+      }
+    },
     changePage(v) {
+      console.log(v)
       this.getTagPageList(v);
     },
     //转换时间格式
