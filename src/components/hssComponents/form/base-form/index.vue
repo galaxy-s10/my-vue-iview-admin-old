@@ -11,6 +11,7 @@
           <div v-if="item.render">
             <hss-render :render="item.render" :row="item" :index="index"></hss-render>
           </div>
+          <!-- 输入框 -->
           <Input
             v-if="item.type == 'Input'"
             :style="{ display: item.display }"
