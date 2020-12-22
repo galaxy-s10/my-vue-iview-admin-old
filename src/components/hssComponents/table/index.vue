@@ -1,11 +1,21 @@
 <template>
   <div>
-    <Table
+    <!-- <Table
       border
       :loading="tableData.list && tableData.list.length == 0"
       :columns="columns"
       :data="tableData.list"
-    ></Table>
+    ></Table> -->
+    <Table border :columns="columns" :data="tableData.list">
+      <template
+        v-for="(col, colIndex) in columns"
+        v-if="col.slot"
+        slot-scope="{ row, column, index }"
+        :slot="col.slot"
+      >
+        <table-slot :row="row" :column="column" :index="index"></table-slot>
+      </template>
+    </Table>
     <Page
       style="text-align: right"
       :total="tableData.count"
@@ -17,8 +27,14 @@
 </template>
 
 <script>
+import tableSlot from "./render.js";
 export default {
-  components: {},
+  components: { tableSlot },
+  provide() {
+    return {
+      demoSlot: this,
+    };
+  },
   props: {
     columns: {
       type: Array,

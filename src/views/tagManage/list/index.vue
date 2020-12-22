@@ -6,7 +6,11 @@
         :columns="columns"
         :params="params"
         @changePage="changePage"
-      ></hss-table>
+      >
+        <template slot-scope="{ row }" slot="operation">
+          <hss-operation :row="row" :operation="operationData"></hss-operation>
+        </template>
+      </hss-table>
     </div>
     <!-- <hss-table v-if="tableData.list.length>0" :tableData="tableData" :columns="columns" :params="params"></hss-table> -->
   </div>
@@ -15,10 +19,32 @@
 <script>
 import { taglist, tagPageList } from "../../../api/tag";
 import hssTable from "../../../components/hssComponents/table";
+import hssOperation from "../../../components/hssComponents/table/operation";
 export default {
-  components: { hssTable },
+  components: { hssTable, hssOperation },
   data() {
     return {
+      //表格操作列
+      operationData: [
+        {
+          name: "编辑",
+          type: "CUSTOM", //CUSTOM（自定义）、ROUTER（路由方式）、DELETE（删除按钮）、STATUS（双状态切换）
+          custom: (row) => {
+            console.log(row);
+          },
+          // 是否显示
+          isShow() {
+            return 1;
+          },
+        },
+        {
+          name: "删除",
+          type: "DELETE",
+          isShow() {
+            return 1;
+          },
+        },
+      ],
       tableData: {
         list: "",
         count: "",
@@ -47,6 +73,26 @@ export default {
           title: "颜色",
           align: "center",
           key: "color",
+        },
+        {
+          title: "预览",
+          align: "center",
+          render: (h, params) => {
+            console.log(params);
+            return h(
+              "div",
+              {
+                style: {
+                  display: "inline-block",
+                  background: params.row.color,
+                  padding:'5px 10px',
+                  borderRadius:'5px',
+                  color:'white'
+                },
+              },
+              params.row.name
+            );
+          },
         },
         {
           title: "创建时间",
