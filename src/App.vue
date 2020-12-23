@@ -13,7 +13,7 @@ export default {
   components: {},
   data() {
     return {
-      menuList:[],
+      menuList: [],
       roles: ["add", "del"],
       path: "",
     };
@@ -40,11 +40,12 @@ export default {
       console.log("999");
       console.log(newVal);
       console.log(oldVal);
+      console.log(this.$route)
       this.changeMenu(newVal.name);
     },
   },
   methods: {
-    ...mapMutations(["addTagOpenPage", "changeActiveTagOpenPage"]),
+    ...mapMutations(["addTagOpenPage", "editTagOpenPage", "changeActiveTagOpenPage"]),
     findItem(source, target) {
       var res = false;
       function digui(source, target) {
@@ -71,19 +72,23 @@ export default {
       // 判断当前跳转页面有没有在tagOpenPageList里面
       // 查询点击跳转的路由信息
       console.log(name);
-      console.log(this.$route)
+      console.log(this.$route);
       let target = this.findItem(this.menuList, name);
       let tag;
       let bool = utils.exist(this.tagList, name);
       if (!bool) {
         console.log("点击判断，没有就插入1");
         console.log(target);
-        if(this.$route.query){
-          console.log(target)
+        if (this.$route.params) {
+          console.log(target);
         }
-        this.addTagOpenPage({...target,query:this.$route.query});
+        this.addTagOpenPage({ ...target, params: this.$route.params });
         this.changeActiveTagOpenPage(target.name);
       } else {
+        if (this.$route.params) {
+          console.log('edit')
+          this.editTagOpenPage({ ...target, params: this.$route.params   });
+        }
         this.changeActiveTagOpenPage(target.name);
       }
       // this.$router.push({ name: name });

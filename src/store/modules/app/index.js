@@ -34,7 +34,22 @@ const app = {
                 }
 
             })
-        }
+        },
+        editTagOpenPage(state, val) {
+            // 删除打开的页面tag，并更新当前页面tag
+            state.tagOpenPageList.forEach((item, index) => {
+                if (item.name == val.name) {
+                    console.log('object');
+                    console.log(state.tagOpenPageList)
+                    // state.tagOpenPageList.splice(index, 1)
+                    state.tagOpenPageList[index] = val
+                    console.log(state.tagOpenPageList)
+                    // index == state.tagOpenPageList.length ? state.tagOpenPageList.length - 1 : index
+                    // state.activeTagOpenPage = state.tagOpenPageList[index].name
+                }
+
+            })
+        },
     },
     actions: {
 

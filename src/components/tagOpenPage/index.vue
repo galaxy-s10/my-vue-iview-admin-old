@@ -187,7 +187,7 @@ export default {
       console.log("改变");
       console.log(v);
       if (this.$route.name != v) {
-        this.$router.push({ name: v.name, query: v.query });
+        this.$router.push({ name: v.name, params: v.params });
         this.changeActiveTagOpenPage(v);
       }
     },
@@ -219,21 +219,21 @@ export default {
   },
 
   created() {
-    this.menuList = this.$router.options.routes;
-    this.currentPage = this.$route.path;
-    // console.log(this);
+    // this.menuList = this.$router.options.routes;
+    // this.currentPage = this.$route.path;
+    // console.log(this.$route);
     // console.log(this.currentPage);
     // console.log(this.tagOpenPageList);
-    let target = this.findItem(this.menuList, this.currentPage);
-    console.log(target);
-    let bool = utils.exist(this.tagOpenPageList, target.name);
-    console.log(this.tagOpenPageList);
-    console.log(bool);
-    if (!bool) {
-      // this["addTagOpenPage"](target);
-      this.addTagOpenPage(target);
-      this.changeActiveTagOpenPage(target.name);
-    }
+    // let target = this.findItem(this.menuList, this.currentPage);
+    // console.log(target);
+    // let bool = utils.exist(this.tagOpenPageList, target.name);
+    // console.log(this.tagOpenPageList);
+    // console.log(bool);
+    // if (!bool) {
+    //   // this["addTagOpenPage"](target);
+    //   this.addTagOpenPage(target);
+    //   this.changeActiveTagOpenPage(target.name);
+    // }
   },
   mounted() {
     // if (this.isCollapsed) {
