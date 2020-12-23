@@ -155,11 +155,12 @@ export const defaultRoutes = [
     },
     {
         path: '/login',
-        // name: 'adminlogin',
-        // meta: {
-        //     title: '后台登录',
-        //     icon: 'md-lock'
-        // },
+        name: 'adminlogin',
+        hidden:true,
+        meta: {
+            title: '后台登录',
+            icon: 'md-lock'
+        },
         component: () => import('@/views/login/index'),
     },
 
@@ -200,6 +201,7 @@ export const roleRoutes = [{
     },
     {
         name: "deleteArticle",
+        hidden:true,
         authKey: "DELETE_ARTICLE",
         path: '/articleManage/deleteArticle',
         component: () => import('@/views/articleManage/delete/index'),
@@ -224,7 +226,7 @@ export const roleRoutes = [{
 
         name: "updateArticle",
         authKey: "UPDATE_ARTICLE",
-        path: '/articleManage/updateArticle/:id',
+        path: '/articleManage/updateArticle',
         component: () => import('@/views/articleManage/update/index'),
         meta: {
             title: '修改文章',
@@ -268,6 +270,7 @@ export const roleRoutes = [{
     {
         name: "deleteComment",
         authKey: "DELETE_COMMENT",
+        hidden:true,
         path: '/commentManage/deleteComment',
         component: () => import('@/views/commentManage/delete/index'),
         meta: {
@@ -335,6 +338,7 @@ export const roleRoutes = [{
     {
         name: "deleteTAG",
         authKey: "DELETE_TAG",
+        hidden:true,
         path: '/tagManage/deleteTag',
         component: () => import('@/views/tagManage/delete/index'),
         meta: {
@@ -402,6 +406,7 @@ export const roleRoutes = [{
     {
         name: "deleteLink",
         authKey: "DELETE_LINK",
+        hidden:true,
         path: '/linkManage/deleteLink',
         component: () => import('@/views/linkManage/delete/index'),
         meta: {

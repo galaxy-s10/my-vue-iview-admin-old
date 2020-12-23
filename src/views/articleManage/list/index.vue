@@ -56,7 +56,7 @@ export default {
             }
             this.$router.push({
               name: "updateArticle",
-              params: { id: row.id },
+              query: { id: row.id },
             });
           },
           // 是否显示

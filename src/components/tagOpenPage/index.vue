@@ -29,7 +29,7 @@
               type="dot"
               :closable="isClosable(item.name)"
               :color="activeTagOpenPage == item.name ? '#41b883' : '#e8eaec'"
-              @click.native="onChangeTag(item.name)"
+              @click.native="onChangeTag(item)"
               @on-close="closeTag(item)"
             >
               {{ item.meta.title }}
@@ -187,7 +187,7 @@ export default {
       console.log("改变");
       console.log(v);
       if (this.$route.name != v) {
-        this.$router.push({ name: v });
+        this.$router.push({ name: v.name, query: v.query });
         this.changeActiveTagOpenPage(v);
       }
     },

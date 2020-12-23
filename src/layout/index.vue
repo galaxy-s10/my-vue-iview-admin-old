@@ -1,12 +1,7 @@
 <template>
   <div>
     <Layout :style="{ minHeight: '100vh' }">
-      <Sider
-        width="200"
-        :collapsed-width="70"
-        collapsible
-        v-model="isCollapsed"
-      >
+      <Sider width="200" :collapsed-width="70" collapsible v-model="isCollapsed">
         <!-- <Sider width="200" collapsible v-model="isCollapsed"> -->
         <!-- <div v-if="auth.length != 0"> -->
         <div class="logo">
@@ -20,46 +15,43 @@
           :active-name="activeName"
         >
           <template v-for="(item, index) in menuList">
-            <Submenu
-              v-if="item.children && item.children.length > 1"
-              :name="item.name"
-              :key="index"
-              v-auth="item.authKey"
-            >
-              <template slot="title">
-                <Icon :type="item.meta.icon" />
-                <span v-if="!isCollapsed">{{ item.meta.title }}</span>
-              </template>
-              <template v-for="(itemm, indexx) in item.children">
-                <MenuItem
-                  :name="itemm.name"
-                  :key="indexx"
-                  v-auth="itemm.authKey"
-                >
-                  <span v-if="!isCollapsed">{{ itemm.meta.title }}</span>
-                </MenuItem>
-              </template>
-            </Submenu>
+            <template v-if="!item.hidden">
+              <Submenu
+                v-if="item.children && item.children.length > 1"
+                :name="item.name"
+                :key="index"
+                v-auth="item.authKey"
+              >
+                <template slot="title">
+                  <Icon :type="item.meta.icon" />
+                  <span v-if="!isCollapsed">{{ item.meta.title }}</span>
+                </template>
+                <template v-for="(itemm, indexx) in item.children">
+                  <template v-if="!itemm.hidden">
+                    <MenuItem :name="itemm.name" :key="indexx" v-auth="itemm.authKey">
+                      <span v-if="!isCollapsed">{{ itemm.meta.title }}</span>
+                    </MenuItem>
+                  </template>
+                </template>
+              </Submenu>
 
-            <MenuItem
-              v-if="item.children && item.children.length <= 1"
-              :name="item.children[0].name"
-              :key="index"
-            >
-              <Icon :type="item.meta.icon" />
-              <span v-if="!isCollapsed">
-                {{ item.meta.title }}
-              </span>
-            </MenuItem>
-            <!-- <MenuItem
-              v-if="!item.children"
-              :name="item.path"
-            >
-              <Icon :type="item.meta.icon" />
-              <span v-if="!isCollapsed">
-                {{ item.meta.title }}
-              </span>
-            </MenuItem> -->
+              <MenuItem
+                v-if="item.children && item.children.length <= 1"
+                :name="item.children[0].name"
+                :key="index"
+              >
+                <Icon :type="item.meta.icon" />
+                <span v-if="!isCollapsed">
+                  {{ item.meta.title }}
+                </span>
+              </MenuItem>
+              <MenuItem v-if="!item.children" :name="item.name">
+                <Icon :type="item.meta.icon" />
+                <span v-if="!isCollapsed">
+                  {{ item.meta.title }}
+                </span>
+              </MenuItem>
+            </template>
           </template>
         </Menu>
       </Sider>
@@ -90,11 +82,9 @@
                 :to="item.path"
                 >{{ item.meta.title }}</BreadcrumbItem
               > -->
-              <BreadcrumbItem
-                v-for="(item, index) in breadList"
-                :key="index"
-                >{{ item.meta.title }}</BreadcrumbItem
-              >
+              <BreadcrumbItem v-for="(item, index) in breadList" :key="index">{{
+                item.meta.title
+              }}</BreadcrumbItem>
             </Breadcrumb>
             <div style="position: absolute; right: 10px">
               <Dropdown style="margin-left: 20px" trigger="click">
@@ -104,14 +94,10 @@
                 </a>
                 <DropdownMenu slot="list">
                   <DropdownItem
-                    ><a href="https://www.zhengbeining.com/" target="_bank"
-                      >网站前台</a
-                    >
+                    ><a href="https://www.zhengbeining.com/" target="_bank">网站前台</a>
                   </DropdownItem>
                   <DropdownItem divided>个人信息</DropdownItem>
-                  <DropdownItem divided @click.native="logout">
-                    退出登录
-                  </DropdownItem>
+                  <DropdownItem divided @click.native="logout"> 退出登录 </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
               <Avatar size="large" shape="square" :src="avatar" />
@@ -236,6 +222,8 @@ export default {
       // 判断当前跳转页面有没有在tagOpenPageList里面
       // 查询点击跳转的路由信息
       console.log(name);
+      this.$router.push({ name: name });
+      return;
       let target = this.findItem(this.menuList, name);
       let tag;
       let bool = utils.exist(this.tagList, name);
@@ -244,7 +232,7 @@ export default {
         console.log(target);
         this.addTagOpenPage(target);
         this.changeActiveTagOpenPage(target.name);
-      }else{
+      } else {
         this.changeActiveTagOpenPage(target.name);
       }
       this.$router.push({ name: name });
@@ -265,9 +253,7 @@ export default {
     getBreadcrumb() {
       // console.log('[[[[[[[[]]]]]]]]')
       // console.log(this.$route.matched)
-      const matched = this.$route.matched.filter(
-        (item) => item.meta && item.meta.title
-      );
+      const matched = this.$route.matched.filter((item) => item.meta && item.meta.title);
       // console.log(
       //   this.$route.matched.filter((item) => item.meta && item.meta.title)
       // );
@@ -275,7 +261,7 @@ export default {
       // console.log(this.$route.matched);
       // console.log('】】】】】】】】】】】】】】】】】】】】】】】】】')
       // console.log(matched)
-      console.log(matched)
+      console.log(matched);
       this.breadList = matched;
     },
   },
@@ -297,6 +283,7 @@ export default {
     // console.log(width);
     // this.menuList = roleRoutes;
     this.menuList = this.$router.options.routes;
+    console.log(this.menuList);
   },
 };
 </script>

@@ -70,7 +70,7 @@ export default {
     await taglist().then((res) => {
       this.tagList = res.rows;
     });
-    await findArticle(this.$route.params.id)
+    await findArticle(this.$route.query.id)
       .then((res) => {
         this.columnForm = {
           submitBtn:true,

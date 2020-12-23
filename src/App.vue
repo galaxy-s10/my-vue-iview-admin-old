@@ -71,13 +71,17 @@ export default {
       // 判断当前跳转页面有没有在tagOpenPageList里面
       // 查询点击跳转的路由信息
       console.log(name);
+      console.log(this.$route)
       let target = this.findItem(this.menuList, name);
       let tag;
       let bool = utils.exist(this.tagList, name);
       if (!bool) {
         console.log("点击判断，没有就插入1");
         console.log(target);
-        this.addTagOpenPage(target);
+        if(this.$route.query){
+          console.log(target)
+        }
+        this.addTagOpenPage({...target,query:this.$route.query});
         this.changeActiveTagOpenPage(target.name);
       } else {
         this.changeActiveTagOpenPage(target.name);

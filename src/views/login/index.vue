@@ -48,7 +48,7 @@ export default {
     return {
       form: {
         username: "hss",
-        password: "227475",
+        password: "123456a",
       },
       redirect: "",
     };
