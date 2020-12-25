@@ -6,6 +6,15 @@
       :columns="columns"
       :data="tableData.list"
     ></Table> -->
+    <div v-if="searchData">
+      <hss-search
+        :searchValue="searchData"
+        @onSelect="onSelect"
+        @onSearch="onSearch"
+        v-model="searchResult"
+      ></hss-search>
+    </div>
+
     <Table border :columns="columns" :data="tableData.list">
       <template
         v-for="(col, colIndex) in columns"
@@ -27,9 +36,10 @@
 </template>
 
 <script>
+import hssSearch from "./search";
 import tableSlot from "./render.js";
 export default {
-  components: { tableSlot },
+  components: { tableSlot, hssSearch },
   provide() {
     return {
       demoSlot: this,
@@ -42,18 +52,40 @@ export default {
         return [];
       },
     },
+    searchData: {
+      type: Array,
+      default: () => {
+        return [];
+      },
+    },
     tableData: {},
     params: {},
   },
   data() {
     return {
+      searchResult: {},
       paramsData: this.params,
+      // searchData: [
+      //   {
+      //     type:"Select",
+      //     key:"iii",
+      //     placeholder: '提交时间',
+      //   }
+      // ],
     };
   },
-  created() {},
+  created() {
+    console.log(this.searchData);
+  },
   mounted() {},
   computed: {},
   methods: {
+    onSelect() {
+      this.$emit("onSelect");
+    },
+    onSearch() {
+      this.$emit("onSearch");
+    },
     changePage(v) {
       console.log(v);
       this.paramsData.nowPage = v;

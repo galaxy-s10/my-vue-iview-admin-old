@@ -1,6 +1,7 @@
 <template>
   <div>
     <hss-table
+      :searchData="searchData"
       :tableData="{ list: articleList.rows, count: articleList.count }"
       :columns="columns"
       :params="params"
@@ -41,7 +42,55 @@ export default {
         pageSize: 10,
         nowPage: 1,
       },
-      //表格操作列
+      // 搜索列
+      searchData: [
+        {
+          type: "Select",
+          key: "iii",
+          placeholder: "提交时间",
+          data: [
+            {
+              label: "111",
+              value: 111,
+            },
+            {
+              label: "222",
+              value: 222,
+            },
+            {
+              label: "333",
+              value: 333,
+            },
+          ],
+          width: 200,
+        },
+        {
+          type: "Input",
+          key: "ee",
+          placeholder: "gdsfhsfdh",
+          width: 200,
+        },
+        {
+          type: "DateTimeRange",
+          key: "dsg",
+          placeholder: "DateTimeRange",
+          // format: "yyyy-MM-dd HH:mm",
+          width: 300,
+        },
+        {
+          type: "DateTime",
+          key: "dsg",
+          placeholder: "DateTime",
+          width: 200,
+        },
+        {
+          type: "Month",
+          key: "sdfd",
+          placeholder: "Month",
+          width: 200,
+        },
+      ],
+      // 表格操作列
       operationData: [
         {
           name: "编辑",
