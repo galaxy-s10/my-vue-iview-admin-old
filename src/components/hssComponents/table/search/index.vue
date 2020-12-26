@@ -1,7 +1,16 @@
 <template>
+  <!-- <div> -->
   <div style="display: flex; width: 100%">
-    <div style="display: flex; justify-content: flex-end; flex-wrap: wrap">
-      <div v-for="(item, index) in searchValue" style="margin: 10px">
+    <div
+      style="
+        display: flex;
+        width: 90%;
+        justify-content: flex-end;
+        align-items: center;
+        flex-wrap: wrap;
+      "
+    >
+      <div v-for="(item, index) in searchValue" style="margin: 0 10px 10px">
         <DatePicker
           v-if="item.type == 'DateTime'"
           v-model="item.val"
@@ -46,8 +55,11 @@
         />
       </div>
     </div>
-
-    <Button type="info" @click="handleSearch">搜索</Button>
+    <div>
+      <i-button style="margin-left: 10px" type="info" @click="handleSearch"
+        >搜索</i-button
+      >
+    </div>
   </div>
 </template>
 
@@ -78,7 +90,14 @@ export default {
       this.$emit("onSelect", v);
     },
     handleSearch() {
-      this.$emit("onSearch", 1111);
+      let temp = {};
+      this.searchValue.forEach((item) => {
+        if (item.val) {
+          temp[item.key] = item.val;
+        }
+      });
+      console.log(temp);
+      this.$emit("onSearch", temp);
     },
   },
 };

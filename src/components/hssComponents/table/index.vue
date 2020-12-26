@@ -83,7 +83,8 @@ export default {
     onSelect() {
       this.$emit("onSelect");
     },
-    onSearch() {
+    onSearch(v) {
+      console.log(v)
       this.$emit("onSearch");
     },
     changePage(v) {
