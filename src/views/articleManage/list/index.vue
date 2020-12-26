@@ -5,6 +5,8 @@
       :tableData="{ list: articleList.rows, count: articleList.count }"
       :columns="columns"
       :params="params"
+      @onSelect="onSelect"
+      @onSearch="onSearch"
       @changePage="changePage"
     >
       <template slot-scope="{ row }" slot="operation">
@@ -46,49 +48,75 @@ export default {
       searchData: [
         {
           type: "Select",
-          key: "iii",
-          placeholder: "提交时间",
+          key: "status",
+          name: "状态",
+          placeholder: "请选择文章状态",
           data: [
             {
-              label: "111",
-              value: 111,
+              label: "已发布",
+              value: 1,
             },
             {
-              label: "222",
-              value: 222,
-            },
-            {
-              label: "333",
-              value: 333,
+              label: "待审核",
+              value: 2,
             },
           ],
-          width: 200,
+          width: 150,
+        },
+        {
+          type: "Select",
+          key: "is_comment",
+          name: "评论",
+          placeholder: "请选择评论状态",
+          data: [
+            {
+              label: "开启",
+              value: 1,
+            },
+            {
+              label: "关闭",
+              value: 2,
+            },
+          ],
+          width: 150,
         },
         {
           type: "Input",
-          key: "ee",
-          placeholder: "gdsfhsfdh",
+          key: "keyword",
+          name: "关键字",
+          placeholder: "请输入关键字",
           width: 200,
         },
+        // {
+        // // DateTimeRange有bug，暂时不要用!
+        //   type: "DateTimeRange",
+        //   name: "时间范围",
+        //   key: "timeRange",
+        //   placeholder: "DateTimeRange",
+        //   format: "yyyy-MM-dd HH:mm",
+        //   width: 300,
+        // },
         {
-          type: "DateTimeRange",
-          key: "dsg",
-          placeholder: "DateTimeRange",
-          // format: "yyyy-MM-dd HH:mm",
-          width: 300,
+          type: "DateTime",
+          key: "createdAt",
+          name: "创建时间",
+          placeholder: "请选择创建时间",
+          width: 200,
         },
         {
           type: "DateTime",
-          key: "dsg",
-          placeholder: "DateTime",
+          key: "updatedAt",
+          name: "更新时间",
+          placeholder: "请选择更新时间",
           width: 200,
         },
-        {
-          type: "Month",
-          key: "sdfd",
-          placeholder: "Month",
-          width: 200,
-        },
+        // {
+        //   type: "Month",
+        //   key: "month",
+        //   name: "月份",
+        //   placeholder: "请选择月份",
+        //   width: 200,
+        // },
       ],
       // 表格操作列
       operationData: [
@@ -375,8 +403,14 @@ export default {
       //   temp.push(item)
       // })
     },
+    onSelect(v) {
+      console.log(v);
+    },
+    onSearch(v) {
+      console.log(v);
+    },
     changePage(v) {
-      // console.log(v);
+      console.log(v);
       // this.params.nowPage = v;
       this.getArticleList(v);
     },
@@ -424,8 +458,10 @@ export default {
         ]
       );
     },
-    getArticleList(params) {
-      articlepage(params).then((res) => {
+    getArticleList(v) {
+      console.log(v);
+      console.log({ ...v });
+      articlepage(v).then((res) => {
         this.articleList = res.pagelist;
         this.params.count = res.pagelist.count;
       });

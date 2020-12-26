@@ -1,9 +1,10 @@
 <template>
   <div>
+    <h1>欢迎进入控制台！</h1>
     <!-- 第一种情况（报警告），将val作为hssIpt的model里hssIptVal的值 -->
     <!-- <hss-input v-model="val"></hss-input> -->
     <!-- 第二种情况 -->
-    <hss-input :val="val" v-model="val" ref="form1"></hss-input>
+    <!-- <hss-input :val="val" v-model="val" ref="form1"></hss-input> -->
     <!-- 等价于 -->
     <!-- <hss-input :val="val" v-model="val" @hssChangeIpt="input1"></hss-input> -->
     <!-- 等价于 -->
@@ -19,9 +20,9 @@
       "
     ></hss-input> -->
 
-    <i-button @click="ppp">ppp</i-button>
+    <!-- <i-button @click="ppp">ppp</i-button>
     <i-button @click="modal1">a</i-button>
-    <hss-modal :val="modalVal" @hssModalOk="ok" @hssModalCancel="cancel"></hss-modal>
+    <hss-modal :val="modalVal" @hssModalOk="ok" @hssModalCancel="cancel"></hss-modal> -->
   </div>
 </template>
 

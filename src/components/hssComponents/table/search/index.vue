@@ -10,49 +10,65 @@
         flex-wrap: wrap;
       "
     >
-      <div v-for="(item, index) in searchValue" style="margin: 0 10px 10px">
-        <DatePicker
-          v-if="item.type == 'DateTime'"
-          v-model="item.val"
-          type="datetime"
-          :options="item.options"
-          :placeholder="item.placeholder"
-        ></DatePicker>
-        <DatePicker
-          v-else-if="item.type == 'Month'"
-          v-model="item.val"
-          type="month"
-          :options="item.options"
-          :placeholder="item.placeholder"
-        ></DatePicker>
-        <DatePicker
-          v-else-if="item.type == 'DateTimeRange'"
-          v-model="item.val"
-          type="datetimerange"
-          :format="item.format ? item.format : 'yyyy-MM-dd HH:mm:ss'"
-          :options="item.options"
-          :placeholder="item.placeholder"
-          :style="{ width: item.width + 'px' }"
-        ></DatePicker>
-        <Select
-          v-else-if="item.type == 'Select'"
-          v-model="item.val"
-          :placeholder="item.placeholder"
-          clearable
-          @on-select="onSelect"
-          :style="{ width: item.width + 'px' }"
-        >
-          <Option v-for="(el, i) in item.data" :value="el.value" :key="i">{{
-            el.label
-          }}</Option>
-        </Select>
-        <Input
-          :style="{ width: item.width + 'px' }"
-          v-else
-          v-model="item.val"
-          :placeholder="item.placeholder"
-          clearable
-        />
+      <div
+        class="ivu-form"
+        v-for="(item, index) in searchValue"
+        style="margin: 0 10px 10px"
+      >
+        <div v-if="item.type == 'DateTime'">
+          <label class="ivu-form-item-label" for="">{{ item.name }}</label>
+          <DatePicker
+            v-model="item.val"
+            type="datetime"
+            :options="item.options"
+            :placeholder="item.placeholder"
+          ></DatePicker>
+        </div>
+
+        <div v-else-if="item.type == 'Month'">
+          <label class="ivu-form-item-label" for="">{{ item.name }}</label>
+          <DatePicker
+            v-model="item.val"
+            type="month"
+            :options="item.options"
+            :placeholder="item.placeholder"
+          ></DatePicker>
+        </div>
+
+        <div v-else-if="item.type == 'DateTimeRange'">
+          <label class="ivu-form-item-label" for="">{{ item.name }}</label>
+          <DatePicker
+            v-model="item.val"
+            type="datetimerange"
+            :format="item.format ? item.format : 'yyyy-MM-dd HH:mm:ss'"
+            :options="item.options"
+            :placeholder="item.placeholder"
+            :style="{ width: item.width + 'px' }"
+          ></DatePicker>
+        </div>
+        <div v-else-if="item.type == 'Select'">
+          <label class="ivu-form-item-label" for="">{{ item.name }}</label>
+          <Select
+            v-model="item.val"
+            :placeholder="item.placeholder"
+            clearable
+            @on-select="onSelect"
+            :style="{ width: item.width + 'px' }"
+          >
+            <Option v-for="(el, i) in item.data" :value="el.value" :key="i">{{
+              el.label
+            }}</Option>
+          </Select>
+        </div>
+        <div v-else>
+          <label class="ivu-form-item-label" for="">{{ item.name }}</label>
+          <Input
+            :style="{ width: item.width + 'px' }"
+            v-model="item.val"
+            :placeholder="item.placeholder"
+            clearable
+          />
+        </div>
       </div>
     </div>
     <div>
@@ -96,7 +112,6 @@ export default {
           temp[item.key] = item.val;
         }
       });
-      console.log(temp);
       this.$emit("onSearch", temp);
     },
   },

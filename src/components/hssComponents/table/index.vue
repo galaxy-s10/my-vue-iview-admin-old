@@ -6,7 +6,7 @@
       :columns="columns"
       :data="tableData.list"
     ></Table> -->
-    <div v-if="searchData">
+    <div v-if="tableData.list && searchData.length">
       <hss-search
         :searchValue="searchData"
         @onSelect="onSelect"
@@ -15,7 +15,8 @@
       ></hss-search>
     </div>
 
-    <Table border :columns="columns" :data="tableData.list">
+    <!-- <Table border :columns="columns" :data="tableData.list"> -->
+    <Table :columns="columns" :data="tableData.list" :loading="!tableData.list">
       <template
         v-for="(col, colIndex) in columns"
         v-if="col.slot"
@@ -80,17 +81,22 @@ export default {
   mounted() {},
   computed: {},
   methods: {
-    onSelect() {
-      this.$emit("onSelect");
+    onSelect(v) {
+      this.$emit("onSelect", v);
     },
     onSearch(v) {
-      console.log(v)
-      this.$emit("onSearch");
-    },
-    changePage(v) {
       console.log(v);
-      this.paramsData.nowPage = v;
-      this.$emit("changePage", this.paramsData);
+      // this.changePage(1);
+      console.log(this.paramsData);
+      this.changePage(1, v);
+      console.log({ ...v });
+      // this.$emit("onSearch", v);
+    },
+    changePage(nowPage, search) {
+      console.log(nowPage, search);
+      console.log({ ...search });
+      this.paramsData.nowPage = nowPage;
+      this.$emit("changePage", { ...this.paramsData, ...search });
       // this.getArticleList(this.params);
     },
   },

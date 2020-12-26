@@ -1,18 +1,20 @@
 <template>
   <div>
-    <i-button @click="addTag">新增标签</i-button>
-    <div v-if="tableData.list">
-      <hss-table
-        :tableData="tableData"
-        :columns="columns"
-        :params="params"
-        @changePage="changePage"
-      >
-        <template slot-scope="{ row }" slot="operation">
-          <hss-operation :row="row" :operation="operationData"></hss-operation>
-        </template>
-      </hss-table>
-    </div>
+    <!-- <i-button @click="addTag">新增标签</i-button> -->
+    <!-- <div v-if="tableData.list"> -->
+    <hss-table
+      :tableData="{ list: tagList.rows, count: tagList.count }"
+      :searchData="searchData"
+      :columns="columns"
+      :params="params"
+      @onSearch="onSearch"
+      @changePage="changePage"
+    >
+      <template slot-scope="{ row }" slot="operation">
+        <hss-operation :row="row" :operation="operationData"></hss-operation>
+      </template>
+    </hss-table>
+    <!-- </div> -->
     <component
       v-bind:is="comments"
       :request="request"
@@ -29,7 +31,7 @@
 
 <script>
 import { format } from "../../../../../webchat/src/utils/format";
-import { taglist, tagPageList, editTag, deltag, addtag } from "../../../api/tag";
+import { taglist, tagPageList, editTag, delTag, addTag } from "../../../api/tag";
 import hssPopupForm from "../../../components/hssComponents/form/popup-form/index";
 import hssTable from "../../../components/hssComponents/table";
 import hssOperation from "../../../components/hssComponents/table/operation";
@@ -44,6 +46,7 @@ export default {
       comments: "",
       isInit: false,
       request: {},
+      tagList: [],
       //表格操作列
       operationData: [
         {
@@ -137,7 +140,7 @@ export default {
                 title: "提示",
                 content: `${row.name}标签下有${row.articles.length}篇文章，确定删除吗?`,
                 onOk: () => {
-                  deltag(row.id).then((res) => {
+                  delTag(row.id).then((res) => {
                     this.$Message.success({
                       content: res.message,
                     });
@@ -146,7 +149,7 @@ export default {
                 },
               });
             } else {
-              deltag(row.id).then((res) => {
+              delTag(row.id).then((res) => {
                 this.$Message.success({
                   content: res.message,
                 });
@@ -163,6 +166,30 @@ export default {
         list: "",
         count: "",
       },
+      // 搜索列
+      searchData: [
+        {
+          type: "Input",
+          key: "keyword",
+          name: "关键字",
+          placeholder: "请输入关键字",
+          width: 200,
+        },
+        {
+          type: "DateTime",
+          key: "createdAt",
+          name: "创建时间",
+          placeholder: "请选择创建时间",
+          width: 200,
+        },
+        // {
+        //   type: "DateTime",
+        //   key: "updatedAt",
+        //   name: "更新时间",
+        //   placeholder: "请选择更新时间",
+        //   width: 200,
+        // },
+      ],
       params: {
         count: 0,
         pageSize: 10,
@@ -239,7 +266,7 @@ export default {
     // this.getTagList();
   },
   mounted() {
-    this.getTagPageList();
+    this.getTagPageList(this.params);
   },
   methods: {
     addTag() {
@@ -305,7 +332,7 @@ export default {
           this.getTagPageList(this.params);
         });
       } else {
-        await addtag(v).then((res) => {
+        await addTag(v).then((res) => {
           console.log(res);
           this.$Message.success({
             content: res.message,
@@ -314,8 +341,12 @@ export default {
         });
       }
     },
+    onSearch(v) {
+      console.log(v);
+      // this.getTagPageList(v);
+    },
     changePage(v) {
-      console.log(v)
+      console.log(v);
       this.getTagPageList(v);
     },
     //转换时间格式
@@ -338,11 +369,13 @@ export default {
         addDateZero(d.getSeconds());
       return formatdatetime;
     },
-    async getTagPageList() {
-      await tagPageList(this.params).then((res) => {
+    async getTagPageList(v) {
+      await tagPageList(v).then((res) => {
         console.log(res);
-        this.tableData.list = res.rows;
-        this.tableData.count = res.count;
+        this.tagList = res;
+        // this.tagList = res.rows
+        // this.tableData.list = res.rows;
+        // this.tableData.count = res.count;
       });
     },
   },

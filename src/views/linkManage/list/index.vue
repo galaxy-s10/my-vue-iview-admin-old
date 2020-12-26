@@ -1,19 +1,379 @@
 <template>
-  <div></div>
+  <div>
+    <!-- <div v-if="tableData.list"> -->
+    <hss-table
+      :tableData="{ list: linkList.rows, count: linkList.count }"
+      :searchData="searchData"
+      :columns="columns"
+      :params="params"
+      @onSearch="onSearch"
+      @changePage="changePage"
+    >
+      <template slot-scope="{ row }" slot="operation">
+        <hss-operation :row="row" :operation="operationData"></hss-operation>
+      </template>
+    </hss-table>
+    <!-- </div> -->
+    <component
+      v-bind:is="comments"
+      :request="request"
+      :fromData="columnForm"
+      :initData="tagInfo"
+      :isInit="isInit"
+      @on-cancel="onCancel"
+      @on-ok="onOk"
+      @onSubmit="onSubmit"
+    ></component>
+    <!-- <hss-table v-if="tableData.list.length>0" :tableData="tableData" :columns="columns" :params="params"></hss-table> -->
+  </div>
 </template>
 
 <script>
+import { format } from "../../../../../webchat/src/utils/format";
+import { linkPageList, editLink, delLink } from "../../../api/link";
+import hssPopupForm from "../../../components/hssComponents/form/popup-form/index";
+import hssTable from "../../../components/hssComponents/table";
+import hssOperation from "../../../components/hssComponents/table/operation";
+import { mapState } from "vuex";
 export default {
-  components: {},
+  components: { hssTable, hssOperation, hssPopupForm },
   data() {
-    return {};
+    return {
+      action: "", //1:编辑，2:新增
+      columnForm: {},
+      tagInfo: {},
+      comments: "",
+      isInit: false,
+      request: {},
+      linkList: [],
+      //表格操作列
+      operationData: [
+        {
+          name: "编辑",
+          type: "CUSTOM", //CUSTOM（自定义）、ROUTER（路由方式）、DELETE（删除按钮）、STATUS（双状态切换）
+          customStyle: (row) => {
+            // let bool = false;
+            // if (this.auth.includes("UPDATE_TAG")) {
+            //   console.log("yes");
+            //   bool = true;
+            // }
+            // console.log(this.auth);
+            // return {
+            //   "pointer-events": bool ? "none" : "",
+            //   color: "rgb(170, 170, 170)",
+            // };
+          },
+          custom: async (row) => {
+            console.log(row);
+            if (!this.auth.includes("UPDATE_TAG")) {
+              this.$Message.error({
+                content: "权限不足！",
+              });
+              return;
+            }
+            this.action = 1;
+            this.tagInfo = { ...row, createdAt: format(row.createdAt) };
+            this.columnForm = {
+              list: [
+                {
+                  prop: "id",
+                },
+                {
+                  type: "Input",
+                  name: "名称",
+                  prop: "name",
+                  placeholder: "请输入友链名称",
+                  required: true,
+                },
+                {
+                  name: "头像",
+                  type: "Input",
+                  prop: "avatar",
+                  placeholder: "请输入友链头像",
+                  required: true,
+                },
+                {
+                  name: "描述",
+                  type: "Input",
+                  prop: "description",
+                  placeholder: "请输入友链描述",
+                  required: true,
+                },
+                {
+                  name: "链接",
+                  type: "Input",
+                  prop: "url",
+                  placeholder: "请输入友链链接",
+                  required: true,
+                },
+                // {
+                //   name: "创建时间",
+                //   type: "Date",
+                //   prop: "createdAt",
+                //   isDate: true,
+                //   placeholder: "请选择创建时间",
+                //   required: true,
+                // },
+              ],
+            };
+            this.request = {
+              title: "编辑标签",
+              size: "centre",
+            };
+            this.isInit = true;
+            this.comments = "hssPopupForm";
+          },
+          // 是否显示
+          isShow() {
+            return 1;
+          },
+        },
+        {
+          name: "删除",
+          type: "TIP",
+          customStyle: (row) => {
+            return {
+              color: "red",
+            };
+          },
+          custom: (row) => {
+            console.log(row);
+            if (!this.auth.includes("DELETE_TAG")) {
+              this.$Message.error({
+                content: "权限不足！",
+              });
+              return;
+            }
+            // if (row.articles.length > 0) {
+            delLink(row.id).then((res) => {
+              this.$Message.success({
+                content: res.message,
+              });
+              this.getLinkPageList(this.params);
+            });
+            // }
+          },
+          isShow() {
+            return 1;
+          },
+        },
+      ],
+      tableData: {
+        list: "",
+        count: "",
+      },
+      // 搜索列
+      searchData: [
+        {
+          type: "Input",
+          key: "keyword",
+          name: "关键字",
+          placeholder: "请输入关键字",
+          width: 200,
+        },
+      ],
+      params: {
+        count: 0,
+        pageSize: 10,
+        nowPage: 1,
+      },
+      columns: [
+        {
+          title: "id",
+          key: "id",
+          width: "100",
+          align: "center",
+        },
+        {
+          title: "名称",
+          align: "center",
+          key: "name",
+        },
+        {
+          title: "头像",
+          align: "center",
+          key: "name",
+          render: (h, params) => {
+            if (params.row.avatar) {
+              return h("img", {
+                attrs: {
+                  src: params.row.avatar,
+                  style: "width:50px;height:50px",
+                },
+              });
+            } else {
+              return h("span", "无");
+            }
+          },
+        },
+        {
+          title: "描述",
+          align: "center",
+          key: "description",
+        },
+        {
+          title: "链接",
+          align: "center",
+          key: "url",
+        },
+        {
+          title: "创建时间",
+          align: "center",
+          render: (h, params) => {
+            return h("span", this.formateDate(params.row.createdAt));
+          },
+        },
+        {
+          title: "更新时间",
+          align: "center",
+          render: (h, params) => {
+            return h("span", this.formateDate(params.row.updatedAt));
+          },
+        },
+        {
+          title: "操作",
+          align: "center",
+          slot: "operation",
+          // width: 400,
+        },
+      ],
+    };
   },
-  computed: {},
-  methods: {},
-  created() {},
-  mounted() {},
+  computed: {
+    ...mapState("user", ["auth"]),
+  },
+  created() {
+    // this.getTagList();
+  },
+  mounted() {
+    this.getLinkPageList(this.params);
+  },
+  methods: {
+    addTag() {
+      this.action = 2;
+      this.columnForm = {
+        list: [
+          {
+            // name: "id",
+            // type: "Input",
+            prop: "id",
+            // placeholder: "",
+            // display:'none'
+          },
+          {
+            type: "Input",
+            name: "名称",
+            prop: "name",
+            placeholder: "请输入友链名称",
+            required: true,
+          },
+          {
+            name: "头像",
+            type: "Input",
+            prop: "avatar",
+            placeholder: "请输入友链头像",
+            required: true,
+          },
+          {
+            name: "描述",
+            type: "Input",
+            prop: "description",
+            placeholder: "请输入友链描述",
+            required: true,
+          },
+          {
+            name: "链接",
+            type: "Input",
+            prop: "url",
+            placeholder: "请输入友链链接",
+            required: true,
+          },
+          // {
+          //   name: "创建时间",
+          //   type: "Date",
+          //   prop: "createdAt",
+          //   isDate: true,
+          //   placeholder: "请选择创建时间",
+          //   required: true,
+          // },
+        ],
+      };
+      this.request = {
+        title: "新增标签",
+        size: "centre",
+      };
+      // this.isInit = true;
+      this.comments = "hssPopupForm";
+    },
+    onCancel() {
+      // this.showRole = false
+      console.log("onCancel");
+      this.roleInfo = {};
+      this.comments = "";
+    },
+    onOk() {
+      this.comments = "";
+    },
+    async onSubmit(v) {
+      console.log(v);
+      if (this.action == 1) {
+        let temp = [];
+        await editLink(v).then((res) => {
+          console.log(res);
+          this.$Message.success({
+            content: res.message,
+          });
+          this.getLinkPageList(this.params);
+        });
+      } else {
+        await addtag(v).then((res) => {
+          console.log(res);
+          this.$Message.success({
+            content: res.message,
+          });
+          this.getLinkPageList(this.params);
+        });
+      }
+    },
+    onSearch(v) {
+      console.log(v);
+      // this.getLinkPageList(v);
+    },
+    changePage(v) {
+      console.log(v);
+      this.getLinkPageList(v);
+    },
+    //转换时间格式
+    formateDate(datetime) {
+      function addDateZero(num) {
+        return num < 10 ? "0" + num : num;
+      }
+      let d = new Date(datetime);
+      let formatdatetime =
+        d.getFullYear() +
+        "-" +
+        addDateZero(d.getMonth() + 1) +
+        "-" +
+        addDateZero(d.getDate()) +
+        " " +
+        addDateZero(d.getHours()) +
+        ":" +
+        addDateZero(d.getMinutes()) +
+        ":" +
+        addDateZero(d.getSeconds());
+      return formatdatetime;
+    },
+    async getLinkPageList(v) {
+      await linkPageList(v).then((res) => {
+        console.log(res);
+        this.linkList = res;
+        // this.linkList = res.rows
+        // this.tableData.list = res.rows;
+        // this.tableData.count = res.count;
+      });
+    },
+  },
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

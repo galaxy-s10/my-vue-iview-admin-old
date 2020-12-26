@@ -17,6 +17,8 @@ export function articletypelist() {
   })
 }
 export function articlepage(params) {
+  console.log('paramsparamsparamsparams')
+  console.log(params)
   return request({
     url: '/api/article/page',
     method: 'get',

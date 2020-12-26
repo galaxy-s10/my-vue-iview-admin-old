@@ -30,7 +30,7 @@ export function editTag(data) {
 }
 
 //添加标签
-export function addtag(data) {
+export function addTag(data) {
     return request({
         url: '/api/tag/add',
         method: 'post',
@@ -39,7 +39,7 @@ export function addtag(data) {
 }
 
 //删除标签
-export function deltag(id) {
+export function delTag(id) {
     return request({
         url: '/api/tag/del',
         method: 'delete',

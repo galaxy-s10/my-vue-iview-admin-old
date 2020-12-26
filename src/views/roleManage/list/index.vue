@@ -490,8 +490,10 @@ export default {
         });
       }
       let depData = JSON.parse(JSON.stringify(this.allAuth));
+      console.log(depData)
       digui(depData, this.currentAuth);
-      this.allAuth = depData;
+      console.log(depData)
+      // this.allAuth = depData;
     },
 
     onCancel() {

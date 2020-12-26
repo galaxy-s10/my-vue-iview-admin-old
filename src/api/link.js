@@ -1,5 +1,14 @@
 import request from './request'
 
+// 友链分页列表
+export function linkPageList(params) {
+    return request({
+        url: '/api/link/pageList',
+        method: 'get',
+        params
+    })
+}
+
 //友链列表
 export function linklist() {
     return request({
@@ -9,7 +18,7 @@ export function linklist() {
 }
 
 //添加友链
-export function addlink(data) {
+export function addLink(data) {
     console.log(data);
     return request({
         url: '/api/link/add',
@@ -18,7 +27,7 @@ export function addlink(data) {
     })
 }
 //修改友链
-export function editlink(data) {
+export function editLink(data) {
     return request({
         url: '/api/link/edit',
         method: 'put',
@@ -27,7 +36,7 @@ export function editlink(data) {
 }
 
 //删除友链
-export function dellink(id) {
+export function delLink(id) {
     return request({
         url: "/api/link/del",
         method: 'delete',

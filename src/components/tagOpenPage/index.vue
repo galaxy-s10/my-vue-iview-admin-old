@@ -44,10 +44,10 @@
           <Icon type="ios-arrow-down"></Icon>
         </Button>
         <DropdownMenu slot="list">
-          <DropdownItem>关闭左侧</DropdownItem>
-          <DropdownItem>关闭右侧</DropdownItem>
-          <DropdownItem>关闭其他</DropdownItem>
-          <DropdownItem>全部关闭</DropdownItem>
+          <DropdownItem @click.native="close(1)">关闭左侧</DropdownItem>
+          <DropdownItem @click.native="close(2)">关闭右侧</DropdownItem>
+          <DropdownItem @click.native="close(3)">关闭其他</DropdownItem>
+          <DropdownItem @click.native="close(4)">全部关闭</DropdownItem>
         </DropdownMenu>
       </Dropdown>
       <!-- </div> -->
@@ -117,6 +117,69 @@ export default {
     // ...mapMutations({
 
     // }),
+    close(v) {
+      console.log(this.activeTagOpenPage);
+      console.log(this.tagOpenPageList);
+      let temp = [];
+      switch (v) {
+        case 1:
+          try {
+            this.tagOpenPageList.forEach((item, index) => {
+              // temp.push(item.name);
+              if (item.name != this.activeTagOpenPage) {
+                temp.push(item.name);
+              } else {
+                throw Error();
+              }
+            });
+          } catch (err) {}
+          temp.splice(0, 1);
+          temp.forEach((item) => {
+            this.$store.commit("delTagOpenPage", item);
+          });
+          console.log(v);
+          break;
+        case 2:
+          try {
+            for (var i = this.tagOpenPageList.length - 1; i >= 0; i--) {
+              temp.push(this.tagOpenPageList[i].name);
+              if (this.tagOpenPageList[i].name == this.activeTagOpenPage) {
+                console.log(i); // 7,3,2
+                // break;
+                throw Error();
+              }
+            }
+          } catch (err) {}
+          temp.splice(temp.length - 1, 1);
+          temp.forEach((item) => {
+            this.$store.commit("delTagOpenPage", item);
+          });
+          console.log(temp);
+          break;
+        case 3:
+          this.tagOpenPageList.forEach((item, index) => {
+            if (item.name != this.activeTagOpenPage) {
+              temp.push(item.name);
+            }
+          });
+          temp.splice(0, 1);
+          temp.forEach((item) => {
+            this.$store.commit("delTagOpenPage", item);
+          });
+          break;
+        case 4:
+          this.tagOpenPageList.forEach((item, index) => {
+            temp.push(item.name);
+          });
+          temp.splice(0, 1);
+          temp.forEach((item) => {
+            this.$store.commit("delTagOpenPage", item);
+          });
+          this.changeActiveTagOpenPage(this.tagOpenPageList[0].name);
+          this.$router.push({ name: this.tagOpenPageList[0].name });
+          break;
+      }
+    },
     left() {
       // console.log(this.$refs.tagList);
       // console.log(this.$refs.tagListWrap);
@@ -186,7 +249,7 @@ export default {
     onChangeTag(v) {
       console.log("改变");
       console.log(v);
-      if (this.$route.name != v) {
+      if (this.$route.name != v.name) {
         this.$router.push({ name: v.name, params: v.params });
         this.changeActiveTagOpenPage(v);
       }
