@@ -92,11 +92,23 @@ export default {
     },
   },
   model: {
-    prop: "searchValue1",
+    prop: "vvv",
     event: "changeSearch",
   },
   data() {
     return {};
+  },
+  watch: {
+    searchValue(newVal) {
+      console.log(newVal);
+      let temp = {};
+      newVal.forEach((item) => {
+        if (item.val != "" && item.val != undefined) {
+          temp[item.key] = item.val;
+        }
+      });
+      this.$emit("changeSearch", temp);
+    },
   },
   created() {},
   mounted() {},
@@ -108,10 +120,15 @@ export default {
     handleSearch() {
       let temp = {};
       this.searchValue.forEach((item) => {
-        if (item.val) {
+        console.log(item.val);
+        console.log(item.val != "");
+        console.log(item.val != undefined);
+        if (item.val == 0 || (item.val != "" && item.val != undefined)) {
+          console.log("p");
           temp[item.key] = item.val;
         }
       });
+      console.log(temp);
       this.$emit("onSearch", temp);
     },
   },

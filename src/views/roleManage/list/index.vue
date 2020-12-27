@@ -475,6 +475,88 @@ export default {
       await this.getAuthList();
       await this.getUserRoleAuth(v.id);
       // 递归将当前角色的权限在所有权限里添加checked为true
+      // this.allAuth = depData;
+      const deepData = JSON.parse(JSON.stringify(this.allAuth));
+      // const deepData = res.data.data
+      // console.log(deepData)
+      // return
+      const all = deepData;
+      const val = this.currentAuth;
+      console.log(all);
+      console.log(val);
+      function digui(list) {
+        list.forEach((item) => {
+          item.checked = false;
+          if (item.children && item.children.length > 0) {
+            digui(item.children);
+          }
+        });
+      }
+      digui(all);
+
+      function digui1(value, list) {
+        list.forEach((item) => {
+          if (item.id == value.auth_id) {
+            item.checked = true;
+          }
+          if (item.children && item.children.length > 0) {
+            digui1(value, item.children);
+          }
+        });
+      }
+      val.forEach((item) => {
+        // console.log(item);
+        digui1(item, all);
+      });
+
+      // console.log(deepData);
+      // console.log(all);
+      // console.log(val);
+      // return
+
+      const temp = [];
+      function digui2(list) {
+        list.forEach((item) => {
+          if (item.checked == false) {
+            temp.push(item.p_id);
+            // temp.push({id:item.auth_id,pid:item.auth_pid})
+          }
+          if (item.children && item.children.length > 0) {
+            digui2(item.children);
+          }
+        });
+      }
+      digui2(all);
+      // console.log(deepData);
+      // console.log(temp);
+      // return;
+      const newTemp = [...new Set(temp)];
+      console.log(newTemp);
+      function digui3(value, list) {
+        list.forEach((item) => {
+          console.log(item);
+          console.log(value);
+          if (value == item.id) {
+            item.checked = false;
+          }
+          console.log(item.children);
+          if (item.children && item.children.length > 0) {
+            digui3(value, item.children);
+          }
+        });
+      }
+
+      newTemp.forEach((item) => {
+        digui3(item, all);
+      });
+      console.log(deepData);
+      console.log(temp);
+      this.allAuth = deepData;
+    },
+    async getTreeAuth1(v) {
+      await this.getAuthList();
+      await this.getUserRoleAuth(v.id);
+      // 递归将当前角色的权限在所有权限里添加checked为true
       function digui(allAuth, currentAuth) {
         let val = [];
         currentAuth.forEach((item) => {
@@ -490,9 +572,9 @@ export default {
         });
       }
       let depData = JSON.parse(JSON.stringify(this.allAuth));
-      console.log(depData)
+      console.log(depData);
       digui(depData, this.currentAuth);
-      console.log(depData)
+      console.log(depData);
       // this.allAuth = depData;
     },
 

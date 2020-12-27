@@ -12,6 +12,7 @@
         @onSelect="onSelect"
         @onSearch="onSearch"
         v-model="searchResult"
+        @changeSearch="changeSearch"
       ></hss-search>
     </div>
 
@@ -29,6 +30,7 @@
     <Page
       style="text-align: right"
       :total="tableData.count"
+      :current="params.nowPage"
       show-total
       show-elevator
       @on-change="changePage"
@@ -81,6 +83,9 @@ export default {
   mounted() {},
   computed: {},
   methods: {
+    changeSearch(v) {
+      console.log(v);
+    },
     onSelect(v) {
       this.$emit("onSelect", v);
     },
@@ -88,15 +93,16 @@ export default {
       console.log(v);
       // this.changePage(1);
       console.log(this.paramsData);
+      this.searchResult = v;
       this.changePage(1, v);
       console.log({ ...v });
-      // this.$emit("onSearch", v);
+      this.$emit("onSearch", v);
     },
-    changePage(nowPage, search) {
-      console.log(nowPage, search);
-      console.log({ ...search });
+    changePage(nowPage) {
+      console.log(nowPage);
+      console.log({ ...this.searchResult });
       this.paramsData.nowPage = nowPage;
-      this.$emit("changePage", { ...this.paramsData, ...search });
+      this.$emit("changePage", { ...this.paramsData, ...this.searchResult });
       // this.getArticleList(this.params);
     },
   },

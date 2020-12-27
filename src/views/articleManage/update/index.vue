@@ -118,7 +118,7 @@ export default {
               type: "Radio",
               data: [
                 { label: "已发布", value: 1 },
-                { label: "待审核", value: 2 },
+                { label: "待审核", value: 0 },
               ],
               prop: "status",
               required: true,

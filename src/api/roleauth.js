@@ -19,10 +19,11 @@ export function getAuth(id) {
 }
 
 // 获取所有用户以及其角色列表
-export function getUserRoleList() {
+export function getUserRoleList(params) {
     return request({
         url: '/api/roleauth/userRoleList',
         method: 'get',
+        params
     })
 }
 

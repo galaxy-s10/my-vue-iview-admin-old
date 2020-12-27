@@ -206,6 +206,16 @@ export default {
           },
         },
         {
+          title: "作者",
+          // key: "click",
+          // width: 100,
+          align: "center",
+          render: (h, params) => {
+            console.log(params.row);
+            return h("span", params.row.users[0].username);
+          },
+        },
+        {
           title: "浏览数",
           key: "click",
           // width: 100,
@@ -229,7 +239,7 @@ export default {
             // if (params.row.status == 1) {
             return h("iSwitch", {
               props: {
-                value: params.row.status == 1 ? true : false,
+                value: params.row.status ? true : false,
                 size: "large",
                 // "before-change": () => this.beforeChangeStatus(params.row),
               },
@@ -367,7 +377,7 @@ export default {
       row.tags.forEach((item) => {
         tagTemp.push(item.id);
       });
-      editArticle({ ...row, status: v ? 1 : 2, tags: tagTemp })
+      editArticle({ ...row, status: v ? 1 : 0, tags: tagTemp })
         .then((res) => {
           this.$Message.success({
             content: res.message,
@@ -388,7 +398,7 @@ export default {
       row.tags.forEach((item) => {
         tagTemp.push(item.id);
       });
-      editArticle({ ...row, is_comment: v ? 1 : 2, tags: tagTemp }).then((res) => {
+      editArticle({ ...row, is_comment: v ? 1 : 0, tags: tagTemp }).then((res) => {
         this.$Message.success({
           content: res.message,
         });

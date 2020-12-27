@@ -106,6 +106,16 @@ export default {
                   placeholder: "请输入友链链接",
                   required: true,
                 },
+                {
+                  name: "状态",
+                  type: "Radio",
+                  data: [
+                    { label: "已通过", value: 1 },
+                    { label: "待审核", value: 0 },
+                  ],
+                  prop: "status",
+                  required: true,
+                },
                 // {
                 //   name: "创建时间",
                 //   type: "Date",
@@ -165,6 +175,17 @@ export default {
       // 搜索列
       searchData: [
         {
+          name: "状态",
+          type: "Select",
+          width: 200,
+          data: [
+            { label: "已通过", value: 1 },
+            { label: "待审核", value: 0 },
+          ],
+          key: "status",
+          required: true,
+        },
+        {
           type: "Input",
           key: "keyword",
           name: "关键字",
@@ -173,7 +194,7 @@ export default {
         },
       ],
       params: {
-        count: 0,
+        // count: 0,
         pageSize: 10,
         nowPage: 1,
       },
@@ -192,7 +213,7 @@ export default {
         {
           title: "头像",
           align: "center",
-          key: "name",
+          // key: "name",
           render: (h, params) => {
             if (params.row.avatar) {
               return h("img", {
@@ -215,6 +236,37 @@ export default {
           title: "链接",
           align: "center",
           key: "url",
+        },
+        {
+          title: "状态",
+          align: "center",
+          render: (h, params) => {
+            console.log(params.row.status);
+            // this.status = params.row.status == 1 ? true : false;
+            // if (params.row.status == 1) {
+            return h("iSwitch", {
+              props: {
+                value: params.row.status ? true : false,
+                size: "large",
+                "before-change": () => this.beforeChangeStatus(params.row),
+              },
+              on: {
+                "on-change": (status) => this.changeStatus(status, params.row),
+                // "on-change": (status) => {
+                //   console.log(params.row);
+                //   console.log(status);
+                // },
+              },
+              scopedSlots: {
+                open: () => {
+                  return h("span", "通过");
+                },
+                close: () => {
+                  return h("span", "待审");
+                },
+              },
+            });
+          },
         },
         {
           title: "创建时间",
@@ -249,6 +301,26 @@ export default {
     this.getLinkPageList(this.params);
   },
   methods: {
+    beforeChangeStatus(v, row) {
+      // editArticle({ ...row, is_comment: v ? 1 : 0, tags: tagTemp }).then((res) => {
+      //   this.$Message.success({
+      //     content: res.message,
+      //   });
+      //   this.getArticleList(this.params);
+      // });
+    },
+    changeStatus(v, row) {
+      console.log(v);
+      console.log(row);
+      console.log("changeStatus");
+      let tagTemp = [];
+      editLink({ ...row, status: v ? 1 : 0 }).then((res) => {
+        this.$Message.success({
+          content: res.message,
+        });
+        this.getLinkPageList(this.params);
+      });
+    },
     addTag() {
       this.action = 2;
       this.columnForm = {
@@ -288,6 +360,7 @@ export default {
             placeholder: "请输入友链链接",
             required: true,
           },
+
           // {
           //   name: "创建时间",
           //   type: "Date",
@@ -316,27 +389,18 @@ export default {
     },
     async onSubmit(v) {
       console.log(v);
-      if (this.action == 1) {
-        let temp = [];
-        await editLink(v).then((res) => {
-          console.log(res);
-          this.$Message.success({
-            content: res.message,
-          });
-          this.getLinkPageList(this.params);
+      let temp = [];
+      await editLink(v).then((res) => {
+        console.log(res);
+        this.$Message.success({
+          content: res.message,
         });
-      } else {
-        await addtag(v).then((res) => {
-          console.log(res);
-          this.$Message.success({
-            content: res.message,
-          });
-          this.getLinkPageList(this.params);
-        });
-      }
+        this.getLinkPageList({ ...this.params });
+      });
     },
     onSearch(v) {
       console.log(v);
+      console.log("!!!!!!!!!");
       // this.getLinkPageList(v);
     },
     changePage(v) {
