@@ -28,6 +28,7 @@
       </template>
     </Table>
     <Page
+      v-if="Object.keys(params).length != 0"
       style="text-align: right"
       :total="tableData.count"
       :current="params.nowPage"
@@ -62,7 +63,12 @@ export default {
       },
     },
     tableData: {},
-    params: {},
+    params: {
+      type: Object,
+      default: () => {
+        return {};
+      },
+    },
   },
   data() {
     return {

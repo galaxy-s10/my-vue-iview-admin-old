@@ -8,6 +8,35 @@ Vue.use(VueRouter)
 // 默认路由
 export const defaultRoutes = [
     {
+        name: "qiniu_manage",
+        path: '/qiniu',
+        component: Layout,
+        meta: {
+            title: '管理七牛云',
+            icon: 'ios-eye-outline',
+        },
+        children: [{
+            name: "qiniu_add",
+            path: '/qiniu/qiniu_add',
+            component: () => import('@/views/qiniuManage/list/index'),
+            meta: {
+                title: 'qiniu_add',
+                icon: 'md-speedometer',
+            },
+        },
+        {
+            name: "qiniu_del",
+            path: '/qiniu/qiniu_del',
+            hidden:true,
+            component: () => import('@/views/qiniuManage/list/index'),
+            meta: {
+                title: 'qiniu_del',
+                icon: 'md-speedometer',
+            },
+        },
+        ]
+    },
+    {
         name: "admin",
         path: '/',
         component: Layout,

@@ -15,3 +15,10 @@ export function delQiniuImg(filename) {
     }
   })
 }
+export function getQiniuList(params) {
+  return request({
+    url: '/api/qiniu/getList',
+    method: 'get',
+    params
+  })
+}
