@@ -2,13 +2,18 @@
   <div>
     <!-- <div v-if="tableData.list"> -->
     <div style="margin-bottom: 10px"></div>
-    <div style="margin-bottom: 10px; display: flex; justify-content: space-between">
+    <div
+      style="margin-bottom: 10px; display: flex; justify-content: space-between"
+    >
       <div>
         <i-button>上传文件</i-button>
       </div>
       <div style="display: flex">
         <div style="width: 200px; margin-right: 10px">
-          <i-input @input="changePrefix" placeholder="请输入文件名前缀"></i-input>
+          <i-input
+            @input="changePrefix"
+            placeholder="请输入文件名前缀"
+          ></i-input>
         </div>
         <i-button type="info" @click="QiniuSearch">搜索</i-button>
       </div>
@@ -24,7 +29,14 @@
       </template>
     </hss-table>
     <!-- </div> -->
-    <div style="text-align: center; height: 40px; line-height: 40px; font-size: 16px">
+    <div
+      style="
+        text-align: center;
+        height: 40px;
+        line-height: 40px;
+        font-size: 16px;
+      "
+    >
       <span style="color: #00aae7" @click="loadMore">{{
         flag ? "加载更多" : "已加载全部"
       }}</span>
@@ -34,7 +46,7 @@
       v-bind:is="comments"
       :request="request"
       :fromData="columnForm"
-      :initData="tagInfo"
+      :initData="qiniuData"
       :isInit="isInit"
       @on-cancel="onCancel"
       @on-ok="onOk"
@@ -45,9 +57,9 @@
 </template>
 
 <script>
-import { format } from "../../../../../webchat/src/utils/format";
+// import { format } from "../../../../../webchat/src/utils/format";
 import { linkPageList, editLink, delLink } from "../../../api/link";
-import { getQiniuToken, getQiniuList } from "@/api/qiniu";
+import { getQiniuToken, getQiniuList, updateQiniu } from "@/api/qiniu";
 import hssPopupForm from "../../../components/hssComponents/form/popup-form/index";
 import hssTable from "../../../components/hssComponents/table";
 import hssOperation from "../../../components/hssComponents/table/operation";
@@ -59,7 +71,7 @@ export default {
       flag: true, //是否可加载下一页
       action: "", //1:编辑，2:新增
       columnForm: {},
-      tagInfo: {},
+      qiniuData: {},
       comments: "",
       isInit: false,
       request: {},
@@ -90,58 +102,33 @@ export default {
               return;
             }
             this.action = 1;
-            this.tagInfo = { ...row, createdAt: format(row.createdAt) };
+            this.qiniuData = {
+              ...row,
+            };
             this.columnForm = {
               list: [
                 {
-                  prop: "id",
-                },
-                {
                   type: "Input",
-                  name: "名称",
-                  prop: "name",
-                  placeholder: "请输入友链名称",
+                  name: "文件名",
+                  prop: "key",
+                  placeholder: "请输入文件名",
                   required: true,
                 },
                 {
-                  name: "头像",
+                  name: "大小",
                   type: "Input",
-                  prop: "avatar",
-                  placeholder: "请输入友链头像",
+                  isNumber: true,
+                  prop: "fsize",
+                  disabled: true,
                   required: true,
                 },
                 {
-                  name: "描述",
+                  name: "类型",
                   type: "Input",
-                  prop: "description",
-                  placeholder: "请输入友链描述",
+                  prop: "mimeType",
+                  disabled: true,
                   required: true,
                 },
-                {
-                  name: "链接",
-                  type: "Input",
-                  prop: "url",
-                  placeholder: "请输入友链链接",
-                  required: true,
-                },
-                {
-                  name: "状态",
-                  type: "Radio",
-                  data: [
-                    { label: "已通过", value: 1 },
-                    { label: "待审核", value: 0 },
-                  ],
-                  prop: "status",
-                  required: true,
-                },
-                // {
-                //   name: "创建时间",
-                //   type: "Date",
-                //   prop: "createdAt",
-                //   isDate: true,
-                //   placeholder: "请选择创建时间",
-                //   required: true,
-                // },
               ],
             };
             this.request = {
@@ -197,22 +184,6 @@ export default {
         marker: "",
       },
       columns: [
-        // {
-        //   title: "哈希值",
-        //   align: "center",
-        //   //   width: 100,
-        //   render: (h, params) => {
-        //     return h(
-        //       "span",
-        //       {
-        //         attrs: {
-        //           style: "overflow:hidden;text-overflow:ellipsis;white-space: nowrap;",
-        //         },
-        //       },
-        //       params.row.hash
-        //     );
-        //   },
-        // },
         {
           title: "文件名",
           align: "center",
@@ -222,7 +193,8 @@ export default {
               "span",
               {
                 attrs: {
-                  style: "overflow:hidden;text-overflow:ellipsis;white-space: nowrap;",
+                  style:
+                    "overflow:hidden;text-overflow:ellipsis;white-space: nowrap;",
                 },
               },
               params.row.key
@@ -259,7 +231,10 @@ export default {
           align: "center",
           render: (h, params) => {
             let temp = params.row.putTime + "";
-            return h("span", this.formateDate(parseInt(temp.slice(0, temp.length - 4))));
+            return h(
+              "span",
+              this.formateDate(parseInt(temp.slice(0, temp.length - 4)))
+            );
           },
         },
 
@@ -358,22 +333,6 @@ export default {
             placeholder: "请输入友链描述",
             required: true,
           },
-          {
-            name: "链接",
-            type: "Input",
-            prop: "url",
-            placeholder: "请输入友链链接",
-            required: true,
-          },
-
-          // {
-          //   name: "创建时间",
-          //   type: "Date",
-          //   prop: "createdAt",
-          //   isDate: true,
-          //   placeholder: "请选择创建时间",
-          //   required: true,
-          // },
         ],
       };
       this.request = {
@@ -395,13 +354,15 @@ export default {
     async onSubmit(v) {
       console.log(v);
       let temp = [];
-      await editLink(v).then((res) => {
-        console.log(res);
-        this.$Message.success({
-          content: res.message,
-        });
-        this.getLinkPageList({ ...this.params });
-      });
+      await updateQiniu({ srcKey: this.qiniuData.key, destKey: v.key }).then(
+        (res) => {
+          console.log(res);
+          this.$Message.success({
+            content: res.message,
+          });
+          // this.getLinkPageList({ ...this.params });
+        }
+      );
     },
     onSearch(v) {
       console.log(v);

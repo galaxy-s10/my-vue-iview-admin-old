@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { format } from "../../../../../webchat/src/utils/format";
+// import { format } from "../../../../../webchat/src/utils/format";
 import { linkPageList, editLink, delLink } from "../../../api/link";
 import hssPopupForm from "../../../components/hssComponents/form/popup-form/index";
 import hssTable from "../../../components/hssComponents/table";
@@ -72,7 +72,7 @@ export default {
               return;
             }
             this.action = 1;
-            this.tagInfo = { ...row, createdAt: format(row.createdAt) };
+            this.tagInfo = { ...row, createdAt: this.formateDate(row.createdAt) };
             this.columnForm = {
               list: [
                 {
