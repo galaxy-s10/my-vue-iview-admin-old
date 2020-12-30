@@ -26,7 +26,7 @@ export default (authData, roleRoutes) => {
             }
         })
     }
-    // console.log('status');
-    // console.log(status);
+    console.log('status');
+    console.log( roleRoutes,status);
     return status
 }

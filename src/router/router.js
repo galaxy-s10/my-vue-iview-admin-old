@@ -7,35 +7,7 @@ Vue.use(VueRouter)
 
 // 默认路由
 export const defaultRoutes = [
-    {
-        name: "qiniu_manage",
-        path: '/qiniu',
-        component: Layout,
-        meta: {
-            title: '管理七牛云',
-            icon: 'ios-eye-outline',
-        },
-        children: [{
-            name: "qiniu_add",
-            path: '/qiniu/qiniu_add',
-            component: () => import('@/views/qiniuManage/list/index'),
-            meta: {
-                title: 'qiniu_add',
-                icon: 'md-speedometer',
-            },
-        },
-        {
-            name: "qiniu_del",
-            path: '/qiniu/qiniu_del',
-            hidden:true,
-            component: () => import('@/views/qiniuManage/list/index'),
-            meta: {
-                title: 'qiniu_del',
-                icon: 'md-speedometer',
-            },
-        },
-        ]
-    },
+
     {
         name: "admin",
         path: '/',
@@ -166,6 +138,10 @@ export const defaultRoutes = [
 
 ]
 
+
+/* 
+    只要有子权限，就会显示外层！
+*/
 // 权限路由
 export const roleRoutes = [
     {
@@ -559,6 +535,66 @@ export const roleRoutes = [
         ]
     },
     {
+        name: "qiniu_manage",
+        path: '/qiniuManage',
+        component: Layout,
+        authKey: [
+            "QINIU_MANAGE", "QINIU_LIST", "UPDATE_QINIU", "UPLOAD_QINIU", "DELETE_QINIU"
+        ],
+        meta: {
+            title: '七牛云',
+            icon: 'ios-eye-outline',
+            authKey: [
+                "QINIU_MANAGE", "QINIU_LIST", "UPDATE_QINIU", "UPLOAD_QINIU", "DELETE_QINIU"
+            ],
+        },
+        children: [{
+            name: "qiniu_list",
+            path: '/qiniuManage/list',
+            authKey: "QINIU_LIST",
+            component: () => import('@/views/qiniuManage/list/index'),
+            meta: {
+                title: '文件列表',
+                icon: 'md-speedometer',
+                authKey: "QINIU_LIST",
+            },
+        },
+        {
+            name: "qiniu_update",
+            path: '/qiniuManage/update',
+            authKey: "UPDATE_QINIU",
+            component: () => import('@/views/qiniuManage/update/index'),
+            meta: {
+                title: '修改文件',
+                icon: 'md-speedometer',
+                authKey: "UPDATE_QINIU",
+            },
+        },
+        {
+            name: "qiniu_upload",
+            path: '/qiniuManage/upload',
+            authKey: "UPLOAD_QINIU",
+            component: () => import('@/views/qiniuManage/upload/index'),
+            meta: {
+                title: '上传文件',
+                icon: 'md-speedometer',
+                authKey: "UPLOAD_QINIU",
+            },
+        },
+        {
+            name: "qiniu_delete",
+            path: '/qiniuManage/delete',
+            authKey: "DELETE_QINIU",
+            component: () => import('@/views/qiniuManage/delete/index'),
+            meta: {
+                title: '删除文件',
+                icon: 'md-speedometer',
+                authKey: "DELETE_QINIU",
+            },
+        },
+        ]
+    },
+    {
         name: "logManage",
         authKey: ["LOG_LIST", 'LOG_MANAGE'],
         path: '/logManage',
@@ -582,6 +618,7 @@ export const roleRoutes = [
             }
         ]
     },
+
     // {
     //     name: "authManage",
     //     authKey: ["AUTH_LIST", "ADD_AUTH", "DELETE_AUTH", "SELECT_AUTH", "UPDATE_AUTH"],

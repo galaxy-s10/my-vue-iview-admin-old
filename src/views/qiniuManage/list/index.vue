@@ -5,11 +5,29 @@
     <div
       style="margin-bottom: 10px; display: flex; justify-content: space-between"
     >
-      <div>
-        <i-button>上传文件</i-button>
+      <div style="display: flex; align-items: center">
+        <div style="margin-right: 10px">
+          当前总文件数：{{ linkList.length }}
+        </div>
+        <div>
+          分页大小:
+          <Select
+            v-model="params.limit"
+            style="width: 200px"
+            placeholder="请选择分页大小"
+            @on-change="onSelect"
+          >
+            <Option
+              v-for="item in pageLimit"
+              :value="item.value"
+              :key="item.value"
+              >{{ item.label }}</Option
+            >
+          </Select>
+        </div>
       </div>
-      <div style="display: flex">
-        <div style="width: 200px; margin-right: 10px">
+      <div style="width: 300px; display: flex; justify-content: space-between">
+        <div style="width: 200px">
           <i-input
             @input="changePrefix"
             placeholder="请输入文件名前缀"
@@ -68,6 +86,12 @@ export default {
   components: { hssTable, hssOperation, hssPopupForm },
   data() {
     return {
+      pageLimit: [
+        { label: "10条", value: 10 },
+        { label: "30条", value: 30 },
+        { label: "50条", value: 50 },
+        { label: "100条", value: 100 },
+      ],
       flag: true, //是否可加载下一页
       action: "", //1:编辑，2:新增
       columnForm: {},
@@ -227,7 +251,7 @@ export default {
           key: "mimeType",
         },
         {
-          title: "修改时间",
+          title: "最后修改",
           align: "center",
           render: (h, params) => {
             let temp = params.row.putTime + "";
@@ -257,6 +281,11 @@ export default {
     this.getQiniuList(this.params);
   },
   methods: {
+    onSelect() {
+      this.params.marker = "";
+      this.linkList = [];
+      this.getQiniuList(this.params);
+    },
     QiniuSearch() {
       this.params.marker = "";
       this.linkList = [];
@@ -405,6 +434,8 @@ export default {
         if (!res.respInfo.data.marker) {
           console.log("!!!!!!!");
           that.flag = false;
+        } else {
+          that.flag = true;
         }
         this.linkList.push(...res.respInfo.data.items);
         this.params.marker = res.respInfo.data.marker;

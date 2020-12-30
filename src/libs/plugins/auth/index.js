@@ -22,7 +22,7 @@ export default {
                 el.parentNode && el.parentNode.removeChild(el)
             }
         } else {
-            // console.log('这是不需要验证权限的路由，不移除');
+            console.log('这是不需要验证权限的路由，不移除');
             // throw new Error('缺少指令权限数据')
         }
     },
