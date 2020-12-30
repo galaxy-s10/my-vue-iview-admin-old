@@ -40,7 +40,7 @@ export default {
       console.log("999");
       console.log(newVal);
       console.log(oldVal);
-      console.log(this.$route)
+      console.log(this.$route);
       this.changeMenu(newVal.name);
     },
   },
@@ -79,15 +79,17 @@ export default {
       if (!bool) {
         console.log("点击判断，没有就插入1");
         console.log(target);
-        if (this.$route.params) {
-          console.log(target);
+        if (!target.hidden) {
+          if (this.$route.params) {
+            console.log(target);
+          }
+          this.addTagOpenPage({ ...target, params: this.$route.params });
+          this.changeActiveTagOpenPage(target.name);
         }
-        this.addTagOpenPage({ ...target, params: this.$route.params });
-        this.changeActiveTagOpenPage(target.name);
       } else {
         if (this.$route.params) {
-          console.log('edit')
-          this.editTagOpenPage({ ...target, params: this.$route.params   });
+          console.log("edit");
+          this.editTagOpenPage({ ...target, params: this.$route.params });
         }
         this.changeActiveTagOpenPage(target.name);
       }

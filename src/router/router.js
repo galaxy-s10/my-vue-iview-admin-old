@@ -535,6 +535,66 @@ export const roleRoutes = [
         ]
     },
     {
+        name: "music_manage",
+        path: '/musicManage',
+        component: Layout,
+        authKey: [
+            "MUSIC_MANAGE", "MUSIC_LIST", "UPDATE_MUSIC", "UPLOAD_MUSIC", "DELETE_MUSIC"
+        ],
+        meta: {
+            title: '音乐管理',
+            icon: 'ios-eye-outline',
+            authKey: [
+                "MUSIC_MANAGE", "MUSIC_LIST", "UPDATE_MUSIC", "UPLOAD_MUSIC", "DELETE_MUSIC"
+            ],
+        },
+        children: [{
+            name: "music_list",
+            path: '/musicManage/list',
+            authKey: "MUSIC_LIST",
+            component: () => import('@/views/musicManage/list/index'),
+            meta: {
+                title: '音乐列表',
+                icon: 'md-speedometer',
+                authKey: "MUSIC_LIST",
+            },
+        },
+        {
+            name: "qiniu_update",
+            path: '/musicManage/update',
+            authKey: "UPDATE_MUSIC",
+            component: () => import('@/views/musicManage/update/index'),
+            meta: {
+                title: '修改音乐',
+                icon: 'md-speedometer',
+                authKey: "UPDATE_MUSIC",
+            },
+        },
+        {
+            name: "music_upload",
+            path: '/musicManage/upload',
+            authKey: "UPLOAD_MUSIC",
+            component: () => import('@/views/musicManage/upload/index'),
+            meta: {
+                title: '上传音乐',
+                icon: 'md-speedometer',
+                authKey: "UPLOAD_MUSIC",
+            },
+        },
+        {
+            name: "music_delete",
+            path: '/musicManage/delete',
+            authKey: "DELETE_MUSIC",
+            component: () => import('@/views/musicManage/delete/index'),
+            meta: {
+                title: '删除音乐',
+                icon: 'md-speedometer',
+                authKey: "DELETE_MUSIC",
+            },
+        },
+        ]
+    },
+    {
         name: "qiniu_manage",
         path: '/qiniuManage',
         component: Layout,
@@ -594,6 +654,7 @@ export const roleRoutes = [
         },
         ]
     },
+
     {
         name: "logManage",
         authKey: ["LOG_LIST", 'LOG_MANAGE'],

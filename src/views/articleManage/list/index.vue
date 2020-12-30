@@ -185,7 +185,7 @@ export default {
           align: "center",
           render: (h, params) => {
             console.log(params);
-            return h("span", params.row.title);
+            return h("span", params.row.article.title);
           },
         },
         {
@@ -193,10 +193,10 @@ export default {
           // width: 100,
           align: "center",
           render: (h, params) => {
-            if (params.row.img) {
+            if (params.row.article.img) {
               return h("img", {
                 attrs: {
-                  src: params.row.img,
+                  src: params.row.article.img,
                   style: "width:50px;height:50px",
                 },
               });
@@ -212,21 +212,23 @@ export default {
           align: "center",
           render: (h, params) => {
             console.log(params.row);
-            return h("span", params.row.users[0].username);
+            return h("span", params.row.article.users[0].username);
           },
         },
         {
           title: "浏览数",
-          key: "click",
           // width: 100,
           align: "center",
+          render: (h, params) => {
+            return h("span", params.row.article.click);
+          },
         },
         {
           title: "点赞数",
           // width: 100,
           align: "center",
           render: (h, params) => {
-            return h("span", params.row.stars.length);
+            return h("span", params.row.article.stars.length);
           },
         },
         {
@@ -239,7 +241,7 @@ export default {
             // if (params.row.status == 1) {
             return h("iSwitch", {
               props: {
-                value: params.row.status ? true : false,
+                value: params.row.article.status ? true : false,
                 size: "large",
                 // "before-change": () => this.beforeChangeStatus(params.row),
               },
@@ -271,12 +273,12 @@ export default {
             // if (params.row.status == 1) {
             return h("iSwitch", {
               props: {
-                value: params.row.is_comment == 1 ? true : false,
+                value: params.row.article.is_comment == 1 ? true : false,
                 size: "large",
                 // "before-change": () => this.beforeChangeStatus(params.row),
               },
               on: {
-                "on-change": (status) => this.changeIsComment(status, params.row),
+                "on-change": (status) => this.changeIsComment(status, params.rowarticle),
                 // "on-change": (status) => {
                 //   console.log(params.row);
                 //   console.log(status);
@@ -298,7 +300,7 @@ export default {
           align: "center",
           // width: 150,
           render: (h, params) => {
-            return h("span", this.formateDate(params.row.createdAt));
+            return h("span", this.formateDate(params.row.article.createdAt));
           },
         },
         {
@@ -306,7 +308,7 @@ export default {
           align: "center",
           // width: 150,
           render: (h, params) => {
-            return h("span", this.formateDate(params.row.updatedAt));
+            return h("span", this.formateDate(params.row.article.updatedAt));
           },
         },
         {
@@ -472,8 +474,8 @@ export default {
       console.log(v);
       console.log({ ...v });
       articlepage(v).then((res) => {
-        this.articleList = res.pagelist;
-        this.params.count = res.pagelist.count;
+        this.articleList = res;
+        this.params.count = res.count;
       });
     },
   },
