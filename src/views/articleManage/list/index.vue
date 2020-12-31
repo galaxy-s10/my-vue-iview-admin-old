@@ -7,6 +7,7 @@
       :params="params"
       @onSelect="onSelect"
       @onSearch="onSearch"
+      @changeSearchResult="changeSearchResult"
       @changePage="changePage"
     >
       <template slot-scope="{ row }" slot="operation">
@@ -34,90 +35,18 @@ import { mapState } from "vuex";
 import hssTable from "../../../components/hssComponents/table";
 import hssOperation from "../../../components/hssComponents/table/operation";
 import { articlepage, editArticle, delArticle } from "../../../api/article";
+import { typePageList } from "../../../api/type";
 export default {
   components: { hssTable, hssOperation },
   data() {
     return {
       params: {
         is_admin: 1, //是否后台，是的话显示所有文章，包括未审核
-        count: 0,
         pageSize: 10,
         nowPage: 1,
       },
       // 搜索列
-      searchData: [
-        {
-          type: "Select",
-          key: "status",
-          name: "状态",
-          placeholder: "请选择文章状态",
-          data: [
-            {
-              label: "已发布",
-              value: 1,
-            },
-            {
-              label: "待审核",
-              value: 2,
-            },
-          ],
-          width: 150,
-        },
-        {
-          type: "Select",
-          key: "is_comment",
-          name: "评论",
-          placeholder: "请选择评论状态",
-          data: [
-            {
-              label: "开启",
-              value: 1,
-            },
-            {
-              label: "关闭",
-              value: 2,
-            },
-          ],
-          width: 150,
-        },
-        {
-          type: "Input",
-          key: "keyword",
-          name: "关键字",
-          placeholder: "请输入关键字",
-          width: 200,
-        },
-        // {
-        // // DateTimeRange有bug，暂时不要用!
-        //   type: "DateTimeRange",
-        //   name: "时间范围",
-        //   key: "timeRange",
-        //   placeholder: "DateTimeRange",
-        //   format: "yyyy-MM-dd HH:mm",
-        //   width: 300,
-        // },
-        {
-          type: "DateTime",
-          key: "createdAt",
-          name: "创建时间",
-          placeholder: "请选择创建时间",
-          width: 200,
-        },
-        {
-          type: "DateTime",
-          key: "updatedAt",
-          name: "更新时间",
-          placeholder: "请选择更新时间",
-          width: 200,
-        },
-        // {
-        //   type: "Month",
-        //   key: "month",
-        //   name: "月份",
-        //   placeholder: "请选择月份",
-        //   width: 200,
-        // },
-      ],
+      searchData: [],
       // 表格操作列
       operationData: [
         {
@@ -172,6 +101,7 @@ export default {
       loading: true,
       showRole: false,
       articleList: [],
+      articleTypeList: [],
       columns: [
         {
           title: "id",
@@ -185,7 +115,16 @@ export default {
           align: "center",
           render: (h, params) => {
             console.log(params);
-            return h("span", params.row.article.title);
+            return h("span", params.row.title);
+          },
+        },
+        {
+          title: "分类",
+          // width: 150,
+          align: "center",
+          render: (h, params) => {
+            console.log(params);
+            return h("span", params.row.types[0].name);
           },
         },
         {
@@ -193,10 +132,10 @@ export default {
           // width: 100,
           align: "center",
           render: (h, params) => {
-            if (params.row.article.img) {
+            if (params.row.img) {
               return h("img", {
                 attrs: {
-                  src: params.row.article.img,
+                  src: params.row.img,
                   style: "width:50px;height:50px",
                 },
               });
@@ -212,7 +151,7 @@ export default {
           align: "center",
           render: (h, params) => {
             console.log(params.row);
-            return h("span", params.row.article.users[0].username);
+            return h("span", params.row.users[0].username);
           },
         },
         {
@@ -220,7 +159,7 @@ export default {
           // width: 100,
           align: "center",
           render: (h, params) => {
-            return h("span", params.row.article.click);
+            return h("span", params.row.click);
           },
         },
         {
@@ -228,7 +167,7 @@ export default {
           // width: 100,
           align: "center",
           render: (h, params) => {
-            return h("span", params.row.article.stars.length);
+            return h("span", params.row.stars.length);
           },
         },
         {
@@ -241,7 +180,7 @@ export default {
             // if (params.row.status == 1) {
             return h("iSwitch", {
               props: {
-                value: params.row.article.status ? true : false,
+                value: params.row.status ? true : false,
                 size: "large",
                 // "before-change": () => this.beforeChangeStatus(params.row),
               },
@@ -273,12 +212,12 @@ export default {
             // if (params.row.status == 1) {
             return h("iSwitch", {
               props: {
-                value: params.row.article.is_comment == 1 ? true : false,
+                value: params.row.is_comment == 1 ? true : false,
                 size: "large",
                 // "before-change": () => this.beforeChangeStatus(params.row),
               },
               on: {
-                "on-change": (status) => this.changeIsComment(status, params.rowarticle),
+                "on-change": (status) => this.changeIsComment(status, params.row),
                 // "on-change": (status) => {
                 //   console.log(params.row);
                 //   console.log(status);
@@ -300,7 +239,7 @@ export default {
           align: "center",
           // width: 150,
           render: (h, params) => {
-            return h("span", this.formateDate(params.row.article.createdAt));
+            return h("span", this.formateDate(params.row.createdAt));
           },
         },
         {
@@ -308,7 +247,7 @@ export default {
           align: "center",
           // width: 150,
           render: (h, params) => {
-            return h("span", this.formateDate(params.row.article.updatedAt));
+            return h("span", this.formateDate(params.row.updatedAt));
           },
         },
         {
@@ -418,6 +357,10 @@ export default {
     onSelect(v) {
       console.log(v);
     },
+    changeSearchResult(v){
+      console.log(v);
+      this.params = {...this.params,...v}
+    },
     onSearch(v) {
       console.log(v);
     },
@@ -470,18 +413,94 @@ export default {
         ]
       );
     },
-    getArticleList(v) {
+    async getArticleList(v) {
       console.log(v);
       console.log({ ...v });
-      articlepage(v).then((res) => {
-        this.articleList = res;
-        this.params.count = res.count;
+      let res = await articlepage(v);
+      this.articleList = res;
+      this.params.count = res.count;
+    },
+    async getArticleTypeList(v) {
+      let typeList = [];
+      let res = await typePageList(v);
+      res.rows.forEach((item) => {
+        let temp = {};
+        temp.label = item.name;
+        temp.value = item.id;
+        typeList.push(temp);
       });
+      this.articleTypeList = typeList;
+      this.searchData = [
+        {
+          type: "Select",
+          key: "type_id",
+          name: "分类",
+          placeholder: "请选择分类",
+          data: this.articleTypeList,
+          width: 150,
+        },
+        {
+          type: "Select",
+          key: "status",
+          name: "状态",
+          placeholder: "请选择文章状态",
+          data: [
+            {
+              label: "已发布",
+              value: 1,
+            },
+            {
+              label: "待审核",
+              value: 0,
+            },
+          ],
+          width: 150,
+        },
+        {
+          type: "Select",
+          key: "is_comment",
+          name: "评论",
+          placeholder: "请选择评论状态",
+          data: [
+            {
+              label: "开启",
+              value: 1,
+            },
+            {
+              label: "关闭",
+              value: 0,
+            },
+          ],
+          width: 150,
+        },
+        {
+          type: "Input",
+          key: "keyword",
+          name: "关键字",
+          placeholder: "请输入关键字",
+          width: 200,
+        },
+        // {
+        //   type: "DateTime",
+        //   key: "createdAt",
+        //   name: "创建时间",
+        //   placeholder: "请选择创建时间",
+        //   width: 200,
+        // },
+        // {
+        //   type: "DateTime",
+        //   key: "updatedAt",
+        //   name: "更新时间",
+        //   placeholder: "请选择更新时间",
+        //   width: 200,
+        // },
+      ];
     },
   },
   created() {},
-  mounted() {
-    this.getArticleList(this.params);
+  async mounted() {
+    await this.getArticleTypeList(this.params);
+    await this.getArticleList(this.params);
   },
 };
 </script>

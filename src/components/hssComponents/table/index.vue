@@ -88,6 +88,11 @@ export default {
   },
   mounted() {},
   computed: {},
+  watch: {
+    searchResult(newVal, oldVal) {
+      this.$emit("changeSearchResult", newVal);
+    },
+  },
   methods: {
     changeSearch(v) {
       console.log(v);
