@@ -27,11 +27,11 @@ export function editRoleAuth(val) {
 }
 
 // 添加角色
-export function addRole(val) {
+export function addRole(data) {
     return request({
         url: '/api/role/addRole',
         method: 'post',
-        data: val
+        data
     })
 }
 

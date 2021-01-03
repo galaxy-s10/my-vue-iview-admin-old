@@ -1,11 +1,20 @@
 import request from './request'
 
 // 音乐列表
-export function musicPageList(params) {
+export function getMusicList(params) {
     return request({
         url: '/api/music/pageList',
         method: 'get',
         params
+    })
+}
+
+// 查找音乐
+export function findMusic(id) {
+    return request({
+        url: '/api/music/findOne',
+        method: 'get',
+        params: { id }
     })
 }
 

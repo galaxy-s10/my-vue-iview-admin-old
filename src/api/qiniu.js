@@ -16,11 +16,11 @@ export function getQiniuToken() {
   })
 }
 
-export function delQiniuImg(filename) {
+export function deleteQiniu(filename) {
   return request({
-    url: '/api/qiniu/del',
-    method: 'get',
-    params: {
+    url: '/api/qiniu/delete',
+    method: 'delete',
+    data: {
       filename
     }
   })

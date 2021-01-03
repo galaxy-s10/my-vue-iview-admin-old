@@ -1,7 +1,5 @@
 <template>
   <div>
-    <!-- <i-button @click="addTag">新增标签</i-button> -->
-    <!-- <div v-if="tableData.list"> -->
     <hss-table
       :tableData="{ list: tagList.rows, count: tagList.count }"
       :searchData="searchData"
@@ -14,7 +12,6 @@
         <hss-operation :row="row" :operation="operationData"></hss-operation>
       </template>
     </hss-table>
-    <!-- </div> -->
     <component
       v-bind:is="comments"
       :request="request"
@@ -25,17 +22,17 @@
       @on-ok="onOk"
       @onSubmit="onSubmit"
     ></component>
-    <!-- <hss-table v-if="tableData.list.length>0" :tableData="tableData" :columns="columns" :params="params"></hss-table> -->
   </div>
 </template>
 
 <script>
-// import { format } from "../../../../../webchat/src/utils/format";
-import { taglist, tagPageList, editTag, delTag, addTag } from "../../../api/tag";
 import hssPopupForm from "../../../components/hssComponents/form/popup-form/index";
 import hssTable from "../../../components/hssComponents/table";
 import hssOperation from "../../../components/hssComponents/table/operation";
+
+import { getTagList, updateTag, deleteTag, addTag } from "../../../api/tag";
 import { mapState } from "vuex";
+
 export default {
   components: { hssTable, hssOperation, hssPopupForm },
   data() {
@@ -144,7 +141,12 @@ export default {
                     this.$Message.success({
                       content: res.message,
                     });
-                    this.getTagPageList(this.params);
+                    this.getTagList(this.params);
+                  });
+                },
+                onCancel: () => {
+                  this.$Message.info({
+                    content: "你取消了删除操作",
                   });
                 },
               });
@@ -153,7 +155,7 @@ export default {
                 this.$Message.success({
                   content: res.message,
                 });
-                this.getTagPageList(this.params);
+                this.getTagList(this.params);
               });
             }
           },
@@ -182,16 +184,24 @@ export default {
           placeholder: "请选择创建时间",
           width: 200,
         },
-        // {
-        //   type: "DateTime",
-        //   key: "updatedAt",
-        //   name: "更新时间",
-        //   placeholder: "请选择更新时间",
-        //   width: 200,
-        // },
+        {
+          type: "Date",
+          key: "createdAt",
+          name: "创建时间",
+          format: "yyyy-MM-dd",
+          placeholder: "请选择创建时间",
+          width: 200,
+        },
+        {
+          type: "Date",
+          key: "updatedAt",
+          name: "更新时间",
+          format: "yyyy-MM-dd",
+          placeholder: "请选择更新时间",
+          width: 200,
+        },
       ],
       params: {
-        count: 0,
         pageSize: 10,
         nowPage: 1,
       },
@@ -206,10 +216,6 @@ export default {
           title: "名称",
           align: "center",
           key: "name",
-          // render: (h, params) => {
-          //   console.log(params);
-          //   return h("span", params.row.title);
-          // },
         },
         {
           title: "颜色",
@@ -262,57 +268,12 @@ export default {
   computed: {
     ...mapState("user", ["auth"]),
   },
-  created() {
-    // this.getTagList();
-  },
+  created() {},
   mounted() {
-    this.getTagPageList(this.params);
+    this.getTagList(this.params);
   },
   methods: {
-    addTag() {
-      this.action = 2;
-      this.columnForm = {
-        list: [
-          {
-            // name: "id",
-            // type: "Input",
-            prop: "id",
-            // placeholder: "",
-            // display:'none'
-          },
-          {
-            type: "Input",
-            name: "名称",
-            prop: "name",
-            placeholder: "请输入标签名",
-            required: true,
-          },
-          {
-            name: "颜色",
-            type: "Input",
-            prop: "color",
-            placeholder: "请输入标签颜色",
-            required: true,
-          },
-          // {
-          //   name: "创建时间",
-          //   type: "Date",
-          //   prop: "createdAt",
-          //   isDate: true,
-          //   placeholder: "请选择创建时间",
-          //   required: true,
-          // },
-        ],
-      };
-      this.request = {
-        title: "新增标签",
-        size: "centre",
-      };
-      // this.isInit = true;
-      this.comments = "hssPopupForm";
-    },
     onCancel() {
-      // this.showRole = false
       console.log("onCancel");
       this.roleInfo = {};
       this.comments = "";
@@ -324,12 +285,12 @@ export default {
       console.log(v);
       if (this.action == 1) {
         let temp = [];
-        await editTag(v).then((res) => {
+        await updateTag(v).then((res) => {
           console.log(res);
           this.$Message.success({
             content: res.message,
           });
-          this.getTagPageList(this.params);
+          this.getTagList(this.params);
         });
       } else {
         await addTag(v).then((res) => {
@@ -337,17 +298,17 @@ export default {
           this.$Message.success({
             content: res.message,
           });
-          this.getTagPageList(this.params);
+          this.getTagList(this.params);
         });
       }
     },
     onSearch(v) {
       console.log(v);
-      // this.getTagPageList(v);
+      this.getTagList({ ...this.params, ...v });
     },
     changePage(v) {
       console.log(v);
-      this.getTagPageList(v);
+      this.getTagList(v);
     },
     //转换时间格式
     formateDate(datetime) {
@@ -369,8 +330,8 @@ export default {
         addDateZero(d.getSeconds());
       return formatdatetime;
     },
-    async getTagPageList(v) {
-      await tagPageList(v).then((res) => {
+    async getTagList(v) {
+      await getTagList(v).then((res) => {
         console.log(res);
         this.tagList = res;
         // this.tagList = res.rows

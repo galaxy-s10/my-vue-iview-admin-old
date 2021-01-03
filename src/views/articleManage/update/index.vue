@@ -18,9 +18,11 @@
 // import markdown from "../../../components/markdown/index";
 import hssUpload from "../../../components/upload/index";
 import baseForm from "../../../components/hssComponents/form/base-form/index";
-import { findArticle, editArticle } from "@/api/article";
-import { taglist } from "@/api/tag";
-// import { editarticle } from '../../../../../vueblog-client/src/api/article';
+import { findArticle, updateArticle } from "@/api/article";
+import { getTagList, updateTag, deleteTag, addTag } from "@/api/tag";
+import { getTypeList } from "../../../api/type";
+
+// import { updatearticle } from '../../../../../vueblog-client/src/api/article';
 export default {
   components: { baseForm, hssUpload },
   data() {
@@ -43,22 +45,36 @@ export default {
       headerImg: [],
       oldImgList: [],
       newimg: null,
+      typeList: [],
     };
   },
   computed: {},
   methods: {
+    async getArticleTypeList(v) {
+      let typeList = [];
+      let res = await getTypeList(v);
+      res.rows.forEach((item) => {
+        let temp = {};
+        temp.label = item.name;
+        temp.value = item.id;
+        typeList.push(temp);
+      });
+      this.typeList = typeList;
+    },
     onSubmit() {
       this.$refs.hssBaseForm.submit((v) => {
         if (v) {
           console.log(v);
-          editArticle(v).then(res=>{
-            console.log(res)
-            this.$Message.success({
-            content: res.message,
-          });
-          }).catch(err=>{
-            console.log(err)
-          })
+          updateArticle(v)
+            .then((res) => {
+              console.log(res);
+              this.$Message.success({
+                content: res.message,
+              });
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         } else {
         }
       });
@@ -67,13 +83,15 @@ export default {
   },
   async created() {
     console.log(this.$route);
-    await taglist().then((res) => {
+    await getTagList({ nowPage: 1, pageSize: 100 }).then((res) => {
       this.tagList = res.rows;
     });
+    await this.getArticleTypeList({ nowPage: 1, pageSize: 10 });
+
     await findArticle(this.$route.params.id)
       .then((res) => {
         this.columnForm = {
-          submitBtn:true,
+          submitBtn: true,
           list: [
             {
               // name: "id",
@@ -92,10 +110,11 @@ export default {
             },
             {
               name: "类型",
-              type: "Input",
+              type: "Select",
               prop: "type",
-              placeholder: "请输入类型",
+              placeholder: "请选择文章类型",
               required: true,
+              data: this.typeList,
             },
             {
               name: "浏览量",
@@ -136,10 +155,10 @@ export default {
               // isString:true,
               required: true,
             },
-            
+
             {
               name: "内容",
-              type: "editor",
+              type: "Editor",
               prop: "content",
               content: "",
               placeholder: "请输入内容",
@@ -164,20 +183,21 @@ export default {
           ],
         };
         let tagTemp1 = [];
-        res.list.rows[0].tags.forEach((item) => {
+        res.detail.tags.forEach((item) => {
           tagTemp1.push(item.id);
         });
-        // let deepTags = JSON.parse(JSON.stringify(res.list.rows[0].tags));
-        res.list.rows[0].tags = tagTemp1;
-        this.initData = res.list.rows[0];
+        // let deepTags = JSON.parse(JSON.stringify(res.detail.tags));
+        res.detail.tags = tagTemp1;
+        this.initData = res.detail;
+        this.initData.type = res.detail.types[0].id;
         // console.log(this.initData);
-        this.form.id = res.list.rows[0].id;
-        this.form.title = res.list.rows[0].title;
-        this.form.type = res.list.rows[0].type;
-        this.form.tags = res.list.rows[0].tags;
-        this.form.content = res.list.rows[0].content;
+        this.form.id = res.detail.id;
+        this.form.title = res.detail.title;
+        this.form.type = res.detail.types[0].id;
+        this.form.tags = res.detail.tags;
+        this.form.content = res.detail.content;
         this.columnForm.list[this.columnForm.list.length - 3].content =
-          res.list.rows[0].content;
+          res.detail.content;
         let tagTemp = [];
         this.tagList.forEach((item) => {
           // console.log(item);
@@ -191,10 +211,10 @@ export default {
         this.columnForm.list[4].data = tagTemp;
 
         // 保存文章所有图片
-        // this.oldImgList = this.regMd(res.list.rows[0].content);
+        // this.oldImgList = this.regMd(res.detail.content);
         // 保存封面图
-        if (res.list.rows[0].img) {
-          this.headerImg.push({ name: "", url: res.list.rows[0].img });
+        if (res.detail.img) {
+          this.headerImg.push({ name: "", url: res.detail.img });
         }
       })
       .catch((err) => {

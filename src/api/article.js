@@ -1,37 +1,34 @@
 import request from './request'
 
-export function articleList(ordername, orderby) {
+// export function articleList(ordername, orderby) {
+//   return request({
+//     url: '/api/article',
+//     method: 'get',
+//     params: {
+//       ordername,
+//       orderby
+//     }
+//   })
+// }
+// export function articletypelist() {
+//   return request({
+//     url: '/api/article/typelist',
+//     method: 'get',
+//   })
+// }
+export function getArticleList(params) {
   return request({
-    url: '/api/article',
-    method: 'get',
-    params: {
-      ordername,
-      orderby
-    }
-  })
-}
-export function articletypelist() {
-  return request({
-    url: '/api/article/typelist',
-    method: 'get',
-  })
-}
-export function articlepage(params) {
-  console.log('paramsparamsparamsparams')
-  console.log(params)
-  return request({
-    url: '/api/article/page',
+    url: '/api/article/pageList',
     method: 'get',
     params
   })
 }
-export function findArticle(id, title) {
+export function findArticle(id) {
   return request({
-    url: '/api/article/find',
+    url: '/api/article/findOne',
     method: 'get',
-    params: {
-      id,
-      title
+    params:{
+      id
     }
   })
 }
@@ -42,16 +39,16 @@ export function addArticle(data) {
     data
   })
 }
-export function editArticle(data) {
+export function updateArticle(data) {
   return request({
-    url: '/api/article/edit',
+    url: '/api/article/update',
     method: 'put',
     data
   })
 }
-export function delArticle(id) {
+export function deleteArticle(id) {
   return request({
-    url: '/api/article/del',
+    url: '/api/article/delete',
     method: 'delete',
     data: {
       id

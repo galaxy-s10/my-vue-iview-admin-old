@@ -30,7 +30,7 @@
 
 <script>
 // import { format } from "../../../../../webchat/src/utils/format";
-import { linkPageList, editLink, delLink } from "../../../api/link";
+import { getLinkList, updateLink, deleteLink } from "../../../api/link";
 import hssPopupForm from "../../../components/hssComponents/form/popup-form/index";
 import hssTable from "../../../components/hssComponents/table";
 import hssOperation from "../../../components/hssComponents/table/operation";
@@ -42,6 +42,7 @@ export default {
       action: "", //1:编辑，2:新增
       columnForm: {},
       tagInfo: {},
+      searchRes: {},
       comments: "",
       isInit: false,
       request: {},
@@ -51,21 +52,10 @@ export default {
         {
           name: "编辑",
           type: "CUSTOM", //CUSTOM（自定义）、ROUTER（路由方式）、DELETE（删除按钮）、STATUS（双状态切换）
-          customStyle: (row) => {
-            // let bool = false;
-            // if (this.auth.includes("UPDATE_TAG")) {
-            //   console.log("yes");
-            //   bool = true;
-            // }
-            // console.log(this.auth);
-            // return {
-            //   "pointer-events": bool ? "none" : "",
-            //   color: "rgb(170, 170, 170)",
-            // };
-          },
+          customStyle: (row) => {},
           custom: async (row) => {
             console.log(row);
-            if (!this.auth.includes("UPDATE_TAG")) {
+            if (!this.auth.includes("UPDATE_LINK")) {
               this.$Message.error({
                 content: "权限不足！",
               });
@@ -159,7 +149,7 @@ export default {
               this.$Message.success({
                 content: res.message,
               });
-              this.getLinkPageList(this.params);
+              this.getLinkList(this.params);
             });
             // }
           },
@@ -190,6 +180,22 @@ export default {
           key: "keyword",
           name: "关键字",
           placeholder: "请输入关键字",
+          width: 200,
+        },
+        {
+          type: "Date",
+          key: "createdAt",
+          name: "创建时间",
+          format: "yyyy-MM-dd",
+          placeholder: "请选择创建时间",
+          width: 200,
+        },
+        {
+          type: "Date",
+          key: "updatedAt",
+          name: "更新时间",
+          format: "yyyy-MM-dd",
+          placeholder: "请选择更新时间",
           width: 200,
         },
       ],
@@ -251,11 +257,10 @@ export default {
                 "before-change": () => this.beforeChangeStatus(params.row),
               },
               on: {
-                "on-change": (status) => this.changeStatus(status, params.row),
-                // "on-change": (status) => {
-                //   console.log(params.row);
-                //   console.log(status);
-                // },
+                "on-change": (status) => {
+                  params.row.status = status ? 1 : 0;
+                  this.changeStatus(status, params.row);
+                },
               },
               scopedSlots: {
                 open: () => {
@@ -298,7 +303,7 @@ export default {
     // this.getTagList();
   },
   mounted() {
-    this.getLinkPageList(this.params);
+    this.getLinkList(this.params);
   },
   methods: {
     beforeChangeStatus(v, row) {
@@ -314,11 +319,11 @@ export default {
       console.log(row);
       console.log("changeStatus");
       let tagTemp = [];
-      editLink({ ...row, status: v ? 1 : 0 }).then((res) => {
+      updateLink({ ...row, status: v ? 1 : 0 }).then((res) => {
         this.$Message.success({
           content: res.message,
         });
-        this.getLinkPageList(this.params);
+        this.getLinkList({ ...this.params, ...this.searchRes });
       });
     },
     addTag() {
@@ -395,17 +400,18 @@ export default {
         this.$Message.success({
           content: res.message,
         });
-        this.getLinkPageList({ ...this.params });
+        this.getLinkList({ ...this.params });
       });
     },
     onSearch(v) {
       console.log(v);
+      this.searchRes = v;
       console.log("!!!!!!!!!");
-      // this.getLinkPageList(v);
+      this.getLinkList({ ...this.params, ...v });
     },
     changePage(v) {
       console.log(v);
-      this.getLinkPageList(v);
+      this.getLinkList(v);
     },
     //转换时间格式
     formateDate(datetime) {
@@ -427,8 +433,8 @@ export default {
         addDateZero(d.getSeconds());
       return formatdatetime;
     },
-    async getLinkPageList(v) {
-      await linkPageList(v).then((res) => {
+    async getLinkList(v) {
+      await getLinkList(v).then((res) => {
         console.log(res);
         this.linkList = res;
         // this.linkList = res.rows

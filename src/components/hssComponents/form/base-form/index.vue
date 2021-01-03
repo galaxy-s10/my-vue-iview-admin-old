@@ -9,11 +9,7 @@
       >
         <template>
           <div v-if="item.render">
-            <hss-render
-              :render="item.render"
-              :row="item"
-              :index="index"
-            ></hss-render>
+            <hss-render :render="item.render" :row="item" :index="index"></hss-render>
           </div>
           <!-- 输入框 -->
           <Input
@@ -22,7 +18,7 @@
             clearable
             :number="item.isNumber"
             :disabled="item.disabled"
-            :type="item.prop == 'password' ? 'password' : 'text'"
+            :type="item.mode == 'password' ? 'password' : 'text'"
             v-model="fromCol[item.prop]"
             :placeholder="item.placeholder"
           ></Input>
@@ -46,16 +42,10 @@
             }}</Radio>
           </RadioGroup>
           <!-- 多选框 -->
-          <CheckboxGroup
-            v-if="item.type == 'Check'"
-            v-model="fromCol[item.prop]"
-          >
-            <Checkbox
-              :label="el.value"
-              v-for="el in item.data"
-              :key="el.value"
-              >{{ el.label }}</Checkbox
-            >
+          <CheckboxGroup v-if="item.type == 'Check'" v-model="fromCol[item.prop]">
+            <Checkbox :label="el.value" v-for="el in item.data" :key="el.value">{{
+              el.label
+            }}</Checkbox>
           </CheckboxGroup>
           <!-- 树结构 -->
           <hss-tree
@@ -69,13 +59,20 @@
           <DatePicker
             v-if="item.type == 'Date'"
             v-model="fromCol[item.prop]"
-            type="datetime"
+            :type="item.mode ? item.mode : 'date'"
+            :format="item.format ? item.format : 'yyyy-MM-dd HH:mm:ss'"
             :disabled="item.disabled"
             :placeholder="item.placeholder"
           ></DatePicker>
+          <!-- 上传文件 -->
+          <hss-upload
+            v-if="item.type == 'Upload'"
+            :file="fromCol[item.prop]"
+            v-model="fromCol[item.prop]"
+          ></hss-upload>
           <!-- md富文本 -->
           <hss-markdown
-            v-if="item.type == 'editor'"
+            v-if="item.type == 'Editor'"
             :initContent="fromCol[item.prop]"
             v-model="fromCol[item.prop]"
             :placeholder="item.placeholder"
@@ -106,11 +103,12 @@
 
 <script>
 import hssMarkdown from "../../../hssMarkdown/index";
+import hssUpload from "../../../hssUpload/index";
 import hssRender from "./render.js";
 import fromRules from "./rules";
 import hssTree from "../../tree/index";
 export default {
-  components: { hssTree, hssRender, hssMarkdown },
+  components: { hssTree, hssRender, hssMarkdown, hssUpload },
   props: {
     fromData: {
       type: Object,
@@ -182,20 +180,17 @@ export default {
           console.log("表单验证失败");
           let that = this;
           function digui(j) {
-            that.$refs["hssForm"].validateField(
-              that.fromData.list[j].prop,
-              (valid) => {
-                if (valid) {
-                  that.$Message.error(valid);
-                  console.log("cb");
-                  // console.log(cb)
-                  cb(false);
-                } else {
-                  console.log(that.fromData.list[j].prop);
-                  digui(j + 1);
-                }
+            that.$refs["hssForm"].validateField(that.fromData.list[j].prop, (valid) => {
+              if (valid) {
+                that.$Message.error(valid);
+                console.log("cb");
+                // console.log(cb)
+                cb(false);
+              } else {
+                console.log(that.fromData.list[j].prop);
+                digui(j + 1);
               }
-            );
+            });
           }
 
           digui(0);
@@ -260,14 +255,8 @@ export default {
                 // trigger: "blur",
                 message:
                   item.name +
-                  `必须是${
-                    item.isNumber ? "数字" : item.isDate ? "日期" : "字符串"
-                  }类型`,
-                type: item.isNumber
-                  ? "number"
-                  : item.isDate
-                  ? "date"
-                  : "string",
+                  `必须是${item.isNumber ? "数字" : item.isDate ? "日期" : "字符串"}类型`,
+                type: item.isNumber ? "number" : item.isDate ? "date" : "string",
               },
             ];
             // if (item.isNumber) {
@@ -338,7 +327,7 @@ export default {
     "fromData.list": {
       handler() {
         this.fromCol = {};
-        // console.log(this.initData);
+        console.log(this.initData);
         this.handleVal(this.initData);
         this.handleFromCol();
         this.handleRule();

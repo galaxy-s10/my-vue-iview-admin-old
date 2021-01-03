@@ -1,7 +1,7 @@
 import request from './request'
 
 // 文章类型列表
-export function typePageList(params) {
+export function getTypeList(params) {
     return request({
         url: '/api/type/pageList',
         method: 'get',

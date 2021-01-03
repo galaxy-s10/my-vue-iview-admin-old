@@ -73,14 +73,6 @@ export default {
   data() {
     return {
       searchResult: {},
-      paramsData: this.params,
-      // searchData: [
-      //   {
-      //     type:"Select",
-      //     key:"iii",
-      //     placeholder: '提交时间',
-      //   }
-      // ],
     };
   },
   created() {
@@ -89,13 +81,20 @@ export default {
   mounted() {},
   computed: {},
   watch: {
-    searchResult(newVal, oldVal) {
-      this.$emit("changeSearchResult", newVal);
+    searchData(newVal, oldVal) {
+      console.log('searchDatasearchData')
+      // this.$emit("changeSearchResult", newVal);
+      // this.searchResult = newVal
     },
+    searchResult(newVal, oldVal) {
+      // this.$emit("changeSearchResult", newVal);
+    },
+    
   },
   methods: {
     changeSearch(v) {
       console.log(v);
+      this.$emit("changeSearchResult", v);
     },
     onSelect(v) {
       this.$emit("onSelect", v);
@@ -103,17 +102,17 @@ export default {
     onSearch(v) {
       console.log(v);
       // this.changePage(1);
-      console.log(this.paramsData);
-      this.searchResult = v;
-      this.changePage(1, v);
+      // console.log(this.paramsData);
+      // this.searchResult = v;
+      // this.changePage(1, v);
       console.log({ ...v });
       this.$emit("onSearch", v);
     },
     changePage(nowPage) {
       console.log(nowPage);
       console.log({ ...this.searchResult });
-      this.paramsData.nowPage = nowPage;
-      this.$emit("changePage", { ...this.paramsData, ...this.searchResult });
+      // this.paramsData.nowPage = nowPage;
+      this.$emit("changePage", { ...this.params,nowPage, ...this.searchResult });
       // this.getArticleList(this.params);
     },
   },

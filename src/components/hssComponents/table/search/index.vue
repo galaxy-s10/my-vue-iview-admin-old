@@ -15,22 +15,48 @@
         v-for="(item, index) in searchValue"
         style="margin: 0 10px 10px"
       >
-        <div v-if="item.type == 'DateTime'">
+        <div v-if="item.type == 'Date'">
           <label class="ivu-form-item-label" for="">{{ item.name }}</label>
           <DatePicker
-            v-model="item.val"
-            type="datetime"
+            :value="item.val"
+            type="date"
+            :format="item.format ? item.format : 'yyyy-MM-dd'"
             :options="item.options"
+            @on-change="(v) => (item.val = v)"
+            :placeholder="item.placeholder"
+          ></DatePicker>
+        </div>
+        <div v-else-if="item.type == 'DateTime'">
+          <label class="ivu-form-item-label" for="">{{ item.name }}</label>
+          <DatePicker
+            :value="item.val"
+            type="datetime"
+            :format="item.format ? item.format : 'yyyy-MM-dd HH:mm:ss'"
+            :options="item.options"
+            @on-change="(v) => (item.val = v)"
             :placeholder="item.placeholder"
           ></DatePicker>
         </div>
 
+        <div v-else-if="item.type == 'Year'">
+          <label class="ivu-form-item-label" for="">{{ item.name }}</label>
+          <DatePicker
+            :value="item.val"
+            type="year"
+            :format="item.format ? item.format : 'yyyy'"
+            :options="item.options"
+            @on-change="(v) => (item.val = v)"
+            :placeholder="item.placeholder"
+          ></DatePicker>
+        </div>
         <div v-else-if="item.type == 'Month'">
           <label class="ivu-form-item-label" for="">{{ item.name }}</label>
           <DatePicker
-            v-model="item.val"
+            :value="item.val"
             type="month"
+            :format="item.format ? item.format : 'yyyy-MM'"
             :options="item.options"
+            @on-change="(v) => (item.val = v)"
             :placeholder="item.placeholder"
           ></DatePicker>
         </div>
@@ -38,11 +64,12 @@
         <div v-else-if="item.type == 'DateTimeRange'">
           <label class="ivu-form-item-label" for="">{{ item.name }}</label>
           <DatePicker
-            v-model="item.val"
+            :value="item.val"
             type="datetimerange"
             :format="item.format ? item.format : 'yyyy-MM-dd HH:mm:ss'"
             :options="item.options"
             :placeholder="item.placeholder"
+            @on-change="(v) => (item.val = v)"
             :style="{ width: item.width + 'px' }"
           ></DatePicker>
         </div>
@@ -99,21 +126,34 @@ export default {
     return {};
   },
   watch: {
-    searchValue(newVal) {
-      console.log(newVal);
-      let temp = {};
-      newVal.forEach((item) => {
-        if (item.val != "" && item.val != undefined) {
-          temp[item.key] = item.val;
-        }
-      });
-      this.$emit("changeSearch", temp);
+    searchValue: {
+      handler(newVal, oldVal) {
+        // console.log(newVal);
+        // console.log(oldVal);
+        // console.log("handler");
+        let temp = {};
+        newVal.forEach((item) => {
+          console.log(item.name);
+          console.log(item.val != undefined);
+          if (item.val != undefined) {
+            console.log(item.key);
+            temp[item.key] = item.val;
+          }
+        });
+        console.log(temp);
+        this.$emit("changeSearch", temp);
+      },
+      deep: true,
+      // immediate: true,
     },
   },
   created() {},
   mounted() {},
   computed: {},
   methods: {
+    ppp(v) {
+      console.log(v);
+    },
     onSelect(v) {
       this.$emit("onSelect", v);
     },

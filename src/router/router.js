@@ -535,7 +535,7 @@ export const roleRoutes = [
         ]
     },
     {
-        name: "music_manage",
+        name: "musicManage",
         path: '/musicManage',
         component: Layout,
         authKey: [
@@ -549,7 +549,7 @@ export const roleRoutes = [
             ],
         },
         children: [{
-            name: "music_list",
+            name: "musicList",
             path: '/musicManage/list',
             authKey: "MUSIC_LIST",
             component: () => import('@/views/musicManage/list/index'),
@@ -560,8 +560,8 @@ export const roleRoutes = [
             },
         },
         {
-            name: "qiniu_update",
-            path: '/musicManage/update',
+            name: "updateMusic",
+            path: '/musicManage/update/:id',
             authKey: "UPDATE_MUSIC",
             component: () => import('@/views/musicManage/update/index'),
             meta: {
@@ -571,7 +571,7 @@ export const roleRoutes = [
             },
         },
         {
-            name: "music_upload",
+            name: "uploadMusic",
             path: '/musicManage/upload',
             authKey: "UPLOAD_MUSIC",
             component: () => import('@/views/musicManage/upload/index'),
@@ -582,7 +582,7 @@ export const roleRoutes = [
             },
         },
         {
-            name: "music_delete",
+            name: "deleteMusic",
             path: '/musicManage/delete',
             authKey: "DELETE_MUSIC",
             component: () => import('@/views/musicManage/delete/index'),
@@ -595,7 +595,7 @@ export const roleRoutes = [
         ]
     },
     {
-        name: "qiniu_manage",
+        name: "qiniuManage",
         path: '/qiniuManage',
         component: Layout,
         authKey: [
@@ -609,7 +609,7 @@ export const roleRoutes = [
             ],
         },
         children: [{
-            name: "qiniu_list",
+            name: "qiniuLlist",
             path: '/qiniuManage/list',
             authKey: "QINIU_LIST",
             component: () => import('@/views/qiniuManage/list/index'),
@@ -620,7 +620,7 @@ export const roleRoutes = [
             },
         },
         {
-            name: "qiniu_update",
+            name: "updateQiniu",
             path: '/qiniuManage/update',
             authKey: "UPDATE_QINIU",
             component: () => import('@/views/qiniuManage/update/index'),
@@ -631,7 +631,7 @@ export const roleRoutes = [
             },
         },
         {
-            name: "qiniu_upload",
+            name: "uploadQiniu",
             path: '/qiniuManage/upload',
             authKey: "UPLOAD_QINIU",
             component: () => import('@/views/qiniuManage/upload/index'),
@@ -642,7 +642,7 @@ export const roleRoutes = [
             },
         },
         {
-            name: "qiniu_delete",
+            name: "deleteQiniu",
             path: '/qiniuManage/delete',
             authKey: "DELETE_QINIU",
             component: () => import('@/views/qiniuManage/delete/index'),

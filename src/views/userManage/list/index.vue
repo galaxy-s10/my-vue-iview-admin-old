@@ -13,32 +13,6 @@
         <hss-operation :row="row" :operation="operationData"></hss-operation>
       </template>
     </hss-table>
-    <!-- <Table
-      border
-      :loading="userList.length == 0"
-      :columns="columns"
-      :data="userList"
-    ></Table> -->
-    <!-- <Modal v-model="showRole" title="编辑角色" @on-ok="ok" @on-cancel="cancel">
-      <div>
-        {{ showRole && currentRow && currentRow.username }}
-      </div>
-      <div class="aaa">
-        <div v-if="allRole.length == 0" style="position: relative">
-          <Spin size="large">
-            <Icon type="ios-loading" class="demo-spin-icon-load"></Icon>
-            <div>加载中...</div>
-          </Spin>
-        </div>
-        <Tree
-          v-else
-          :data="allRole"
-          :render="renderContent"
-          show-checkbox
-          @on-check-change="getChecked"
-        ></Tree>
-      </div>
-    </Modal> -->
 
     <component
       v-bind:is="comments"
@@ -58,13 +32,13 @@ import hssTable from "../../../components/hssComponents/table";
 import hssOperation from "../../../components/hssComponents/table/operation";
 import hssPopupForm from "../../../components/hssComponents/form/popup-form/index";
 
-import { editStatus } from "../../../api/user";
+import utils from "../../../libs/utils";
+import { getUserList, updateUser, updateUserStatus } from "../../../api/user";
 import {
   addRole,
   getRoleList,
   editRoleAuth,
   editUserRole,
-  deleteRole,
   findParentRole,
   findBrotherRole,
 } from "../../../api/role";
@@ -72,7 +46,7 @@ import {
   getAuth,
   getUserRoleAuth,
   addAuthForRole,
-  getUserRoleList,
+  // getUserRoleList,
 } from "../../../api/roleauth";
 
 // import { getRoleList, editUserRole } from "../../../api/role";
@@ -85,11 +59,9 @@ export default {
       comments: "",
       request: {},
       columnForm: {},
-      action: "edit",
+      searchRes: {},
       isInit: false,
       params: {
-        is_admin: 1, //是否后台，是的话显示所有文章，包括未审核
-        count: 0,
         pageSize: 10,
         nowPage: 1,
       },
@@ -104,9 +76,9 @@ export default {
       searchData: [
         {
           type: "Input",
-          key: "username",
-          name: "用户名",
-          placeholder: "请输入用户名",
+          key: "keyword",
+          name: "关键字",
+          placeholder: "请输入关键字",
           width: 200,
         },
         {
@@ -125,6 +97,22 @@ export default {
             },
           ],
           width: 150,
+        },
+        {
+          type: "Date",
+          key: "createdAt",
+          name: "创建时间",
+          format: "yyyy-MM-dd",
+          placeholder: "请选择创建时间",
+          width: 200,
+        },
+        {
+          type: "Date",
+          key: "updatedAt",
+          name: "更新时间",
+          format: "yyyy-MM-dd",
+          placeholder: "请选择更新时间",
+          width: 200,
         },
         // {
         // // DateTimeRange有bug，暂时不要用!
@@ -306,7 +294,7 @@ export default {
                 "before-change": () => this.beforeChangeStatus(params.row),
               },
               on: {
-                "on-change": (status) => this.changeStatus(status, params.row),
+                "on-change": () => this.changeStatus(params.row),
                 // "on-change": (status) => {
                 //   console.log(params.row);
                 //   console.log(status);
@@ -327,14 +315,14 @@ export default {
           align: "center",
           title: "创建时间",
           render: (h, params) => {
-            return h("span", this.formateDate(params.row.createdAt));
+            return h("span", utils.formateDate(params.row.createdAt));
           },
         },
         {
           align: "center",
           title: "更新时间",
           render: (h, params) => {
-            return h("span", this.formateDate(params.row.updatedAt));
+            return h("span", utils.formateDate(params.row.updatedAt));
           },
         },
         {
@@ -343,53 +331,6 @@ export default {
           slot: "operation",
           // width: 400,
         },
-        // {
-        //   align: "center",
-        //   title: "操作",
-        //   render: (h, params) => {
-        //     return h("div", [
-        //       h(
-        //         "Button",
-        //         {
-        //           props: {
-        //             type: "warning",
-        //             size: "small",
-        //           },
-        //           style: {
-        //             marginRight: "5px",
-        //           },
-        //           on: {
-        //             click: () => {
-        //               // this.show(params.row);
-        //               // console.log("click");
-        //               // this.action = "edit";
-        //               console.log(params.row);
-        //               // console.log()
-        //               // this.editRole(params.row);
-        //               this.editRole({ ...params.row });
-        //             },
-        //           },
-        //         },
-        //         "编辑"
-        //       ),
-        //       h(
-        //         "Button",
-        //         {
-        //           props: {
-        //             type: "error",
-        //             size: "small",
-        //           },
-        //           on: {
-        //             click: () => {
-        //               this.remove(params.row);
-        //             },
-        //           },
-        //         },
-        //         "删除"
-        //       ),
-        //     ]);
-        //   },
-        // },
       ],
     };
   },
@@ -398,7 +339,6 @@ export default {
   },
   methods: {
     onCancel() {
-      // this.showRole = false
       console.log("onCancel");
       this.roleInfo = {};
       this.comments = "";
@@ -411,41 +351,43 @@ export default {
       v.roles.forEach((item) => {
         temp.push(item.id);
       });
-      console.log({ ...v, roles: temp });
-      // if (this.action == "edit") {
-      //   await editRoleAuth({ ...v, auths: temp }).then((res) => {
-      //     console.log(res);
-      //     this.$Message.success({
-      //       content: res.message,
-      //     });
-      //   });
-      // }
+      await updateUser({ ...v, roles: temp }).then((res) => {
+        console.log(res);
+        this.$Message.success({
+          content: res.message,
+        });
+        this.getUserList({ ...this.params, ...this.searchRes });
+      });
     },
     // 动态组件处理完回调
     onOk() {
       this.comments = "";
       console.log("object");
     },
+
     // 修改用户
     async editRole(v) {
       console.log(v);
       this.userInfo = v;
-      // this.userInfo.roles = v.roles;
-      this.getTree({ ...v });
+      // await this.getTreeRoleRole(v);
+      this.getTreeRole({ ...v });
 
       this.columnForm = {
         list: [
           {
-            // name: "id",
-            // type: "Input",
             prop: "id",
-            // placeholder: "",
-            // display:'none'
           },
           {
             type: "Input",
             name: "用户名",
             prop: "username",
+            required: true,
+          },
+          {
+            type: "Input",
+            name: "密码",
+            mode: "password",
+            prop: "password",
             required: true,
           },
           {
@@ -498,7 +440,6 @@ export default {
           },
         ],
       };
-      // this.userInfo.roles = this.allRole;
       this.request = {
         title: "编辑角色",
         size: "centre",
@@ -510,20 +451,21 @@ export default {
       console.log(v);
     },
     onSearch(v) {
+      this.searchRes = v;
       console.log(v);
+      this.getUserList({ ...this.params, ...v });
     },
     changePage(v) {
       console.log(v);
-      // this.params.nowPage = v;
-      this.getUserRoleList(v);
+      this.getUserList(v);
     },
-    async getTree(v) {
+    async getTreeRole(v) {
       // await this.getAuthList();
       console.log(v);
       // await this.getCurrentRole(v);
       // 递归将当前角色的权限在所有权限里添加checked为true
       // this.allAuth = depData;
-      const deepData = JSON.parse(JSON.stringify(this.allRole));
+      const deepData = JSON.parse(JSON.stringify(this.currentRole));
       // const deepData = res.data.data
       console.log(deepData);
       // return
@@ -574,9 +516,6 @@ export default {
         });
       }
       digui2(all);
-      // console.log(deepData);
-      // console.log(temp);
-      // return;
       const newTemp = [...new Set(temp)];
       console.log(newTemp);
       function digui3(value, list) {
@@ -643,48 +582,20 @@ export default {
       digui(data, temp);
       return temp;
     },
-    test() {
-      for (let i = 0; i < 100; i++) {
-        this.$http("/api/article/typelist")
-          .then((res) => {
-            this.$Message.success({
-              content: "请求ok",
-            });
-            console.log(res);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
-    },
     beforeChangeStatus(user) {
       this.showEditStatus = true;
       this.currentUser = user;
-      let { id, status } = user;
-      console.log(id);
+      console.log(user);
       return new Promise((resolve, reject) => {
         this.$Modal.confirm({
           title: "提示",
           loading: this.loading,
           content:
-            status == 1 ? `确认要禁用${user.username}吗` : `确认要启用${user.username}吗`,
+            user.status == 1
+              ? `确认要禁用${user.username}吗`
+              : `确认要启用${user.username}吗`,
           onOk: () => {
-            // if (status == 1) {
-            editStatus({ id, status: status == 1 ? 2 : 1 })
-              .then((res) => {
-                this.$Message.success({
-                  content: res.message,
-                });
-                this.$Modal.remove();
-                resolve();
-              })
-              .catch((err) => {
-                console.log(err);
-                this.$Message.error({
-                  content: err.message,
-                });
-                this.$Modal.remove();
-              });
+            resolve();
           },
           onCancel: () => {
             // reject();
@@ -692,27 +603,23 @@ export default {
         });
       });
     },
-    changeStatus(status, user) {
-      console.log("改变switch");
-      console.log(status, user);
-    },
-    getChecked(v) {
-      console.log(v);
-      function getAllRoleId(data) {
-        let temp = [];
-        function digui(data) {
-          data.forEach((item) => {
-            temp.push(item.id);
-            if (item.children) {
-              digui(item.children);
-            }
+    changeStatus(user) {
+      updateUserStatus({ id: user.id, status: user.status == 1 ? 0 : 1 })
+        .then((res) => {
+          this.$Message.success({
+            content: res.message,
           });
-        }
-        digui(data);
-        return [...new Set(temp)];
-      }
-      this.roles = getAllRoleId(v);
-      // console.log(getAllRoleId(v));
+          user.status = user.status == 1 ? 0 : 1;
+          this.$Modal.remove();
+          this.getUserList({ ...this.params, ...this.searchRes });
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$Message.error({
+            content: err.message,
+          });
+          this.$Modal.remove();
+        });
     },
     // 获取所有角色
     getRoleList() {
@@ -747,141 +654,13 @@ export default {
         let tree = handleRole(res.rows);
         console.log(tree);
         this.allRole = tree;
+        this.currentRole = tree;
         let flat1 = this.flatTree(tree);
         this.flatRole = flat1;
         console.log("flat1");
         // console.log(flat1);
         // console.log(this.flatRole);
       });
-    },
-    // 获取当前用户的角色
-    async getCurrentRole(v) {
-      await getAuth(v.id).then((res) => {
-        console.log("获取当前用户的角色");
-        console.log(res);
-        if (res.count > 0) {
-          res.rows[0].user.roles.forEach((item) => {
-            this.currentRole.push(item);
-          });
-        }
-        // this.currentRole = this.role;
-      });
-    },
-    async show(v) {
-      this.showRole = true;
-      this.currentRow = v;
-      let that = this;
-      await getRoleList().then((res) => {
-        console.log("获取所有角色");
-        let data = res.rows;
-        console.log(data);
-        this.translateTree(data);
-        function handleRole(data) {
-          let temp = [];
-          data.forEach((item) => {
-            if (item.p_id == 0) {
-              temp.push(item);
-            }
-          });
-          function digui(data, temp) {
-            temp.forEach((tempItem, tempIndex) => {
-              let children = [];
-              data.forEach((dataItem, dataIndex) => {
-                if (tempItem.id == dataItem.p_id) {
-                  // let children = tempItem.children ? tempItem.children : [];
-                  children.push(dataItem);
-                }
-              });
-              if (children.length > 0) {
-                tempItem.children = children;
-                digui(data, children);
-              }
-            });
-          }
-          digui(data, temp);
-          return temp;
-        }
-        // this.allRole = handleRole(res.rows);
-        this.allRole = this.translateTree(res.rows);
-      });
-      // await getAuth(v.id).then((res) => {
-      //   console.log("获取我的角色");
-      //   console.log(res);
-      //   if (res.count > 0) {
-      //     res.rows[0].user.roles.forEach((item) => {
-      //       this.currentRole.push(item.role_name);
-      //     });
-      //   }
-      //   // this.currentRole = this.role;
-      // });
-      function digui(data, val) {
-        data.forEach((item1, index1) => {
-          if (val.includes(item1.role_name)) {
-            item1.checked = true;
-          }
-          if (item1.children) {
-            digui(item1.children, val);
-          }
-        });
-        // });
-      }
-      let depData = JSON.parse(JSON.stringify(this.allRole));
-      digui(depData, this.currentRole);
-      console.log("depData");
-      console.log(this.currentRole);
-      console.log(depData);
-      this.allRole = depData;
-    },
-    ok() {
-      // this.showRole = false
-      console.log("ok");
-      this.allRole = [];
-      this.currentRole = [];
-      editUserRole({
-        id: this.currentRow.id,
-        roles: this.roles,
-      })
-        .then((res) => {
-          this.$Message.success({
-            content: res.message,
-          });
-          getUserRoleList().then((res) => {
-            console.log(res);
-            this.userList = res.rows;
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-    cancel() {
-      // this.showRole = false
-      console.log("quxiao");
-      this.allRole = [];
-      this.currentRole = [];
-    },
-    remove(v) {
-      console.log(v);
-    },
-    //转换时间格式
-    formateDate(datetime) {
-      function addDateZero(num) {
-        return num < 10 ? "0" + num : num;
-      }
-      let d = new Date(datetime);
-      let formatdatetime =
-        d.getFullYear() +
-        "-" +
-        addDateZero(d.getMonth() + 1) +
-        "-" +
-        addDateZero(d.getDate()) +
-        " " +
-        addDateZero(d.getHours()) +
-        ":" +
-        addDateZero(d.getMinutes()) +
-        ":" +
-        addDateZero(d.getSeconds());
-      return formatdatetime;
     },
     renderContent(h, { root, node, data }) {
       return h(
@@ -907,32 +686,32 @@ export default {
         ]
       );
     },
-    getUserRoleList(v){
-      getUserRoleList(v).then((res) => {
-      this.userList = res;
-    });
-    }
+    getUserList(v) {
+      getUserList(v).then((res) => {
+        this.userList = res;
+      });
+    },
   },
   created() {},
   mounted() {
     // this.show()
     this.getRoleList();
-    this.getUserRoleList(this.params)
+    this.getUserList(this.params);
   },
 };
 </script>
 
 <style scoped>
-/deep/ .ivu-spin {
+/* /deep/ .ivu-spin {
   text-align: initial;
-}
+} */
 /* .aaa /deep/ .ivu-tree ul li{
     margin: 0;
 }
 .aaa /deep/ .ivu-checkbox-disabled .ivu-checkbox-inner{
   background: #eee;
 } */
-.demo-spin-icon-load {
+/* .demo-spin-icon-load {
   animation: ani-demo-spin 1s linear infinite;
 }
 @keyframes ani-demo-spin {
@@ -945,5 +724,5 @@ export default {
   to {
     transform: rotate(360deg);
   }
-}
+} */
 </style>

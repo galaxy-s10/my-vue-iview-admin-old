@@ -335,6 +335,7 @@ export default {
     },
     // 新增角色
     async addNewRole(v) {
+      this.action = "add";
       await this.getAuthList();
       this.columnForm = {
         list: [
@@ -401,6 +402,8 @@ export default {
             return h("span", "无");
           },
         };
+        this.roleInfo.p_id = 0;
+        this.isInit = true;
       }
       this.columnForm.list.unshift(temp);
       this.request = {
@@ -413,17 +416,28 @@ export default {
 
     deleteRole(v) {
       console.log(v);
-      deleteRole(v.id)
-        .then((res) => {
-          console.log(res);
-          this.$Message.success({
-            content: res.message,
+      this.$Modal.confirm({
+        title: "提示",
+        content: `删除${v.role_name}角色后，所有拥有此角色的用户也会失去该角色，确定删除吗?`,
+        onOk: () => {
+          deleteRole(v.id)
+            .then((res) => {
+              console.log(res);
+              this.$Message.success({
+                content: res.message,
+              });
+              this.getRoleList();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        },
+        onCancel: () => {
+          this.$Message.info({
+            content: "你取消了删除操作",
           });
-          this.getRoleList();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        },
+      });
     },
     // 获取所有权限，且整理成树型
     async getAuthList() {
@@ -509,11 +523,6 @@ export default {
         digui1(item, all);
       });
 
-      // console.log(deepData);
-      // console.log(all);
-      // console.log(val);
-      // return
-
       const temp = [];
       function digui2(list) {
         list.forEach((item) => {
@@ -527,9 +536,6 @@ export default {
         });
       }
       digui2(all);
-      // console.log(deepData);
-      // console.log(temp);
-      // return;
       const newTemp = [...new Set(temp)];
       console.log(newTemp);
       function digui3(value, list) {
@@ -553,30 +559,6 @@ export default {
       console.log(temp);
       this.allAuth = deepData;
     },
-    async getTreeAuth1(v) {
-      await this.getAuthList();
-      await this.getUserRoleAuth(v.id);
-      // 递归将当前角色的权限在所有权限里添加checked为true
-      function digui(allAuth, currentAuth) {
-        let val = [];
-        currentAuth.forEach((item) => {
-          val.push(item.auth_id);
-        });
-        allAuth.forEach((item1, index1) => {
-          if (val.includes(item1.id)) {
-            item1.checked = true;
-          }
-          if (item1.children) {
-            digui(item1.children, currentAuth);
-          }
-        });
-      }
-      let depData = JSON.parse(JSON.stringify(this.allAuth));
-      console.log(depData);
-      digui(depData, this.currentAuth);
-      console.log(depData);
-      // this.allAuth = depData;
-    },
 
     onCancel() {
       // this.showRole = false
@@ -599,6 +581,14 @@ export default {
           this.$Message.success({
             content: res.message,
           });
+          this.getRoleList();
+        });
+      } else {
+        addRole({ ...v, auths: temp }).then((res) => {
+          this.$Message.success({
+            content: res.message,
+          });
+          this.getRoleList();
         });
       }
     },

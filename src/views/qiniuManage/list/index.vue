@@ -2,13 +2,9 @@
   <div>
     <!-- <div v-if="tableData.list"> -->
     <div style="margin-bottom: 10px"></div>
-    <div
-      style="margin-bottom: 10px; display: flex; justify-content: space-between"
-    >
+    <div style="margin-bottom: 10px; display: flex; justify-content: space-between">
       <div style="display: flex; align-items: center">
-        <div style="margin-right: 10px">
-          当前总文件数：{{ linkList.length }}
-        </div>
+        <div style="margin-right: 10px">当前总文件数：{{ QiniuList.length }}</div>
         <div>
           分页大小:
           <Select
@@ -17,12 +13,9 @@
             placeholder="请选择分页大小"
             @on-change="onSelect"
           >
-            <Option
-              v-for="item in pageLimit"
-              :value="item.value"
-              :key="item.value"
-              >{{ item.label }}</Option
-            >
+            <Option v-for="item in pageLimit" :value="item.value" :key="item.value">{{
+              item.label
+            }}</Option>
           </Select>
         </div>
       </div>
@@ -31,31 +24,21 @@
           <i-input
             @input="changePrefix"
             placeholder="请输入文件名前缀"
+            clearable
           ></i-input>
         </div>
         <i-button type="info" @click="QiniuSearch">搜索</i-button>
       </div>
     </div>
 
-    <hss-table
-      :tableData="{ list: linkList }"
-      :columns="columns"
-      @changePage="changePage"
-    >
+    <hss-table :tableData="{ list: QiniuList }" :columns="columns">
       <template slot-scope="{ row }" slot="operation">
         <hss-operation :row="row" :operation="operationData"></hss-operation>
       </template>
     </hss-table>
     <!-- </div> -->
-    <div
-      style="
-        text-align: center;
-        height: 40px;
-        line-height: 40px;
-        font-size: 16px;
-      "
-    >
-      <span style="color: #00aae7" @click="loadMore">{{
+    <div style="text-align: center; height: 40px; line-height: 40px; font-size: 16px">
+      <span style="color: #00aae7; cursor: pointer" @click="loadMore">{{
         flag ? "加载更多" : "已加载全部"
       }}</span>
     </div>
@@ -68,7 +51,6 @@
       :isInit="isInit"
       @on-cancel="onCancel"
       @on-ok="onOk"
-      @onSubmit="onSubmit"
     ></component>
     <!-- <hss-table v-if="tableData.list.length>0" :tableData="tableData" :columns="columns" :params="params"></hss-table> -->
   </div>
@@ -76,8 +58,8 @@
 
 <script>
 // import { format } from "../../../../../webchat/src/utils/format";
-import { linkPageList, editLink, delLink } from "../../../api/link";
-import { getQiniuToken, getQiniuList, updateQiniu } from "@/api/qiniu";
+// import { linkPageList, editLink, delLink } from "../../../api/link";
+import { getQiniuToken, getQiniuList, updateQiniu, deleteQiniu } from "@/api/qiniu";
 import hssPopupForm from "../../../components/hssComponents/form/popup-form/index";
 import hssTable from "../../../components/hssComponents/table";
 import hssOperation from "../../../components/hssComponents/table/operation";
@@ -99,7 +81,11 @@ export default {
       comments: "",
       isInit: false,
       request: {},
-      linkList: [],
+      QiniuList: [],
+      tableData: {
+        list: "",
+        count: "",
+      },
       //表格操作列
       operationData: [
         {
@@ -183,24 +169,20 @@ export default {
               });
               return;
             }
-            // if (row.articles.length > 0) {
-            delLink(row.id).then((res) => {
+            deleteQiniu(row.key).then((res) => {
               this.$Message.success({
                 content: res.message,
               });
-              this.getLinkPageList(this.params);
+              this.getQiniuList({ ...this.params, marker: "" }).then(res=>{
+                this.QiniuList = res
+              })
             });
-            // }
           },
           isShow() {
             return 1;
           },
         },
       ],
-      tableData: {
-        list: "",
-        count: "",
-      },
       params: {
         // count: 0,
         limit: 10,
@@ -217,8 +199,7 @@ export default {
               "span",
               {
                 attrs: {
-                  style:
-                    "overflow:hidden;text-overflow:ellipsis;white-space: nowrap;",
+                  style: "overflow:hidden;text-overflow:ellipsis;white-space: nowrap;",
                 },
               },
               params.row.key
@@ -255,10 +236,7 @@ export default {
           align: "center",
           render: (h, params) => {
             let temp = params.row.putTime + "";
-            return h(
-              "span",
-              this.formateDate(parseInt(temp.slice(0, temp.length - 4)))
-            );
+            return h("span", this.formateDate(parseInt(temp.slice(0, temp.length - 4))));
           },
         },
 
@@ -277,27 +255,32 @@ export default {
   created() {
     // this.getTagList();
   },
-  mounted() {
-    this.getQiniuList(this.params);
+  async mounted() {
+    let res = await this.getQiniuList(this.params);
+    this.QiniuList = res;
   },
   methods: {
-    onSelect() {
+    async onSelect() {
       this.params.marker = "";
-      this.linkList = [];
-      this.getQiniuList(this.params);
+      this.QiniuList = [];
+      let res = await this.getQiniuList(this.params);
+      this.QiniuList = res;
     },
-    QiniuSearch() {
+    async QiniuSearch() {
       this.params.marker = "";
-      this.linkList = [];
-      this.getQiniuList(this.params);
+      this.QiniuList = [];
+      let res = await this.getQiniuList(this.params);
+      this.QiniuList = res;
     },
     changePrefix(e) {
       console.log(e);
       this.params.prefix = e;
     },
-    loadMore() {
+    async loadMore() {
       if (this.flag) {
-        this.getQiniuList(this.params);
+        let res = await this.getQiniuList(this.params);
+        console.log(res);
+        this.QiniuList.push(...res);
       }
     },
     // 格式化文件大小
@@ -310,97 +293,13 @@ export default {
       }
       return res + "KB";
     },
-    beforeChangeStatus(v, row) {
-      // editArticle({ ...row, is_comment: v ? 1 : 0, tags: tagTemp }).then((res) => {
-      //   this.$Message.success({
-      //     content: res.message,
-      //   });
-      //   this.getArticleList(this.params);
-      // });
-    },
-    changeStatus(v, row) {
-      console.log(v);
-      console.log(row);
-      console.log("changeStatus");
-      let tagTemp = [];
-      editLink({ ...row, status: v ? 1 : 0 }).then((res) => {
-        this.$Message.success({
-          content: res.message,
-        });
-        this.getLinkPageList(this.params);
-      });
-    },
-    addTag() {
-      this.action = 2;
-      this.columnForm = {
-        list: [
-          {
-            // name: "id",
-            // type: "Input",
-            prop: "id",
-            // placeholder: "",
-            // display:'none'
-          },
-          {
-            type: "Input",
-            name: "名称",
-            prop: "name",
-            placeholder: "请输入友链名称",
-            required: true,
-          },
-          {
-            name: "头像",
-            type: "Input",
-            prop: "avatar",
-            placeholder: "请输入友链头像",
-            required: true,
-          },
-          {
-            name: "描述",
-            type: "Input",
-            prop: "description",
-            placeholder: "请输入友链描述",
-            required: true,
-          },
-        ],
-      };
-      this.request = {
-        title: "新增标签",
-        size: "centre",
-      };
-      // this.isInit = true;
-      this.comments = "hssPopupForm";
-    },
     onCancel() {
-      // this.showRole = false
       console.log("onCancel");
       this.roleInfo = {};
       this.comments = "";
     },
     onOk() {
       this.comments = "";
-    },
-    async onSubmit(v) {
-      console.log(v);
-      let temp = [];
-      await updateQiniu({ srcKey: this.qiniuData.key, destKey: v.key }).then(
-        (res) => {
-          console.log(res);
-          this.$Message.success({
-            content: res.message,
-          });
-          // this.getLinkPageList({ ...this.params });
-        }
-      );
-    },
-    onSearch(v) {
-      console.log(v);
-      console.log("!!!!!!!!!");
-      // this.getLinkPageList(v);
-    },
-    changePage(v) {
-      console.log(v);
-      this.getLinkPageList(v);
     },
     //转换时间格式
     formateDate(datetime) {
@@ -423,23 +322,29 @@ export default {
         addDateZero(d.getSeconds());
       return formatdatetime;
     },
-    getQiniuList(v) {
-      let that = this;
-      getQiniuList(v).then((res) => {
-        console.log(res);
-        // if (res.respInfo.data.items.length < this.params.limit) {
-        //   this.flag == false;
-        // }
-        console.log(res.respInfo.data.marker);
-        if (!res.respInfo.data.marker) {
-          console.log("!!!!!!!");
-          that.flag = false;
-        } else {
-          that.flag = true;
-        }
-        this.linkList.push(...res.respInfo.data.items);
-        this.params.marker = res.respInfo.data.marker;
-      });
+    async getQiniuList(v) {
+      let res = await getQiniuList(v);
+      // .then((res) => {
+      //   console.log(res);
+      //   console.log(res.respInfo.data.marker);
+      //   if (!res.respInfo.data.marker) {
+      //     console.log("!!!!!!!");
+      //     that.flag = false;
+      //   } else {
+      //     that.flag = true;
+      //   }
+      //   this.QiniuList.push(...res.respInfo.data.items);
+      //   this.params.marker = res.respInfo.data.marker;
+      // });
+      if (!res.respInfo.data.marker) {
+        console.log("!!!!!!!");
+        this.flag = false;
+      } else {
+        this.flag = true;
+      }
+      this.params.marker = res.respInfo.data.marker;
+      // this.QiniuList = res.respInfo.data.items;
+      return res.respInfo.data.items;
     },
   },
 };

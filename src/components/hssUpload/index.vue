@@ -23,18 +23,16 @@
       :type="uploaOption.type"
       action
     >
-      <div style="padding: 20px 0">
-        <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-        <p>单击或拖动此处上传文件</p>
+      <div>
+        <div>
+          <Button icon="ios-cloud-upload-outline">选择文件</Button>
+        </div>
+        <div v-if="uploadFile && uploadFile.url != ''">
+          已选文件: {{ uploadFile.name || file }}
+        </div>
       </div>
     </Upload>
-    <img
-      v-if="uploadFile && uploadFile.url"
-      :src="uploadFile.url"
-      style="max-width: 200px"
-      alt=""
-    />
-    <Progress v-if="uploadFile && uploadFile.url" :percent="percent" status="active" />
+    <!-- <Progress v-if="uploadFile && uploadFile.url" :percent="percent" status="active" /> -->
   </div>
 </template>
 
@@ -47,19 +45,18 @@ import * as qiniu from "qiniu-js";
 export default {
   components: {},
   props: {
-    imgList: {
-      type: Array,
-      default: function () {
-        return [];
-      },
-    },
+    file: "",
+  },
+  model: {
+    prop: "file",
+    event: "changeFile",
   },
   data() {
     return {
       uploadFile: {},
       uploaOption: {
         multiple: false,
-        type: "drag",
+        type: "select",
         format: ["jpg", "jpeg", "png"],
         maxSize: 2048, //单位kb
       },
@@ -69,6 +66,10 @@ export default {
   },
   computed: {},
   methods: {
+    changeFile(v) {
+      console.log("changeFilechangeFilechangeFile");
+      console.log(v);
+    },
     // 获取七牛云上传凭证
     async getQiniuToken() {
       const res = await getQiniuToken();
@@ -114,6 +115,12 @@ export default {
     // 覆盖默认的上传行为，可以自定义上传的实现
     handleUpload(file) {
       console.log(file);
+      if (file.name.length > 20) {
+        this.$Message.error({
+          content: "文件名不能超过二十个字符!",
+        });
+        return false;
+      }
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => {
@@ -122,19 +129,19 @@ export default {
         temp.url = _base64; //将_base64赋值给图片的src，实现图片预览
         temp.name = file.name;
         this.uploadFile = temp;
-        console.log(temp);
       };
-      this.qiniuUpload(file.name, file)
-        .then((res) => {
-          console.log(res);
-          this.$Message.success({
-            content: "上传成功！",
-          });
-          // this.imgList.push({ name: "", url: res });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      this.$emit("changeFile", file);
+      // this.qiniuUpload(file.name, file)
+      //   .then((res) => {
+      //     console.log(res);
+      //     this.$Message.success({
+      //       content: "上传成功！",
+      //     });
+      //     // this.imgList.push({ name: "", url: res });
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
       return false;
     },
     // 删除七牛云图片

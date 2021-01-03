@@ -34,17 +34,18 @@
 import { mapState } from "vuex";
 import hssTable from "../../../components/hssComponents/table";
 import hssOperation from "../../../components/hssComponents/table/operation";
-import { articlepage, editArticle, delArticle } from "../../../api/article";
-import { typePageList } from "../../../api/type";
+import { getArticleList, updateArticle, deleteArticle } from "../../../api/article";
+import { getTypeList } from "../../../api/type";
 export default {
   components: { hssTable, hssOperation },
   data() {
     return {
       params: {
-        is_admin: 1, //是否后台，是的话显示所有文章，包括未审核
+        // is_admin: 1, //是否后台，是的话显示所有文章，包括未审核
         pageSize: 10,
         nowPage: 1,
       },
+      searchRes: {},
       // 搜索列
       searchData: [],
       // 表格操作列
@@ -86,7 +87,7 @@ export default {
               });
               return;
             }
-            // delArticle(row.id).then((res) => {
+            // deleteArticle(row.id).then((res) => {
             //   this.$Message.success({
             //     content: res.message,
             //   });
@@ -185,7 +186,10 @@ export default {
                 // "before-change": () => this.beforeChangeStatus(params.row),
               },
               on: {
-                "on-change": (status) => this.changeStatus(status, params.row),
+                "on-change": (status) => {
+                  params.row.status = status ? 1 : 0;
+                  this.changeStatus(status, params.row);
+                },
                 // "on-change": (status) => {
                 //   console.log(params.row);
                 //   console.log(status);
@@ -207,20 +211,42 @@ export default {
           // width: 100,
           align: "center",
           render: (h, params) => {
-            console.log(params.row.status);
-            // this.status = params.row.status == 1 ? true : false;
-            // if (params.row.status == 1) {
-            return h("iSwitch", {
+            let that = this;
+            console.log(params.row.is_comment);
+            // this.is_comment = params.row.is_comment == 1 ? true : false;
+            // if (params.row.is_comment == 1) {
+            let aaa = { ...params.row };
+            return h("i-switch", {
               props: {
-                value: params.row.is_comment == 1 ? true : false,
+                value: aaa.is_comment == 1,
                 size: "large",
-                // "before-change": () => this.beforeChangeStatus(params.row),
+                // "before-change": () => this.beforeChangeis_comment(params.row),
               },
               on: {
-                "on-change": (status) => this.changeIsComment(status, params.row),
-                // "on-change": (status) => {
+                "on-change": (is_comment) => {
+                  /* 
+                    一定要修改原本的params.row.is_comment，否则不会更新！
+                    一开始给iSwitch默认值params.row.is_comment，
+                    后面执行事件后，视图层切换了状态，
+                    但是如果没有改变params.row.is_comment，还是原来的值的话，就会出问题
+                    比如原本是true，点击切换事件，但是并没有给params.row.is_comment重新赋值，
+                    那么表面上看iSwitch是切换了状态，但实际上还是true,如果这时候刷新表格数据，
+                    这个新的数据的params.row.is_comment是true，按道理应该是打开状态，但是由于
+                    这个iSwitch原本就是true，切换事件后没有修改值，它还是true,只不过它显示的关闭
+                    状态而已，这个组件应该不是重新创建销毁的，而是复用了，因此刷新数据后的值是true，
+                    它就不会更新！因为它本身就是true。
+                    类似父子组件传值，不要违反单向数据流直接修改子组件值，子组件的值要改变要通过父组件
+                    进行修改
+                   */
+                  params.row.is_comment = is_comment ? 1 : 0;
+                  console.log("on-changeon-change");
+                  setTimeout(() => {
+                    that.changeIsComment(is_comment, aaa);
+                  }, 1000);
+                },
+                // "on-change": (is_comment) => {
                 //   console.log(params.row);
-                //   console.log(status);
+                //   console.log(is_comment);
                 // },
               },
               scopedSlots: {
@@ -318,12 +344,12 @@ export default {
       row.tags.forEach((item) => {
         tagTemp.push(item.id);
       });
-      editArticle({ ...row, status: v ? 1 : 0, tags: tagTemp })
+      updateArticle({ ...row, status: v ? 1 : 0, tags: tagTemp })
         .then((res) => {
           this.$Message.success({
             content: res.message,
           });
-          this.getArticleList(this.params);
+          this.getArticleList({ ...this.params, ...this.searchRes });
         })
         .catch((err) => {
           this.$Message.error({
@@ -339,11 +365,11 @@ export default {
       row.tags.forEach((item) => {
         tagTemp.push(item.id);
       });
-      editArticle({ ...row, is_comment: v ? 1 : 0, tags: tagTemp }).then((res) => {
+      updateArticle({ ...row, is_comment: v ? 1 : 0, tags: tagTemp }).then((res) => {
         this.$Message.success({
           content: res.message,
         });
-        this.getArticleList(this.params);
+        this.getArticleList({ ...this.params, ...this.searchRes });
       });
     },
     beforeChangeStatus(row) {
@@ -357,16 +383,18 @@ export default {
     onSelect(v) {
       console.log(v);
     },
-    changeSearchResult(v){
+    changeSearchResult(v) {
       console.log(v);
-      this.params = {...this.params,...v}
+      // this.params = { ...this.params, ...v };
     },
     onSearch(v) {
       console.log(v);
+      this.searchRes = v;
+      this.changePage({ ...this.params, ...v });
     },
     changePage(v) {
       console.log(v);
-      // this.params.nowPage = v;
+      // this.params = v;
       this.getArticleList(v);
     },
     //转换时间格式
@@ -416,13 +444,13 @@ export default {
     async getArticleList(v) {
       console.log(v);
       console.log({ ...v });
-      let res = await articlepage(v);
+      let res = await getArticleList(v);
       this.articleList = res;
       this.params.count = res.count;
     },
     async getArticleTypeList(v) {
       let typeList = [];
-      let res = await typePageList(v);
+      let res = await getTypeList(v);
       res.rows.forEach((item) => {
         let temp = {};
         temp.label = item.name;
@@ -438,6 +466,7 @@ export default {
           placeholder: "请选择分类",
           data: this.articleTypeList,
           width: 150,
+          // val:2,
         },
         {
           type: "Select",
@@ -480,18 +509,44 @@ export default {
           placeholder: "请输入关键字",
           width: 200,
         },
+        {
+          type: "Date",
+          key: "createdAt",
+          name: "创建时间",
+          format: "yyyy-MM-dd",
+          placeholder: "请选择创建时间",
+          width: 200,
+        },
+        {
+          type: "Date",
+          key: "updatedAt",
+          name: "更新时间",
+          format: "yyyy-MM-dd",
+          placeholder: "请选择更新时间",
+          width: 200,
+        },
         // {
-        //   type: "DateTime",
-        //   key: "createdAt",
-        //   name: "创建时间",
-        //   placeholder: "请选择创建时间",
+        //   type: "Date",
+        //   key: "createdAt1",
+        //   name: "创建时间(日)",
+        //   // format: "yyyy-MM-dd",
+        //   placeholder: "请选择创建时间(日)",
         //   width: 200,
         // },
         // {
-        //   type: "DateTime",
-        //   key: "updatedAt",
-        //   name: "更新时间",
-        //   placeholder: "请选择更新时间",
+        //   type: "Month",
+        //   key: "createdAt2",
+        //   name: "创建时间(月)",
+        //   // format: "yyyy-MM-dd",
+        //   placeholder: "请选择创建时间(月)",
+        //   width: 200,
+        // },
+        // {
+        //   type: "Year",
+        //   key: "createdAt3",
+        //   name: "创建时间(年)",
+        //   // format: "yyyy-MM-dd",
+        //   placeholder: "请选择创建时间(年)",
         //   width: 200,
         // },
       ];

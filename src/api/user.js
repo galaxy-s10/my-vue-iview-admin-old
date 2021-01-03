@@ -1,9 +1,10 @@
 import request from './request'
 
-export function userList() {
+export function getUserList(params) {
   return request({
-    url: '/api/user/list',
-    method: 'get'
+    url: '/api/user/pageList',
+    method: 'get',
+    params
   })
 }
 
@@ -35,9 +36,9 @@ export function getUserInfo(token) {
   })
 }
 
-export function find(id) {
+export function findUser(id) {
   return request({
-    url: '/api/user/find',
+    url: '/api/user/findUser',
     method: 'get',
     params: {
       id
@@ -45,33 +46,33 @@ export function find(id) {
   })
 }
 
-export function add(data) {
-  return request({
-    url: '/api/user/add',
-    method: 'post',
-    data
-  })
-}
+// export function addUser(data) {
+//   return request({
+//     url: '/api/user/addUser',
+//     method: 'post',
+//     data
+//   })
+// }
 
-export function edit(data) {
+export function updateUser(data) {
   return request({
-    url: '/api/user/edit',
+    url: '/api/user/update',
     method: 'put',
     data
   })
 }
 
-export function editStatus(data) {
+export function updateUserStatus(data) {
   return request({
-    url: '/api/user/editStatus',
+    url: '/api/user/updateStatus',
     method: 'put',
     data
   })
 }
 
-export function deluser(id) {
+export function deleteuser(id) {
   return request({
-    url: '/api/user/del',
+    url: '/api/user/delete',
     method: 'delete',
     data: {
       id

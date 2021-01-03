@@ -1,35 +1,24 @@
 import request from './request'
 
-//标签列表
-export function taglist(size) {
+// 标签列表
+export function getTagList(params) {
     return request({
-        url: '/api/tag/list',
-        method: 'get',
-        params: {
-            size
-        }
-    })
-}
-
-//标签列表分页
-export function tagPageList(params) {
-    return request({
-        url: '/api/tag/tagPage',
+        url: '/api/tag/pageList',
         method: 'get',
         params,
     })
 }
 
-//修改标签
-export function editTag(data) {
+// 修改标签
+export function updateTag(data) {
     return request({
-        url: '/api/tag/edit',
+        url: '/api/tag/update',
         method: 'put',
         data
     })
 }
 
-//添加标签
+// 添加标签
 export function addTag(data) {
     return request({
         url: '/api/tag/add',
@@ -38,10 +27,10 @@ export function addTag(data) {
     })
 }
 
-//删除标签
-export function delTag(id) {
+// 删除标签
+export function deleteTag(id) {
     return request({
-        url: '/api/tag/del',
+        url: '/api/tag/deleteTag',
         method: 'delete',
         data: {
             id

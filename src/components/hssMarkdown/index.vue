@@ -31,7 +31,7 @@
 <script>
 import { mapState } from "vuex";
 import { mavonEditor } from "mavon-editor";
-import { getQiniuToken, delQiniuImg } from "@/api/qiniu";
+import { getQiniuToken, deleteQiniu } from "@/api/qiniu";
 // 引入七牛云
 import * as qiniu from "qiniu-js";
 
@@ -54,10 +54,10 @@ export default {
     };
   },
   watch: {
-    '$attrs.contentp'(){
-      console.log('attrsattrsattrsattrs');
+    "$attrs.contentp"() {
+      console.log("attrsattrsattrsattrs");
       // console.log(this.$attrs.contentp);
-      this.content = this.$attrs.contentp
+      this.content = this.$attrs.contentp;
     },
     content(newVal, oldVal) {
       console.log("newVal================");
@@ -193,7 +193,4 @@ export default {
 };
 </script>
 
-
-
-<style scoped>
-</style>
+<style scoped></style>

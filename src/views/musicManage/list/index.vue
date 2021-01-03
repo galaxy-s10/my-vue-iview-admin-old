@@ -5,6 +5,7 @@
       :searchData="searchData"
       :columns="columns"
       :params="params"
+      @onSearch="onSearch"
       @changePage="changePage"
     >
       <template slot-scope="{ row }" slot="operation">
@@ -28,8 +29,7 @@
 
 <script>
 // import { format } from "../../../../../webchat/src/utils/format";
-import { musicPageList, updateMusic, addMusic, deleteMusic } from "../../../api/music";
-import { getQiniuToken, getQiniuList, updateQiniu } from "@/api/qiniu";
+import { getMusicList, updateMusic, addMusic, deleteMusic } from "../../../api/music";
 import hssPopupForm from "../../../components/hssComponents/form/popup-form/index";
 import hssTable from "../../../components/hssComponents/table";
 import hssOperation from "../../../components/hssComponents/table/operation";
@@ -38,13 +38,7 @@ export default {
   components: { hssTable, hssOperation, hssPopupForm },
   data() {
     return {
-      pageLimit: [
-        { label: "10条", value: 10 },
-        { label: "30条", value: 30 },
-        { label: "50条", value: 50 },
-        { label: "100条", value: 100 },
-      ],
-      flag: true, //是否可加载下一页
+      searchRes: {},
       action: "", //1:编辑，2:新增
       columnForm: {},
       qiniuData: {},
@@ -56,9 +50,9 @@ export default {
       searchData: [
         {
           type: "Input",
-          key: "name",
-          name: "音乐名",
-          placeholder: "请输入音乐名",
+          key: "keyword",
+          name: "关键字",
+          placeholder: "请输入关键字",
           width: 200,
         },
         {
@@ -76,6 +70,22 @@ export default {
           ],
           name: "状态",
           placeholder: "请选择状态",
+          width: 200,
+        },
+        {
+          type: "Date",
+          key: "createdAt",
+          name: "创建时间",
+          format: "yyyy-MM-dd",
+          placeholder: "请选择创建时间",
+          width: 200,
+        },
+        {
+          type: "Date",
+          key: "updatedAt",
+          name: "更新时间",
+          format: "yyyy-MM-dd",
+          placeholder: "请选择更新时间",
           width: 200,
         },
       ],
@@ -104,58 +114,62 @@ export default {
               });
               return;
             }
-            this.action = 1;
-            this.qiniuData = {
-              ...row,
-            };
-            this.columnForm = {
-              list: [
-                {
-                  prop: "id",
-                },
-                {
-                  type: "Input",
-                  name: "音乐名",
-                  prop: "name",
-                  placeholder: "请输入音乐名",
-                  required: true,
-                },
-                {
-                  name: "作者",
-                  type: "Input",
-                  prop: "author",
-                  required: true,
-                },
-                {
-                  name: "图片",
-                  type: "Input",
-                  prop: "img",
-                  required: true,
-                },
-                {
-                  name: "链接",
-                  type: "Input",
-                  prop: "url",
-                  required: true,
-                },
-                {
-                  name: "状态",
-                  type: "Radio",
-                  data: [
-                    { label: "已通过", value: 1 },
-                    { label: "待审核", value: 0 },
-                  ],
-                  prop: "status",
-                  required: true,
-                },
-              ],
-            };
-            this.request = {
-              title: "编辑标签",
-              size: "centre",
-            };
-            this.isInit = true;
-            this.comments = "hssPopupForm";
+            this.$router.push({
+              name: "updateMusic",
+              params: { id: row.id },
+            });
+            // this.action = 1;
+            // this.qiniuData = {
+            //   ...row,
+            // };
+            // this.columnForm = {
+            //   list: [
+            //     {
+            //       prop: "id",
+            //     },
+            //     {
+            //       type: "Input",
+            //       name: "音乐名",
+            //       prop: "name",
+            //       placeholder: "请输入音乐名",
+            //       required: true,
+            //     },
+            //     {
+            //       name: "作者",
+            //       type: "Input",
+            //       prop: "author",
+            //       required: true,
+            //     },
+            //     {
+            //       name: "图片",
+            //       type: "Input",
+            //       prop: "img",
+            //       required: true,
+            //     },
+            //     {
+            //       name: "链接",
+            //       type: "Input",
+            //       prop: "url",
+            //       required: true,
+            //     },
+            //     {
+            //       name: "状态",
+            //       type: "Radio",
+            //       data: [
+            //         { label: "已通过", value: 1 },
+            //         { label: "待审核", value: 0 },
+            //       ],
+            //       prop: "status",
+            //       required: true,
+            //     },
+            //   ],
+            // };
+            // this.request = {
+            //   title: "编辑标签",
+            //   size: "centre",
+            // };
+            // this.isInit = true;
+            // this.comments = "hssPopupForm";
           },
           // 是否显示
           isShow() {
@@ -183,7 +197,7 @@ export default {
               this.$Message.success({
                 content: res.message,
               });
-              this.getMusicPageList(this.params);
+              this.getMusicList(this.params);
             });
             // }
           },
@@ -197,7 +211,6 @@ export default {
         count: "",
       },
       params: {
-        is_admin:true,
         pageSize: 10,
         nowPage: 1,
       },
@@ -252,7 +265,7 @@ export default {
                 // "before-change": () => this.beforeChangeStatus(params.row),
               },
               on: {
-                "on-change": (status) => this.changeStatus(status, params.row),
+                "on-change": (status) => this.changeStatus(params.row),
                 // "on-change": (status) => {
                 //   console.log(params.row);
                 //   console.log(status);
@@ -267,6 +280,13 @@ export default {
                 },
               },
             });
+          },
+        },
+        {
+          title: "创建时间",
+          align: "center",
+          render: (h, params) => {
+            return h("span", this.formateDate(params.row.createdAt));
           },
         },
         {
@@ -293,18 +313,13 @@ export default {
     // this.getTagList();
   },
   mounted() {
-    this.getMusicPageList(this.params);
+    this.getMusicList(this.params);
   },
   methods: {
     onSelect() {
       this.params.marker = "";
       this.linkList = [];
-      this.getQiniuList(this.params);
-    },
-    QiniuSearch() {
-      this.params.marker = "";
-      this.linkList = [];
-      this.getQiniuList(this.params);
+      this.getMusicList(this.params);
     },
     changePrefix(e) {
       console.log(e);
@@ -315,56 +330,15 @@ export default {
         this.getQiniuList(this.params);
       }
     },
-    beforeChangeStatus(v, row) {
-    },
-    changeStatus(v, row) {
-      updateMusic({ ...row, status: v ? 1 : 0 }).then((res) => {
+    beforeChangeStatus(v, row) {},
+    changeStatus(row) {
+      updateMusic({ ...row, status: row.status == 1 ? 0 : 1 }).then((res) => {
+        row.status = row.status == 1 ? 0 : 1;
         this.$Message.success({
           content: res.message,
         });
-        this.getMusicPageList(this.params);
+        this.getMusicList({ ...this.params, ...this.searchRes });
       });
-    },
-    addTag() {
-      this.action = 2;
-      this.columnForm = {
-        list: [
-          {
-            // name: "id",
-            // type: "Input",
-            prop: "id",
-            // placeholder: "",
-            // display:'none'
-          },
-          {
-            type: "Input",
-            name: "名称",
-            prop: "name",
-            placeholder: "请输入友链名称",
-            required: true,
-          },
-          {
-            name: "头像",
-            type: "Input",
-            prop: "avatar",
-            placeholder: "请输入友链头像",
-            required: true,
-          },
-          {
-            name: "描述",
-            type: "Input",
-            prop: "description",
-            placeholder: "请输入友链描述",
-            required: true,
-          },
-        ],
-      };
-      this.request = {
-        title: "新增标签",
-        size: "centre",
-      };
-      // this.isInit = true;
-      this.comments = "hssPopupForm";
     },
     onCancel() {
       // this.showRole = false
@@ -383,17 +357,18 @@ export default {
         this.$Message.success({
           content: res.message,
         });
-        this.getMusicPageList({ ...this.params });
+        this.getMusicList({ ...this.params });
       });
     },
     onSearch(v) {
       console.log(v);
       console.log("!!!!!!!!!");
-      this.getMusicPageList(v);
+      this.searchRes = v;
+      this.getMusicList({ ...this.params, ...v });
     },
     changePage(v) {
       console.log(v);
-      this.getMusicPageList(v);
+      this.getMusicList(v);
     },
     //转换时间格式
     formateDate(datetime) {
@@ -416,9 +391,9 @@ export default {
         addDateZero(d.getSeconds());
       return formatdatetime;
     },
-    getMusicPageList(v) {
+    getMusicList(v) {
       let that = this;
-      musicPageList(v).then((res) => {
+      getMusicList(v).then((res) => {
         console.log(res);
         this.linkList = res;
       });

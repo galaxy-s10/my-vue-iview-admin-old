@@ -1,12 +1,13 @@
 <template>
   <div>
-    <i-button>上传文件</i-button>
+    <hss-upload></hss-upload>
   </div>
 </template>
 
 <script>
+import hssUpload from "../../../components/upload/index";
 export default {
-  components: {},
+  components: { hssUpload },
   props: {},
   data() {
     return {};
@@ -19,5 +20,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
