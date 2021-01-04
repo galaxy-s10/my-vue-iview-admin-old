@@ -157,6 +157,7 @@ export default {
     },
     // 上传七牛云图片
     async qiniuUpload(file) {
+      console.log('articleManage')
       const datetime = new Date();
       const key = datetime.getTime() + file.name;
       const uploadToken = await getQiniuToken();

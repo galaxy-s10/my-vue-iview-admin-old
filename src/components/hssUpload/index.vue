@@ -101,6 +101,7 @@ export default {
           },
           // complete: 接收上传完成后的后端返回信息
           complete(ress) {
+            console.log(ress)
             console.log("上传七牛云图片成功");
             resolve("https://img.cdn.zhengbeining.com/" + ress.key);
           },

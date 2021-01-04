@@ -304,7 +304,7 @@ export default {
             name: "权限",
             type: "Tree",
             prop: "auths",
-            required: true,
+            // required: true,
             isArray: true,
             data: this.allAuth,
             renderContent: function renderContent(h, { root, node, data }) {

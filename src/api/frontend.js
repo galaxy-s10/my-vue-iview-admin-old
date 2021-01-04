@@ -1,17 +1,17 @@
 import request from './request'
 
 // 获取前台信息
-export function getFront() {
+export function getFrontend() {
     return request({
-        url: '/api/front/detail',
+        url: '/api/frontend/detail',
         method: 'get',
     })
 }
 
 // 更新前台信息
-export function updateFront(data) {
+export function updateFrontend(data) {
     return request({
-        url: '/api/front/update',
+        url: '/api/frontend/update',
         method: 'put',
         data
     })

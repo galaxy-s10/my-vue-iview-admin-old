@@ -113,6 +113,7 @@ export default {
     },
     // 上传七牛云图片
     async qiniuUpload(filename, file) {
+      console.log('hssMd')
       const datetime = new Date();
       const key = datetime.getTime() + file.name;
       const uploadToken = await getQiniuToken();
@@ -134,6 +135,7 @@ export default {
           },
           // complete: 接收上传完成后的后端返回信息
           complete(ress) {
+            console.log(ress)
             console.log("上传七牛云图片成功");
             resolve("https://img.cdn.zhengbeining.com/" + ress.key);
           },

@@ -148,20 +148,20 @@ export const roleRoutes = [
         name: "home",
         path: '/home',
         redirect: '/home/register',
-        authKey: ["FRONT_MANAGE", "FRONT_LOGIN", "FRONT_REGISTER", "FRONT_ABOUT"],
+        authKey: ["FRONTEND_MANAGE", "FRONTEND_LOGIN", "FRONTEND_REGISTER", "FRONTEND_ABOUT"],
         component: Layout,
         meta: {
             title: '前台管理',
             icon: 'ios-home-outline',
-            authKey: ["FRONT_MANAGE", "FRONT_LOGIN", "FRONT_REGISTER", "FRONT_ABOUT"],
+            authKey: ["FRONTEND_MANAGE", "FRONTEND_LOGIN", "FRONTEND_REGISTER", "FRONTEND_ABOUT"],
         },
         children: [{
             name: "register",
             path: '/home/register',
             component: () => import('@/views/home/register/index'),
-            authKey: "FRONT_REGISTER",
+            authKey: "FRONTEND_REGISTER",
             meta: {
-                authKey: "FRONT_REGISTER",
+                authKey: "FRONTEND_REGISTER",
                 title: '注册',
                 icon: 'md-add',
             },
@@ -170,10 +170,10 @@ export const roleRoutes = [
             name: "login",
             path: '/home/login',
             component: () => import('@/views/home/login/index'),
-            authKey: "FRONT_LOGIN",
+            authKey: "FRONTEND_LOGIN",
             meta: {
                 title: '登录',
-                authKey: "FRONT_LOGIN",
+                authKey: "FRONTEND_LOGIN",
                 icon: 'ios-add',
             },
         },
@@ -181,10 +181,10 @@ export const roleRoutes = [
             name: "message",
             path: '/home/message',
             component: () => import('@/views/home/message/index'),
-            authKey: "FRONT_COMMENT",
+            authKey: "FRONTEND_COMMENT",
             meta: {
                 title: '留言板',
-                authKey: "FRONT_COMMENT",
+                authKey: "FRONTEND_COMMENT",
                 icon: 'ios-add',
             },
         },
@@ -192,10 +192,10 @@ export const roleRoutes = [
             name: "about",
             path: '/home/about',
             component: () => import('@/views/home/about/index'),
-            authKey: "FRONT_ABOUT",
+            authKey: "FRONTEND_ABOUT",
             meta: {
                 title: '关于',
-                authKey: "FRONT_ABOUT",
+                authKey: "FRONTEND_ABOUT",
                 icon: 'ios-add',
             },
         },
@@ -539,13 +539,13 @@ export const roleRoutes = [
         path: '/musicManage',
         component: Layout,
         authKey: [
-            "MUSIC_MANAGE", "MUSIC_LIST", "UPDATE_MUSIC", "UPLOAD_MUSIC", "DELETE_MUSIC"
+            "MUSIC_MANAGE", "MUSIC_LIST", "UPDATE_MUSIC", "ADD_MUSIC", "DELETE_MUSIC"
         ],
         meta: {
             title: '音乐管理',
             icon: 'ios-eye-outline',
             authKey: [
-                "MUSIC_MANAGE", "MUSIC_LIST", "ADD_MUSIC", "UPLOAD_MUSIC", "DELETE_MUSIC"
+                "MUSIC_MANAGE", "MUSIC_LIST", "UPDATE_MUSIC", "ADD_MUSIC", "DELETE_MUSIC"
             ],
         },
         children: [{
