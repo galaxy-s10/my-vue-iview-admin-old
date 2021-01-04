@@ -545,7 +545,7 @@ export const roleRoutes = [
             title: '音乐管理',
             icon: 'ios-eye-outline',
             authKey: [
-                "MUSIC_MANAGE", "MUSIC_LIST", "UPDATE_MUSIC", "UPLOAD_MUSIC", "DELETE_MUSIC"
+                "MUSIC_MANAGE", "MUSIC_LIST", "ADD_MUSIC", "UPLOAD_MUSIC", "DELETE_MUSIC"
             ],
         },
         children: [{
@@ -573,12 +573,12 @@ export const roleRoutes = [
         {
             name: "uploadMusic",
             path: '/musicManage/upload',
-            authKey: "UPLOAD_MUSIC",
+            authKey: "ADD_MUSIC",
             component: () => import('@/views/musicManage/upload/index'),
             meta: {
-                title: '上传音乐',
+                title: '新增音乐',
                 icon: 'md-speedometer',
-                authKey: "UPLOAD_MUSIC",
+                authKey: "ADD_MUSIC",
             },
         },
         {

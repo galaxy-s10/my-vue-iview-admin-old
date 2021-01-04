@@ -39,7 +39,16 @@
 import hssPopupForm from "../../../../../components/hssComponents/form/popup-form/index";
 import { getAuthList } from "../../../../../api/auth";
 import { getAuth, getUserRoleAuth, addAuthForRole } from "../../../../../api/roleauth";
+// import {
+//   addRole,
+//   getRoleList,
+//   editRoleAuth,
+//   deleteRole,
+//   findParentRole,
+//   findBrotherRole,
+// } from "../../../../../api/role";
 import {
+  editRoleAuth,
   getRoleList,
   findParentRole,
   findBrotherRole,
@@ -58,6 +67,7 @@ export default {
   },
   data() {
     return {
+      action: "",
       parentRole: [],
       brotherRole: [],
       allAuth: [],
@@ -103,8 +113,29 @@ export default {
       this.allAuth = [];
       this.currentAuth = [];
     },
-    onSubmit(v) {
+    async onSubmit(v) {
       console.log(v);
+      let temp = [];
+      v.auths.forEach((item) => {
+        temp.push(item.id);
+      });
+      if (this.action == "edit") {
+        await editRoleAuth({ ...v, auths: temp }).then((res) => {
+          console.log(res);
+          this.$Message.success({
+            content: res.message,
+          });
+          this.getRoleList();
+        });
+      } else {
+        await addRole({ ...v, auths: temp }).then((res) => {
+          console.log(res);
+          this.$Message.success({
+            content: res.message,
+          });
+          this.getRoleList();
+        });
+      }
     },
     getRoleList() {
       getRoleList().then((res) => {
@@ -308,6 +339,7 @@ export default {
     },
     // 新增角色
     async addParentRole(v) {
+      this.action = "add";
       await this.getAuthList();
       await this.findBrotherRole(v.id);
       this.roleInfo.p_id = v.id;
@@ -330,7 +362,7 @@ export default {
             //   return h("span", "无");
             // },
             required: true,
-            disabled:true,
+            disabled: true,
           },
           {
             type: "Input",
@@ -423,6 +455,7 @@ export default {
     },
     // 修改某角色
     async editRole(v) {
+      this.action = "edit";
       console.log(v);
       this.roleInfo = v;
 
@@ -431,6 +464,9 @@ export default {
       this.roleInfo.auths = this.currentAuth;
       this.columnForm = {
         list: [
+          {
+            prop: "id",
+          },
           {
             type: "Select",
             name: "父级",

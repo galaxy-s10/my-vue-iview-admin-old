@@ -14,6 +14,9 @@ import baseForm from "../../../components/hssComponents/form/base-form/index";
 import { findArticle, editArticle, addArticle } from "@/api/article";
 import { getTagList, updateTag, deleteTag, addTag } from "@/api/tag";
 import { getTypeList } from "../../../api/type";
+import { getQiniuToken, deleteQiniu } from "../../../api/qiniu";
+import * as qiniu from "qiniu-js";
+
 // import { editarticle } from '../../../../../vueblog-client/src/api/article';
 export default {
   components: { baseForm, hssUpload },
@@ -52,7 +55,7 @@ export default {
           {
             name: "类型",
             type: "Select",
-            prop: "type",
+            prop: "type_id",
             placeholder: "请选择文章类型",
             required: true,
             data: [],
@@ -96,7 +99,6 @@ export default {
             // isString:true,
             required: true,
           },
-
           {
             name: "内容",
             type: "Editor",
@@ -104,6 +106,13 @@ export default {
             content: "",
             placeholder: "请输入内容",
             required: true,
+          },
+          {
+            name: "封面图",
+            type: "Upload",
+            prop: "img",
+            placeholder: "请上传封面图",
+            // required: true,
           },
           {
             name: "发布时间",
@@ -146,10 +155,45 @@ export default {
       });
       this.columnForm.list[2].data = typeList;
     },
+    // 上传七牛云图片
+    async qiniuUpload(file) {
+      const datetime = new Date();
+      const key = datetime.getTime() + file.name;
+      const uploadToken = await getQiniuToken();
+      const uptoken = uploadToken;
+      const putExtra = {};
+      const config = { useCdnDomain: true };
+      const observable = qiniu.upload(file, key, uptoken, putExtra, config);
+      const that = this;
+      return new Promise(function (resolve, reject) {
+        const subscription = observable.subscribe({
+          // next: 接收上传进度信息的回调函数
+          next(res) {
+            const percent = res.total.percent; // 当前上传进度
+            console.log(percent);
+            // that.percent = parseInt(percent.toFixed());
+          },
+          // error: 上传错误后触发
+          error(err) {
+            console.log("上传七牛云图片错误");
+            reject(err);
+          },
+          // complete: 接收上传完成后的后端返回信息
+          complete(ress) {
+            console.log("上传七牛云图片成功");
+            resolve("https://img.cdn.zhengbeining.com/" + ress.key);
+          },
+        });
+      });
+    },
     onSubmit() {
-      this.$refs.hssBaseForm.submit((v) => {
+      this.$refs.hssBaseForm.submit(async (v) => {
         if (v) {
           console.log(v);
+          if (typeof v.img == "object") {
+            let res = await this.qiniuUpload(v.img);
+            v.img = res;
+          }
           addArticle(v)
             .then((res) => {
               console.log(res);
