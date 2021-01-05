@@ -9,10 +9,11 @@ export function updateQiniu(data) {
   })
 }
 
-export function getQiniuToken() {
+export function getQiniuToken(user_id) {
   return request({
     url: '/api/qiniu/token',
-    method: 'get'
+    method: 'get',
+    params: { user_id }
   })
 }
 

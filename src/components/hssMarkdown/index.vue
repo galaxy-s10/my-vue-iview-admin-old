@@ -89,7 +89,7 @@ export default {
       },
     },
     ...mapState({
-      role: (state) => state.user.role,
+      user_id: (state) => state.user.id,
     }),
   },
 
@@ -106,21 +106,26 @@ export default {
     //   console.log("changeHssMdchangeHssMdchangeHssMd");
     // },
     // 获取七牛云上传凭证
-    async getQiniuToken() {
-      const res = await getQiniuToken();
-      console.log(res);
-      this.qiniuToken = res.uploadToken;
-    },
+    // async getQiniuToken(user_id) {
+    //   const res = await getQiniuToken(user_id);
+    //   console.log(res);
+    //   this.qiniuToken = res.uploadToken;
+    // },
     // 上传七牛云图片
     async qiniuUpload(filename, file) {
-      console.log('hssMd')
+      console.log("hssMd");
       const datetime = new Date();
       const key = datetime.getTime() + file.name;
-      const uploadToken = await getQiniuToken();
+      const { uploadToken } = await getQiniuToken();
       const uptoken = uploadToken;
-      const putExtra = {};
+      console.log(uptoken);
+      const putExtra = {
+        customVars: { "x:user_id": `${this.user_id}` },
+      };
+      console.log(putExtra);
       const config = { useCdnDomain: true };
       const observable = qiniu.upload(file, key, uptoken, putExtra, config);
+      let that = this;
       return new Promise(function (resolve, reject) {
         const subscription = observable.subscribe({
           // next: 接收上传进度信息的回调函数
@@ -135,8 +140,12 @@ export default {
           },
           // complete: 接收上传完成后的后端返回信息
           complete(ress) {
-            console.log(ress)
+            console.log(ress);
             console.log("上传七牛云图片成功");
+            that.$Message.success({
+              content: ress.message,
+              duration: 2,
+            });
             resolve("https://img.cdn.zhengbeining.com/" + ress.key);
           },
         });
