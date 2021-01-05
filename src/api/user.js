@@ -46,13 +46,14 @@ export function findUser(id) {
   })
 }
 
-// export function addUser(data) {
-//   return request({
-//     url: '/api/user/addUser',
-//     method: 'post',
-//     data
-//   })
-// }
+// 删除用户
+export function deleteUser(id) {
+  return request({
+    url: '/api/user/delete',
+    method: 'delete',
+    data: { id }
+  })
+}
 
 export function updateUser(data) {
   return request({

@@ -33,7 +33,7 @@ import hssOperation from "../../../components/hssComponents/table/operation";
 import hssPopupForm from "../../../components/hssComponents/form/popup-form/index";
 
 import utils from "../../../libs/utils";
-import { getUserList, updateUser, updateUserStatus } from "../../../api/user";
+import { getUserList, updateUser, updateUserStatus, deleteUser } from "../../../api/user";
 import {
   addRole,
   getRoleList,
@@ -163,12 +163,12 @@ export default {
               });
               return;
             }
-            // delArticle(row.id).then((res) => {
-            //   this.$Message.success({
-            //     content: res.message,
-            //   });
-            //   this.getArticleList(this.params);
-            // });
+            deleteUser(row.id).then((res) => {
+              this.$Message.success({
+                content: res.message,
+              });
+              this.getUserList();
+            });
           },
           isShow() {
             return 1;
@@ -604,7 +604,12 @@ export default {
       });
     },
     changeStatus(user) {
-      updateUserStatus({ id: user.id, status: user.status == 1 ? 0 : 1 })
+      console.log(user);
+      let temp = [];
+      user.roles.forEach((item) => {
+        temp.push(item.id);
+      });
+      updateUser({ ...user, status: user.status == 1 ? 0 : 1, roles: temp })
         .then((res) => {
           this.$Message.success({
             content: res.message,
