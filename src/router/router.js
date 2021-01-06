@@ -145,60 +145,61 @@ export const defaultRoutes = [
 // 权限路由
 export const roleRoutes = [
     {
-        name: "home",
-        path: '/home',
-        redirect: '/home/register',
-        authKey: ["FRONTEND_MANAGE", "FRONTEND_LOGIN", "FRONTEND_REGISTER", "FRONTEND_ABOUT"],
+        name: "frontMangage",
+        path: '/frontendManage',
+        redirect: '/frontendManage/list',
+        authKey: ["FRONTEND_MANAGE", "FRONTEND_LIST", "FRONTEND_UPDATE"],
         component: Layout,
         meta: {
             title: '前台管理',
             icon: 'ios-home-outline',
-            authKey: ["FRONTEND_MANAGE", "FRONTEND_LOGIN", "FRONTEND_REGISTER", "FRONTEND_ABOUT"],
+            authKey: ["FRONTEND_MANAGE", "FRONTEND_LIST", "FRONTEND_UPDATE"],
         },
         children: [{
-            name: "register",
-            path: '/home/register',
-            component: () => import('@/views/home/register/index'),
-            authKey: "FRONTEND_REGISTER",
+            name: "frontendList",
+            path: '/frontendManage/list',
+            component: () => import('@/views/frontend/register/index'),
+            authKey: "FRONTEND_LIST",
             meta: {
-                authKey: "FRONTEND_REGISTER",
-                title: '注册',
+                authKey: "FRONTEND_LIST",
+                title: '前台信息',
                 icon: 'md-add',
             },
         },
-        {
-            name: "login",
-            path: '/home/login',
-            component: () => import('@/views/home/login/index'),
-            authKey: "FRONTEND_LOGIN",
-            meta: {
-                title: '登录',
-                authKey: "FRONTEND_LOGIN",
-                icon: 'ios-add',
-            },
-        },
-        {
-            name: "message",
-            path: '/home/message',
-            component: () => import('@/views/home/message/index'),
-            authKey: "FRONTEND_COMMENT",
-            meta: {
-                title: '留言板',
-                authKey: "FRONTEND_COMMENT",
-                icon: 'ios-add',
-            },
-        },
-        {
-            name: "about",
-            path: '/home/about',
-            component: () => import('@/views/home/about/index'),
-            authKey: "FRONTEND_ABOUT",
-            meta: {
-                title: '关于',
-                authKey: "FRONTEND_ABOUT",
-                icon: 'ios-add',
-            },
-        },
+        // {
+        //     name: "login",
+        //     path: '/frontend/login',
+        //     component: () => import('@/views/frontend/login/index'),
+        //     authKey: "FRONTEND_LOGIN",
+        //     hidden:true,
+        //     meta: {
+        //         title: '登录',
+        //         authKey: "FRONTEND_LOGIN",
+        //         icon: 'ios-add',
+        //     },
+        // },
+        // {
+        //     name: "message",
+        //     path: '/home/message',
+        //     component: () => import('@/views/home/message/index'),
+        //     authKey: "FRONTEND_COMMENT",
+        //     meta: {
+        //         title: '留言板',
+        //         authKey: "FRONTEND_COMMENT",
+        //         icon: 'ios-add',
+        //     },
+        // },
+        // {
+        //     name: "about",
+        //     path: '/home/about',
+        //     component: () => import('@/views/home/about/index'),
+        //     authKey: "FRONTEND_ABOUT",
+        //     meta: {
+        //         title: '关于',
+        //         authKey: "FRONTEND_ABOUT",
+        //         icon: 'ios-add',
+        //     },
+        // },
         ]
     },
     {
