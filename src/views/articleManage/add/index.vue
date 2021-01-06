@@ -16,6 +16,7 @@ import { getTagList, updateTag, deleteTag, addTag } from "@/api/tag";
 import { getTypeList } from "../../../api/type";
 import { getQiniuToken, deleteQiniu } from "../../../api/qiniu";
 import * as qiniu from "qiniu-js";
+import { mapState } from "vuex";
 
 // import { editarticle } from '../../../../../vueblog-client/src/api/article';
 export default {
@@ -142,7 +143,11 @@ export default {
       articleTypeList: [],
     };
   },
-  computed: {},
+  computed: {
+    ...mapState({
+      user_id: (state) => state.user.id,
+    }),
+  },
   methods: {
     async getArticleTypeList(v) {
       let typeList = [];
@@ -157,12 +162,16 @@ export default {
     },
     // 上传七牛云图片
     async qiniuUpload(file) {
-      console.log('articleManage')
+      console.log("articleManage");
       const datetime = new Date();
       const key = datetime.getTime() + file.name;
-      const uploadToken = await getQiniuToken();
+      const { uploadToken } = await getQiniuToken();
       const uptoken = uploadToken;
-      const putExtra = {};
+      const putExtra = {
+        customVars: { "x:user_id": `${this.user_id}` },
+      };
+      
+      console.log(putExtra);
       const config = { useCdnDomain: true };
       const observable = qiniu.upload(file, key, uptoken, putExtra, config);
       const that = this;
