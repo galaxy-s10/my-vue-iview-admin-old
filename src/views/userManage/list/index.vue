@@ -133,7 +133,7 @@ export default {
             console.log(row);
             if (!this.auth.includes("UPDATE_USER")) {
               this.$Message.error({
-                content: "权限不足！",
+                content: "你没有权限修改用户!",
               });
               return;
             }
@@ -157,9 +157,9 @@ export default {
           },
           custom: (row) => {
             console.log(row);
-            if (!this.auth.includes("DELETE_ARTICLE")) {
+            if (!this.auth.includes("DELETE_USER")) {
               this.$Message.error({
-                content: "权限不足！",
+                content: "你没有权限删除用户!",
               });
               return;
             }
@@ -589,13 +589,19 @@ export default {
       return new Promise((resolve, reject) => {
         this.$Modal.confirm({
           title: "提示",
-          loading: this.loading,
           content:
             user.status == 1
               ? `确认要禁用${user.username}吗`
               : `确认要启用${user.username}吗`,
           onOk: () => {
-            resolve();
+            if (!this.auth.includes("UPDATE_USER!")) {
+              this.$Message.error({
+                content: "你没有权限修改用户!",
+              });
+              reject();
+            } else {
+              resolve();
+            }
           },
           onCancel: () => {
             // reject();

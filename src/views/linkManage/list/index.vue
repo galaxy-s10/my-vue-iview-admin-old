@@ -57,7 +57,7 @@ export default {
             console.log(row);
             if (!this.auth.includes("UPDATE_LINK")) {
               this.$Message.error({
-                content: "权限不足！",
+                content: "你没有权限修改标签!",
               });
               return;
             }
@@ -140,7 +140,7 @@ export default {
             console.log(row);
             if (!this.auth.includes("DELETE_TAG")) {
               this.$Message.error({
-                content: "权限不足！",
+                content: "你没有权限删除标签!",
               });
               return;
             }
@@ -307,17 +307,18 @@ export default {
   },
   methods: {
     beforeChangeStatus(v, row) {
-      // editArticle({ ...row, is_comment: v ? 1 : 0, tags: tagTemp }).then((res) => {
-      //   this.$Message.success({
-      //     content: res.message,
-      //   });
-      //   this.getArticleList(this.params);
-      // });
+      return new Promise((resolve, reject) => {
+        if (!this.auth.includes("UPDATE_LINK")) {
+          this.$Message.error({
+            content: "你没有权限修改标签!",
+          });
+          reject();
+        } else {
+          resolve();
+        }
+      });
     },
     changeStatus(v, row) {
-      console.log(v);
-      console.log(row);
-      console.log("changeStatus");
       let tagTemp = [];
       updateLink({ ...row, status: v ? 1 : 0 }).then((res) => {
         this.$Message.success({

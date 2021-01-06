@@ -9,6 +9,7 @@
       @onSubmit="onSubmit"
     >
     </base-form>
+    <div v-else>请在文章列表选择要编辑的文章</div>
     <!-- <i-button @click="confirm">修改</i-button> -->
     <!-- <markdown ref="md" v-if="this.form.content != null" /> -->
   </div>
@@ -83,11 +84,13 @@ export default {
   },
   async created() {
     console.log(this.$route);
+    if (!this.$route.params.id) {
+      return;
+    }
     await getTagList({ nowPage: 1, pageSize: 100 }).then((res) => {
       this.tagList = res.rows;
     });
     await this.getArticleTypeList({ nowPage: 1, pageSize: 10 });
-
     await findArticle(this.$route.params.id)
       .then((res) => {
         this.columnForm = {
@@ -122,7 +125,6 @@ export default {
               prop: "click",
               placeholder: "请输入角色浏览量",
               isNumber: true,
-              required: true,
             },
             {
               name: "标签",
@@ -140,7 +142,7 @@ export default {
                 { label: "待审核", value: 0 },
               ],
               prop: "status",
-              required: true,
+              // required: true,
             },
 
             {
@@ -149,11 +151,11 @@ export default {
               // type: "Select",
               data: [
                 { label: "开启", value: 1 },
-                { label: "关闭", value: 2 },
+                { label: "关闭", value: 0 },
               ],
               prop: "is_comment",
               // isString:true,
-              required: true,
+              // required: true,
             },
 
             {

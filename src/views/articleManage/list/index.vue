@@ -57,7 +57,7 @@ export default {
             console.log(row);
             if (!this.auth.includes("UPDATE_ARTICLE")) {
               this.$Message.error({
-                content: "权限不足！",
+                content: "你没有权限修改文章!",
               });
               return;
             }
@@ -83,7 +83,7 @@ export default {
             console.log(row);
             if (!this.auth.includes("DELETE_ARTICLE")) {
               this.$Message.error({
-                content: "权限不足！",
+                content: "你没有权限删除文章!",
               });
               return;
             }
@@ -183,7 +183,7 @@ export default {
               props: {
                 value: params.row.status ? true : false,
                 size: "large",
-                // "before-change": () => this.beforeChangeStatus(params.row),
+                "before-change": () => this.beforeChangeStatus(params.row),
               },
               on: {
                 "on-change": (status) => {
@@ -220,7 +220,7 @@ export default {
               props: {
                 value: aaa.is_comment == 1,
                 size: "large",
-                // "before-change": () => this.beforeChangeis_comment(params.row),
+                "before-change": () => this.beforeChangeStatus(params.row),
               },
               on: {
                 "on-change": (is_comment) => {
@@ -373,6 +373,16 @@ export default {
       });
     },
     beforeChangeStatus(row) {
+      return new Promise((resolve, reject) => {
+        if (!this.auth.includes("UPDATE_ARTICLE")) {
+          this.$Message.error({
+            content: "你没有权限修改文章!",
+          });
+          reject();
+        } else {
+          resolve();
+        }
+      });
       //  console.log(row);
       // console.log("beforeChangeStatus");
       // let temp =[]

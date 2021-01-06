@@ -108,9 +108,9 @@ export default {
           },
           custom: async (row) => {
             console.log(row);
-            if (!this.auth.includes("UPDATE_TAG")) {
+            if (!this.auth.includes("UPDATE_MUSIC")) {
               this.$Message.error({
-                content: "权限不足！",
+                content: "你没有权限修改音乐!",
               });
               return;
             }
@@ -118,58 +118,6 @@ export default {
               name: "updateMusic",
               params: { id: row.id },
             });
-            // this.action = 1;
-            // this.qiniuData = {
-            //   ...row,
-            // };
-            // this.columnForm = {
-            //   list: [
-            //     {
-            //       prop: "id",
-            //     },
-            //     {
-            //       type: "Input",
-            //       name: "音乐名",
-            //       prop: "name",
-            //       placeholder: "请输入音乐名",
-            //       required: true,
-            //     },
-            //     {
-            //       name: "作者",
-            //       type: "Input",
-            //       prop: "author",
-            //       required: true,
-            //     },
-            //     {
-            //       name: "图片",
-            //       type: "Input",
-            //       prop: "img",
-            //       required: true,
-            //     },
-            //     {
-            //       name: "链接",
-            //       type: "Input",
-            //       prop: "url",
-            //       required: true,
-            //     },
-            //     {
-            //       name: "状态",
-            //       type: "Radio",
-            //       data: [
-            //         { label: "已通过", value: 1 },
-            //         { label: "待审核", value: 0 },
-            //       ],
-            //       prop: "status",
-            //       required: true,
-            //     },
-            //   ],
-            // };
-            // this.request = {
-            //   title: "编辑标签",
-            //   size: "centre",
-            // };
-            // this.isInit = true;
-            // this.comments = "hssPopupForm";
           },
           // 是否显示
           isShow() {
@@ -186,14 +134,14 @@ export default {
           },
           custom: (row) => {
             console.log(row);
-            if (!this.auth.includes("DELETE_TAG")) {
+            if (!this.auth.includes("DELETE_MUSIC")) {
               this.$Message.error({
-                content: "权限不足！",
+                content: "你没有权限删除音乐!",
               });
               return;
             }
             // if (row.articles.length > 0) {
-            delLink(row.id).then((res) => {
+            deleteMusic(row.id).then((res) => {
               this.$Message.success({
                 content: res.message,
               });

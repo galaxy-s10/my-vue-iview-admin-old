@@ -39,6 +39,7 @@
                 v-if="item.children && item.children.length <= 1"
                 :name="item.children[0].name"
                 :key="index"
+                v-auth="item.authKey"
               >
                 <Icon :type="item.meta.icon" />
                 <span v-if="!isCollapsed">

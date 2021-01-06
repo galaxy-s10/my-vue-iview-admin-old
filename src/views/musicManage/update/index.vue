@@ -9,6 +9,7 @@
       @onSubmit="onSubmit"
     >
     </base-form>
+    <div v-else>请在音乐列表选择要编辑的音乐</div>
     <!-- <i-button @click="confirm">修改</i-button> -->
     <!-- <markdown ref="md" v-if="this.form.content != null" /> -->
   </div>
@@ -114,6 +115,9 @@ export default {
   },
   async created() {
     console.log(this.$route);
+    if (!this.$route.params.id) {
+      return;
+    }
     await findMusic(this.$route.params.id)
       .then((res) => {
         this.columnForm = {

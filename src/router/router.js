@@ -158,7 +158,7 @@ export const roleRoutes = [
         children: [{
             name: "frontendList",
             path: '/frontendManage/list',
-            component: () => import('@/views/frontend/register/index'),
+            component: () => import('@/views/frontend/list/index'),
             authKey: "FRONTEND_LIST",
             meta: {
                 authKey: "FRONTEND_LIST",

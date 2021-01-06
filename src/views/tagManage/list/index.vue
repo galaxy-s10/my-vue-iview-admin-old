@@ -65,7 +65,7 @@ export default {
             console.log(row);
             if (!this.auth.includes("UPDATE_TAG")) {
               this.$Message.error({
-                content: "权限不足！",
+                content: "你没有权限修改标签!",
               });
               return;
             }
@@ -128,7 +128,7 @@ export default {
             console.log(row);
             if (!this.auth.includes("DELETE_TAG")) {
               this.$Message.error({
-                content: "权限不足！",
+                content: "你没有权限删除标签!",
               });
               return;
             }

@@ -74,7 +74,7 @@ export default {
             data: [],
             prop: "tags",
             isArray: true,
-            // required: true,
+            required: true,
           },
           {
             name: "发布状态",
@@ -84,7 +84,7 @@ export default {
               { label: "待审核", value: 0 },
             ],
             prop: "status",
-            required: true,
+            // required: true,
           },
 
           {
@@ -97,7 +97,7 @@ export default {
             ],
             prop: "is_comment",
             // isString:true,
-            required: true,
+            // required: true,
           },
           {
             name: "内容",
