@@ -102,6 +102,7 @@ export default {
   created() {},
   mounted() {
     // console.log(this.$router.options.routes);
+    console.log(process);
     this.menuList = this.$router.options.routes;
   },
 };
