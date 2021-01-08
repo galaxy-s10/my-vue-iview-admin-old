@@ -24,15 +24,10 @@ export function register(data) {
   })
 }
 
-export function getUserInfo(token) {
+export function getUserInfo() {
   return request({
     url: '/api/user/getuserinfo',
     method: 'get',
-    // es6简写
-    // params: { token }
-    params: {
-      token
-    }
   })
 }
 

@@ -13,6 +13,8 @@ Vue.prototype.$http1 = service1
 
 import router from './router'
 import store from './store'
+
+// 全局路由鉴权以及判断token 
 import './permission'
 
 import plugins from './libs/plugins'

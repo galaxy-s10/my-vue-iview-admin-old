@@ -576,13 +576,19 @@ export default {
       });
       console.log({ ...v, auths: temp });
       if (this.action == "edit") {
-        await editRoleAuth({ ...v, auths: temp }).then((res) => {
-          console.log(res);
-          this.$Message.success({
-            content: res.message,
+        try {
+          await editRoleAuth({ ...v, auths: temp }).then((res) => {
+            console.log(res);
+            this.$Message.success({
+              content: res.message,
+            });
+            this.getRoleList();
           });
-          this.getRoleList();
-        });
+        } catch (err) {
+          // this.$Message.error({
+          //   content: err.message,
+          // });
+        }
       } else {
         addRole({ ...v, auths: temp }).then((res) => {
           this.$Message.success({

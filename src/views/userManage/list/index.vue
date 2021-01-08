@@ -131,6 +131,7 @@ export default {
           type: "CUSTOM", //CUSTOM（自定义）、ROUTER（路由方式）、DELETE（删除按钮）、STATUS（双状态切换）
           custom: async (row) => {
             console.log(row);
+            console.log(this.auth.includes("UPDATE_USER"));
             if (!this.auth.includes("UPDATE_USER")) {
               this.$Message.error({
                 content: "你没有权限修改用户!",
@@ -167,7 +168,7 @@ export default {
               this.$Message.success({
                 content: res.message,
               });
-              this.getUserList();
+              this.getUserList({ ...this.params, ...this.searchRes });
             });
           },
           isShow() {
@@ -594,7 +595,7 @@ export default {
               ? `确认要禁用${user.username}吗`
               : `确认要启用${user.username}吗`,
           onOk: () => {
-            if (!this.auth.includes("UPDATE_USER!")) {
+            if (!this.auth.includes("UPDATE_USER")) {
               this.$Message.error({
                 content: "你没有权限修改用户!",
               });
@@ -621,15 +622,13 @@ export default {
             content: res.message,
           });
           user.status = user.status == 1 ? 0 : 1;
-          this.$Modal.remove();
           this.getUserList({ ...this.params, ...this.searchRes });
         })
         .catch((err) => {
           console.log(err);
-          this.$Message.error({
-            content: err.message,
-          });
-          this.$Modal.remove();
+          // this.$Message.error({
+          //   content: err.message,
+          // });
         });
     },
     // 获取所有角色

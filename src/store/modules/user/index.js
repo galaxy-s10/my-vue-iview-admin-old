@@ -9,7 +9,7 @@ const user = {
     namespaced: true,
     state: () => ({
         token: "",
-        remember: true,    // 七天免登陆
+        remember: false,    // 七天内免登陆
         role: [],
         auth: [],
         username: "",
@@ -23,6 +23,11 @@ const user = {
         editRemember(state, payload) {
             // console.log(state, payload)
             state.remember = payload
+        },
+        setToken(state, { token, exp }) {
+            console.log(token, exp)
+            state.token = token
+            cache.setStorageExt("token", token, exp);
         },
         setUser(state, payload) {
             const { id, username, role, status, avatar, title } = payload
@@ -49,7 +54,6 @@ const user = {
                 login(userInfo).then(res => {
                     reslove(res)
                 }).catch(err => {
-                    console.log(err)
                     reject(err)
                 })
             })
@@ -58,7 +62,7 @@ const user = {
         getUserInfo({ commit, state }) {
             // let res = cache.getStorageExt('token')
             return new Promise((resolve, reject) => {
-                getUserInfo(state.token).then(res => {
+                getUserInfo().then(res => {
                     const { userInfo } = res
                     commit('setUser', userInfo)
                     if (res.code == 0) {
