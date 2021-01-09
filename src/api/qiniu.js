@@ -34,3 +34,11 @@ export function getQiniuList(params) {
     params
   })
 }
+
+export function insertQiniu(data) {
+  return request({
+    url: '/api/qiniu/insert',
+    method: 'post',
+    data
+  })
+}

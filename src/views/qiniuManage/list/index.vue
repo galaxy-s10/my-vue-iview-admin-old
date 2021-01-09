@@ -52,6 +52,7 @@
       @on-cancel="onCancel"
       @on-ok="onOk"
     ></component>
+    <button @click="insert">sss</button>
     <!-- <hss-table v-if="tableData.list.length>0" :tableData="tableData" :columns="columns" :params="params"></hss-table> -->
   </div>
 </template>
@@ -59,7 +60,13 @@
 <script>
 // import { format } from "../../../../../webchat/src/utils/format";
 // import { linkPageList, editLink, delLink } from "../../../api/link";
-import { getQiniuToken, getQiniuList, updateQiniu, deleteQiniu } from "@/api/qiniu";
+import {
+  getQiniuToken,
+  getQiniuList,
+  updateQiniu,
+  deleteQiniu,
+  insertQiniu,
+} from "@/api/qiniu";
 import hssPopupForm from "../../../components/hssComponents/form/popup-form/index";
 import hssTable from "../../../components/hssComponents/table";
 import hssOperation from "../../../components/hssComponents/table/operation";
@@ -173,9 +180,9 @@ export default {
               this.$Message.success({
                 content: res.message,
               });
-              this.getQiniuList({ ...this.params, marker: "" }).then(res=>{
-                this.QiniuList = res
-              })
+              this.getQiniuList({ ...this.params, marker: "" }).then((res) => {
+                this.QiniuList = res;
+              });
             });
           },
           isShow() {
@@ -260,6 +267,12 @@ export default {
     this.QiniuList = res;
   },
   methods: {
+    async insert() {
+      for (let i = 0; i < this.QiniuList.length; i++) {
+        // console.log(QiniuList);
+        await insertQiniu(this.QiniuList[i])
+      }
+    },
     async onSelect() {
       this.params.marker = "";
       this.QiniuList = [];
