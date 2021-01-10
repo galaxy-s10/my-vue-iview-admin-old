@@ -20,11 +20,6 @@ export default {
   },
   computed: {
     ...mapState({
-      // title(state) {
-      //   // console.log("titletitle");
-      //   // console.log(state);
-      //   return state.app.title;
-      // },
       tagList(state) {
         return state.app.tagOpenPageList;
       },
@@ -37,10 +32,6 @@ export default {
   },
   watch: {
     $route(newVal, oldVal) {
-      console.log("999");
-      console.log(newVal);
-      console.log(oldVal);
-      console.log(this.$route);
       this.changeMenu(newVal.name);
     },
   },
@@ -71,38 +62,26 @@ export default {
     changeMenu(name) {
       // 判断当前跳转页面有没有在tagOpenPageList里面
       // 查询点击跳转的路由信息
-      console.log(name);
-      console.log(this.$route);
       let target = this.findItem(this.menuList, name);
       let tag;
       let bool = utils.exist(this.tagList, name);
       if (!bool) {
-        console.log("点击判断，没有就插入1");
-        console.log(target);
         if (!target.hidden) {
           if (this.$route.params) {
-            console.log(target);
           }
           this.addTagOpenPage({ ...target, params: this.$route.params });
           this.changeActiveTagOpenPage(target.name);
         }
       } else {
         if (this.$route.params) {
-          console.log("edit");
           this.editTagOpenPage({ ...target, params: this.$route.params });
         }
         this.changeActiveTagOpenPage(target.name);
       }
-      // this.$router.push({ name: name });
-      // .catch((err) => {
-      //   console.log(err);
-      // });
     },
   },
   created() {},
   mounted() {
-    // console.log(this.$router.options.routes);
-    console.log(process);
     this.menuList = this.$router.options.routes;
   },
 };

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Layout :style="{ minHeight: '100vh' }">
+    <Layout :style="{ height: '100vh' }">
       <Sider
         width="200"
         :collapsed-width="70"

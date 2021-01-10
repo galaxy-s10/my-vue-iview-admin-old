@@ -1,48 +1,17 @@
 <template>
   <div>
-    <!-- <div v-if="tableData.list"> -->
-    <div style="margin-bottom: 10px"></div>
-    <div style="margin-bottom: 10px; display: flex; justify-content: space-between">
-      <div style="display: flex; align-items: center">
-        <div style="margin-right: 10px">当前总文件数：{{ QiniuList.length }}</div>
-        <div>
-          分页大小:
-          <Select
-            v-model="params.limit"
-            style="width: 200px"
-            placeholder="请选择分页大小"
-            @on-change="onSelect"
-          >
-            <Option v-for="item in pageLimit" :value="item.value" :key="item.value">{{
-              item.label
-            }}</Option>
-          </Select>
-        </div>
-      </div>
-      <div style="width: 300px; display: flex; justify-content: space-between">
-        <div style="width: 200px">
-          <i-input
-            @input="changePrefix"
-            placeholder="请输入文件名前缀"
-            clearable
-          ></i-input>
-        </div>
-        <i-button type="info" @click="QiniuSearch">搜索</i-button>
-      </div>
-    </div>
-
-    <hss-table :tableData="{ list: QiniuList }" :columns="columns">
+    <hss-table
+      :tableData="{ list: qiniuList.rows, count: qiniuList.count }"
+      :searchData="searchData"
+      :columns="columns"
+      :params="params"
+      @onSearch="onSearch"
+      @changePage="changePage"
+    >
       <template slot-scope="{ row }" slot="operation">
         <hss-operation :row="row" :operation="operationData"></hss-operation>
       </template>
     </hss-table>
-    <!-- </div> -->
-    <div style="text-align: center; height: 40px; line-height: 40px; font-size: 16px">
-      <span style="color: #00aae7; cursor: pointer" @click="loadMore">{{
-        flag ? "加载更多" : "已加载全部"
-      }}</span>
-    </div>
-
     <component
       v-bind:is="comments"
       :request="request"
@@ -51,22 +20,22 @@
       :isInit="isInit"
       @on-cancel="onCancel"
       @on-ok="onOk"
+      @onSubmit="onSubmit"
     ></component>
-    <button @click="insert">sss</button>
-    <!-- <hss-table v-if="tableData.list.length>0" :tableData="tableData" :columns="columns" :params="params"></hss-table> -->
+    <button @click="insert">insert</button>
   </div>
 </template>
 
 <script>
-// import { format } from "../../../../../webchat/src/utils/format";
-// import { linkPageList, editLink, delLink } from "../../../api/link";
 import {
   getQiniuToken,
   getQiniuList,
   updateQiniu,
   deleteQiniu,
   insertQiniu,
+  getAllQiniuData,
 } from "@/api/qiniu";
+import utils from "../../../libs/utils";
 import hssPopupForm from "../../../components/hssComponents/form/popup-form/index";
 import hssTable from "../../../components/hssComponents/table";
 import hssOperation from "../../../components/hssComponents/table/operation";
@@ -75,12 +44,6 @@ export default {
   components: { hssTable, hssOperation, hssPopupForm },
   data() {
     return {
-      pageLimit: [
-        { label: "10条", value: 10 },
-        { label: "30条", value: 30 },
-        { label: "50条", value: 50 },
-        { label: "100条", value: 100 },
-      ],
       flag: true, //是否可加载下一页
       action: "", //1:编辑，2:新增
       columnForm: {},
@@ -88,11 +51,29 @@ export default {
       comments: "",
       isInit: false,
       request: {},
-      QiniuList: [],
-      tableData: {
-        list: "",
-        count: "",
-      },
+      qiniuList: {},
+      // tableData: {
+      //   list: "",
+      //   count: "",
+      // },
+      // 搜索列
+      searchData: [
+        {
+          type: "Input",
+          key: "keyword",
+          name: "关键字",
+          placeholder: "文件名/类型",
+          width: 200,
+        },
+        {
+          type: "Date",
+          key: "updatedAt",
+          name: "更新时间",
+          format: "yyyy-MM-dd",
+          placeholder: "请选择更新时间",
+          width: 200,
+        },
+      ],
       //表格操作列
       operationData: [
         {
@@ -121,9 +102,17 @@ export default {
             this.action = 1;
             this.qiniuData = {
               ...row,
+              srcKey: row.key,
             };
             this.columnForm = {
               list: [
+                {
+                  // type: "Input",
+                  // name: "文件名",
+                  prop: "srcKey",
+                  // placeholder: "请输入文件名",
+                  // required: true,
+                },
                 {
                   type: "Input",
                   name: "文件名",
@@ -181,7 +170,7 @@ export default {
                 content: res.message,
               });
               this.getQiniuList({ ...this.params, marker: "" }).then((res) => {
-                this.QiniuList = res;
+                this.qiniuList = res;
               });
             });
           },
@@ -191,10 +180,8 @@ export default {
         },
       ],
       params: {
-        // count: 0,
-        limit: 10,
-        prefix: "", //前缀
-        marker: "",
+        pageSize: 10,
+        nowPage: 1,
       },
       columns: [
         {
@@ -217,12 +204,17 @@ export default {
           title: "预览",
           align: "center",
           render: (h, params) => {
-            return h("img", {
-              attrs: {
-                src: "https://img.cdn.zhengbeining.com/" + params.row.key,
-                style: "width:50px;height:50px",
+            return h(
+              "iButton",
+              {
+                attrs: {
+                  icon: "md-eye",
+                  type: "info",
+                  size: "small",
+                },
               },
-            });
+              "预览"
+            );
           },
         },
         {
@@ -260,41 +252,25 @@ export default {
     ...mapState("user", ["auth"]),
   },
   created() {
-    // this.getTagList();
+    this.getQiniuList(this.params);
   },
   async mounted() {
-    let res = await this.getQiniuList(this.params);
-    this.QiniuList = res;
+    // let res = await this.getQiniuList(this.params);
+    // this.QiniuList = res;
   },
   methods: {
     async insert() {
-      for (let i = 0; i < this.QiniuList.length; i++) {
-        // console.log(QiniuList);
-        await insertQiniu(this.QiniuList[i])
+      let res = await getAllQiniuData();
+      let rows = res.respInfo.data.items;
+      let temp = [];
+      for (let i = 0; i < rows.length; i++) {
+        // await insertQiniu(rows[i]);
+        let x = rows[i].putTime + "";
+        let t = x.slice(0, x.length - 4);
+        console.log(utils.formateDate1(parseInt(t))+"");
+        temp.push(t);
       }
-    },
-    async onSelect() {
-      this.params.marker = "";
-      this.QiniuList = [];
-      let res = await this.getQiniuList(this.params);
-      this.QiniuList = res;
-    },
-    async QiniuSearch() {
-      this.params.marker = "";
-      this.QiniuList = [];
-      let res = await this.getQiniuList(this.params);
-      this.QiniuList = res;
-    },
-    changePrefix(e) {
-      console.log(e);
-      this.params.prefix = e;
-    },
-    async loadMore() {
-      if (this.flag) {
-        let res = await this.getQiniuList(this.params);
-        console.log(res);
-        this.QiniuList.push(...res);
-      }
+      console.dir(temp);
     },
     // 格式化文件大小
     formatFsize(val) {
@@ -312,11 +288,36 @@ export default {
       this.comments = "";
     },
     onOk() {
+      console.log("000");
       this.comments = "";
+    },
+    async onSubmit(v) {
+      console.log(v);
+      let temp = [];
+      try {
+        await updateQiniu({ srcKey: v.srcKey, destKey: v.key }).then((res) => {
+          console.log(res);
+          this.$Message.success({
+            content: res.message,
+          });
+          this.getQiniuList({ ...this.params });
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    onSearch(v) {
+      console.log(v);
+      this.searchRes = v;
+      this.getQiniuList({ ...this.params, ...v });
+    },
+    changePage(v) {
+      console.log(v);
+      this.getQiniuList(v);
     },
     //转换时间格式
     formateDate(datetime) {
-      console.log(datetime);
+      // console.log(datetime);
       function addDateZero(num) {
         return num < 10 ? "0" + num : num;
       }
@@ -337,27 +338,7 @@ export default {
     },
     async getQiniuList(v) {
       let res = await getQiniuList(v);
-      // .then((res) => {
-      //   console.log(res);
-      //   console.log(res.respInfo.data.marker);
-      //   if (!res.respInfo.data.marker) {
-      //     console.log("!!!!!!!");
-      //     that.flag = false;
-      //   } else {
-      //     that.flag = true;
-      //   }
-      //   this.QiniuList.push(...res.respInfo.data.items);
-      //   this.params.marker = res.respInfo.data.marker;
-      // });
-      if (!res.respInfo.data.marker) {
-        console.log("!!!!!!!");
-        this.flag = false;
-      } else {
-        this.flag = true;
-      }
-      this.params.marker = res.respInfo.data.marker;
-      // this.QiniuList = res.respInfo.data.items;
-      return res.respInfo.data.items;
+      this.qiniuList = res;
     },
   },
 };

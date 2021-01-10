@@ -29,7 +29,7 @@ export function deleteQiniu(filename) {
 
 export function getQiniuList(params) {
   return request({
-    url: '/api/qiniu/getList',
+    url: '/api/qiniu/pageList',
     method: 'get',
     params
   })
@@ -40,5 +40,12 @@ export function insertQiniu(data) {
     url: '/api/qiniu/insert',
     method: 'post',
     data
+  })
+}
+
+export function getAllQiniuData() {
+  return request({
+    url: '/api/qiniu/getAllQiniuData',
+    method: 'get',
   })
 }

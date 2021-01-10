@@ -21,11 +21,9 @@ const user = {
     }),
     mutations: {
         editRemember(state, payload) {
-            // console.log(state, payload)
             state.remember = payload
         },
         setToken(state, { token, exp }) {
-            console.log(token, exp)
             state.token = token
             cache.setStorageExt("token", token, exp);
         },
@@ -39,11 +37,9 @@ const user = {
             state.status = status
         },
         setRole(state, payload) {
-            // console.log(payload)
             state.role = payload
         },
         setAuth(state, payload) {
-            // console.log(payload)
             state.auth = payload
         },
 

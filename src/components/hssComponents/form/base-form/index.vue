@@ -67,6 +67,7 @@
           <!-- 上传文件 -->
           <hss-upload
             v-if="item.type == 'Upload'"
+            :uploaOption="item.uploaOption"
             :file="fromCol[item.prop]"
             v-model="fromCol[item.prop]"
           ></hss-upload>

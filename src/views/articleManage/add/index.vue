@@ -1,6 +1,12 @@
 <template>
   <div>
-    <base-form ref="hssBaseForm" :fromData="columnForm" :init="init" @onSubmit="onSubmit">
+    <base-form
+      ref="hssBaseForm"
+      :fromData="columnForm"
+      :initData="initData"
+      :init="init"
+      @onSubmit="onSubmit"
+    >
     </base-form>
     <!-- <i-button @click="confirm">修改</i-button> -->
     <!-- <markdown ref="md" v-if="this.form.content != null" /> -->
@@ -24,16 +30,16 @@ export default {
   data() {
     return {
       tagList: [],
-      form: {
-        id: "",
-        title: "",
-        tags: "",
-        type: "",
-        content: "",
-        img: "",
-        createdAt: "",
-        updatedAt: "",
-      },
+      // form: {
+      //   id: "",
+      //   title: "",
+      //   tags: "",
+      //   type: "",
+      //   content: "",
+      //   img: "",
+      //   createdAt: "",
+      //   updatedAt: "",
+      // },
       // columnForm: {},
       columnForm: {
         submitBtn: true,
@@ -75,7 +81,7 @@ export default {
             data: [],
             prop: "tags",
             isArray: true,
-            required: true,
+            // required: true,
           },
           {
             name: "发布状态",
@@ -113,6 +119,13 @@ export default {
             type: "Upload",
             prop: "img",
             placeholder: "请上传封面图",
+            uploaOption: {
+              fileNameLength: 15, //文件名长度
+              multiple: false, //是否多选
+              type: "select", //select（点击选择），drag（支持拖拽）
+              format: ["jpg", "jpeg", "png"],
+              maxSize: 1024 * 2, //单位kb
+            },
             // required: true,
           },
           {
@@ -124,19 +137,14 @@ export default {
             isDate: true,
             // required: true,
           },
-          // {
-          //   name: "最后更新",
-          //   type: "Date",
-          //   prop: "updatedAt",
-          //   placeholder: "请选择最后更新时间",
-          //   isDate: true,
-          //   required: true,
-          // },
         ],
       },
-      initData: {},
-      init: false,
-      // init: true,
+      initData: {
+        status: 1,
+        is_comment: 1,
+      },
+      // init: false,
+      init: true,
       headerImg: [],
       oldImgList: [],
       newimg: null,
@@ -162,7 +170,6 @@ export default {
     },
     // 上传七牛云图片
     async qiniuUpload(file) {
-      console.log("articleManage");
       const datetime = new Date();
       const key = datetime.getTime() + file.name;
       const { uploadToken } = await getQiniuToken();
@@ -170,8 +177,6 @@ export default {
       const putExtra = {
         customVars: { "x:user_id": `${this.user_id}` },
       };
-      
-      console.log(putExtra);
       const config = { useCdnDomain: true };
       const observable = qiniu.upload(file, key, uptoken, putExtra, config);
       const that = this;
@@ -180,8 +185,6 @@ export default {
           // next: 接收上传进度信息的回调函数
           next(res) {
             const percent = res.total.percent; // 当前上传进度
-            console.log(percent);
-            // that.percent = parseInt(percent.toFixed());
           },
           // error: 上传错误后触发
           error(err) {
@@ -190,7 +193,10 @@ export default {
           },
           // complete: 接收上传完成后的后端返回信息
           complete(ress) {
-            console.log("上传七牛云图片成功");
+            this.$Message.error({
+              content: ress.message,
+              duration: 2,
+            });
             resolve("https://img.cdn.zhengbeining.com/" + ress.key);
           },
         });
@@ -199,14 +205,12 @@ export default {
     onSubmit() {
       this.$refs.hssBaseForm.submit(async (v) => {
         if (v) {
-          console.log(v);
           if (typeof v.img == "object") {
             let res = await this.qiniuUpload(v.img);
             v.img = res;
           }
           addArticle(v)
             .then((res) => {
-              console.log(res);
               this.$Message.success({
                 content: res.message,
               });
@@ -221,9 +225,7 @@ export default {
     confirm() {},
   },
   async created() {
-    console.log(this.$route);
     await this.getArticleTypeList({ nowPage: 1, pageSize: 10 });
-
     await getTagList({ nowPage: 1, pageSize: 100 }).then((res) => {
       let temp1 = [];
       res.rows.forEach((item) => {
@@ -235,10 +237,7 @@ export default {
       this.tagList = temp1;
     });
     this.columnForm.list.forEach((item, index) => {
-      console.log(item);
       if (item.prop == "tags") {
-        console.log("ooo");
-        console.log(this.columnForm.list[index]);
         this.columnForm.list[index].data = this.tagList;
       }
     });

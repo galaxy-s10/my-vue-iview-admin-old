@@ -166,40 +166,40 @@ export const roleRoutes = [
                 icon: 'md-add',
             },
         },
-        // {
-        //     name: "login",
-        //     path: '/frontend/login',
-        //     component: () => import('@/views/frontend/login/index'),
-        //     authKey: "FRONTEND_LOGIN",
-        //     hidden:true,
-        //     meta: {
-        //         title: '登录',
-        //         authKey: "FRONTEND_LOGIN",
-        //         icon: 'ios-add',
-        //     },
-        // },
-        // {
-        //     name: "message",
-        //     path: '/home/message',
-        //     component: () => import('@/views/home/message/index'),
-        //     authKey: "FRONTEND_COMMENT",
-        //     meta: {
-        //         title: '留言板',
-        //         authKey: "FRONTEND_COMMENT",
-        //         icon: 'ios-add',
-        //     },
-        // },
-        // {
-        //     name: "about",
-        //     path: '/home/about',
-        //     component: () => import('@/views/home/about/index'),
-        //     authKey: "FRONTEND_ABOUT",
-        //     meta: {
-        //         title: '关于',
-        //         authKey: "FRONTEND_ABOUT",
-        //         icon: 'ios-add',
-        //     },
-        // },
+            // {
+            //     name: "login",
+            //     path: '/frontend/login',
+            //     component: () => import('@/views/frontend/login/index'),
+            //     authKey: "FRONTEND_LOGIN",
+            //     hidden:true,
+            //     meta: {
+            //         title: '登录',
+            //         authKey: "FRONTEND_LOGIN",
+            //         icon: 'ios-add',
+            //     },
+            // },
+            // {
+            //     name: "message",
+            //     path: '/home/message',
+            //     component: () => import('@/views/home/message/index'),
+            //     authKey: "FRONTEND_COMMENT",
+            //     meta: {
+            //         title: '留言板',
+            //         authKey: "FRONTEND_COMMENT",
+            //         icon: 'ios-add',
+            //     },
+            // },
+            // {
+            //     name: "about",
+            //     path: '/home/about',
+            //     component: () => import('@/views/home/about/index'),
+            //     authKey: "FRONTEND_ABOUT",
+            //     meta: {
+            //         title: '关于',
+            //         authKey: "FRONTEND_ABOUT",
+            //         icon: 'ios-add',
+            //     },
+            // },
         ]
     },
     {
@@ -620,17 +620,28 @@ export const roleRoutes = [
                 authKey: "QINIU_LIST",
             },
         },
-        {
-            name: "updateQiniu",
-            path: '/qiniuManage/update',
-            authKey: "UPDATE_QINIU",
-            component: () => import('@/views/qiniuManage/update/index'),
-            meta: {
-                title: '修改文件',
-                icon: 'md-speedometer',
-                authKey: "UPDATE_QINIU",
-            },
-        },
+        // {
+        //     name: "updateQiniu",
+        //     path: '/qiniuManage/update',
+        //     authKey: "UPDATE_QINIU",
+        //     component: () => import('@/views/qiniuManage/update/index'),
+        //     meta: {
+        //         title: '修改文件',
+        //         icon: 'md-speedometer',
+        //         authKey: "UPDATE_QINIU",
+        //     },
+        // },
+        // {
+        //     name: "deleteQiniu",
+        //     path: '/qiniuManage/delete',
+        //     authKey: "DELETE_QINIU",
+        //     component: () => import('@/views/qiniuManage/delete/index'),
+        //     meta: {
+        //         title: '删除文件',
+        //         icon: 'md-speedometer',
+        //         authKey: "DELETE_QINIU",
+        //     },
+        // },
         {
             name: "uploadQiniu",
             path: '/qiniuManage/upload',
@@ -642,17 +653,7 @@ export const roleRoutes = [
                 authKey: "UPLOAD_QINIU",
             },
         },
-        {
-            name: "deleteQiniu",
-            path: '/qiniuManage/delete',
-            authKey: "DELETE_QINIU",
-            component: () => import('@/views/qiniuManage/delete/index'),
-            meta: {
-                title: '删除文件',
-                icon: 'md-speedometer',
-                authKey: "DELETE_QINIU",
-            },
-        },
+
         ]
     },
 
