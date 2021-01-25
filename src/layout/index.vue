@@ -308,6 +308,7 @@ export default {
     let that = this;
     this.$refs.scrollWrap.$el.addEventListener("scroll", function () {
       console.log("ss");
+      console.log(document.documentElement.offsetHeight)
       // 滚动条高度
       // console.log(that.$refs.scrollWrap.$el.scrollHeight);
       // 滚动距离

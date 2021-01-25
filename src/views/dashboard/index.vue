@@ -46,8 +46,19 @@
           style="max-width: 100%"
         /> -->
       </div>
-      <div v-if="isLoad"><Spin fix>加载中...</Spin></div>
+      <!-- <div v-if="isLoad">
+        <div style="color: #2d8cf0">
+          <Icon type="ios-loading" size="18" class="demo-spin-icon-load"></Icon>
+          <div>Loading1</div>
+        </div>
+      </div> -->
     </div>
+    <div v-if="isLoad">
+        <div style="color: #2d8cf0;text-align:center">
+          <Icon type="ios-loading" size="18" class="demo-spin-icon-load"></Icon>
+          <div>加载中...</div>
+        </div>
+      </div>
   </div>
 </template>
 
@@ -233,6 +244,20 @@ export default {
 </script>
 
 <style>
+.demo-spin-icon-load {
+  animation: ani-demo-spin 1s linear infinite;
+}
+@keyframes ani-demo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 img {
   background-position: 50% 50%;
   background-size: cover;
