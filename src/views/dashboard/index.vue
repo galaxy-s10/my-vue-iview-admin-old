@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>欢迎进入控制台！</h1>
+    <span @click="aaa">aaa</span>
     <!-- 第一种情况（报警告），将val作为hssIpt的model里hssIptVal的值 -->
     <!-- <hss-input v-model="val"></hss-input> -->
     <!-- 第二种情况 -->
@@ -23,21 +24,177 @@
     <!-- <i-button @click="ppp">ppp</i-button>
     <i-button @click="modal1">a</i-button>
     <hss-modal :val="modalVal" @hssModalOk="ok" @hssModalCancel="cancel"></hss-modal> -->
+    <div class="masonry-wrap" ref="masonry-wrap">
+      <!-- <div class="masonry-wrap" ref="masonry-wrap" v-if="showMasonry"> -->
+      <div
+        class="masonry-item"
+        ref="masonry-item"
+        v-for="item in articleList"
+        :key="item.id"
+        style="background: pink; padding: 10px; border-radius: 10px; opacity: 0"
+      >
+        {{ item.id }}{{ item.title }}
+        <img
+          :src="item.img ? item.img : require('../../assets/logo.png')"
+          alt=""
+          style="max-width: 100%"
+          @load="imgLoad"
+        />
+        <!-- <img
+          :src="item.img ? item.img : '../../assets/logo.png'"
+          alt=""
+          style="max-width: 100%"
+        /> -->
+      </div>
+      <div v-if="isLoad"><Spin fix>加载中...</Spin></div>
+    </div>
   </div>
 </template>
 
 <script>
 import hssInput from "./custom/hssInput";
 import hssModal from "./custom/hssModal";
+import { getArticleList, updateArticle, deleteArticle } from "@/api/article";
 export default {
   components: { hssInput, hssModal },
   data() {
     return {
       val: "10",
       modalVal: false,
+      masonryParams: {
+        column: 2,
+        gap: 10,
+      },
+      params: {
+        pageSize: 10,
+        nowPage: 1,
+      },
+      articleList: [],
+      imgLoadNum: 0,
+      isLoad: false,
+      showMasonry: false,
     };
   },
+  created() {
+    console.log("createdcreated");
+    this.getArticleList();
+  },
+  mounted() {
+    console.log("mountedmountedmounted");
+    let that = this;
+    this.$bus.$on("overScroll", function () {
+      console.log("1111111111");
+      // if (this.isLoad) return;
+      // that.params.nowPage += 1;
+      // that.getArticleList();
+      if (that.isLoad) {
+        console.log("正在ajax");
+      } else {
+        console.log("发ajax");
+        that.params.nowPage += 1;
+        that.getArticleList();
+      }
+    });
+  },
+  watch: {
+    imgLoadNum(newVal) {
+      console.log(this.imgLoadNum);
+      if (this.imgLoadNum == this.articleList.length) {
+        this.showMasonry = true;
+        this.isLoad = false;
+        this.masonry();
+      }
+    },
+  },
   methods: {
+    aaa() {
+      this.params.nowPage += 1;
+      this.getArticleList();
+    },
+    imgLoad() {
+      this.imgLoadNum++;
+      console.log("imgLoad");
+    },
+    masonry() {
+      // 获取数组最小值的下标
+      function getMinIndex(arr) {
+        return [].indexOf.call(arr, Math.min.apply(null, arr));
+      }
+      // 列数
+      const column = this.masonryParams.column;
+      // 间隙
+      const gap = this.masonryParams.gap;
+      // const wrap = document.getElementsByClassName("masonry-wrap")
+      // const item = wrap[0].getElementsByClassName("masonry-item")
+      const wrap = this.$refs["masonry-wrap"];
+      const item = this.$refs["masonry-item"];
+      const width1 = window.getComputedStyle(wrap, null)["width"];
+      const width2 = width1.slice(0, width1.length - 2) - (column - 1) * gap;
+      // 计算减去间隙后，每个item的平均宽度
+      const width = width2 / column;
+      // 保存当前列的offsetHeight的高度
+      const offsetList = [];
+      wrap.style.position = "relative";
+      console.log(wrap, item);
+      console.log(this.$refs);
+      for (let i = 0; i < item.length; i++) {
+        wrapHeight += item[i].offsetHeight + gap;
+        // console.log(wrapHeight);
+        item[i].style.width = "100%";
+        item[i].style.display = "block";
+        item[i].style.position = "absolute";
+        item[i].style.width = width + "px";
+
+        if (i < column) {
+          // 将第一行的offsetHeight都保存在数组里
+          console.log(item[i]);
+          console.log(item[i].offsetHeight);
+          offsetList.push(i == 0 ? item[i].offsetHeight + gap : item[i].offsetHeight);
+          item[i].style.top = "0";
+          if ((i + 1) % column == 1) {
+            item[i].style.left = 0;
+            item[i].style.opacity = 1;
+          } else {
+            let w = i * width;
+            let g = i * gap;
+            item[i].style.left = `calc(${w}px + ${g}px)`;
+            item[i].style.opacity = 1;
+          }
+        } else {
+          // 当前数组的最低offsetHeight索引
+          const minIndex = getMinIndex(offsetList);
+          let w = minIndex * width;
+          let g = minIndex * gap;
+          item[i].style.top = offsetList[minIndex] + g + "px";
+          item[i].style.left = w + g + "px";
+          item[i].style.opacity = 1;
+          offsetList[minIndex] += item[i].offsetHeight + gap;
+        }
+      }
+      function format(v) {
+        return v.slice(0, v.length - 2);
+      }
+      let wrapHeight =
+        parseInt(format(item[item.length - 1].style.top)) +
+        parseInt(item[item.length - 1].offsetHeight);
+      console.log(wrapHeight, 999999999);
+      wrap.style.height = wrapHeight + "px";
+    },
+    async getArticleList(v) {
+      // console.log(v);
+      // console.log({ ...v });
+      this.isLoad = true;
+      let { rows } = await getArticleList(this.params);
+      if (this.articleList.length == 0) {
+        this.articleList = rows;
+      } else {
+        this.articleList = this.articleList.concat(rows);
+      }
+
+      // setTimeout(() => {
+      //   this.masonry();
+      // }, 300);
+    },
     ppp() {
       this.$refs.form1.handleSubmit((x) => {
         console.log("ooo");
@@ -74,3 +231,13 @@ export default {
   },
 };
 </script>
+
+<style>
+img {
+  background-position: 50% 50%;
+  background-size: cover;
+  height: 100%;
+  width: 100%;
+  transition: all 0.5s ease 0s;
+}
+</style>

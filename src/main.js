@@ -17,6 +17,7 @@ import store from './store'
 import './permission'
 
 import plugins from './libs/plugins'
+Vue.prototype.$bus = new Vue()
 
 
 Vue.use(iView);

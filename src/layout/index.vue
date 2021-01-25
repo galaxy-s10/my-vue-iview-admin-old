@@ -84,7 +84,7 @@
         </div>
       </Sider>
       <!-- <Layout :style="{overflowX:'auto'}"> -->
-      <Layout>
+      <Layout ref="scrollWrap">
         <Header
           :style="{
             padding: '0',
@@ -301,7 +301,42 @@ export default {
   created() {
     this.getBreadcrumb();
   },
+  // beforeDestroy() {
+  // this.$bus.$off("overScroll");
+  // },
   mounted() {
+    let that = this;
+    this.$refs.scrollWrap.$el.addEventListener("scroll", function () {
+      console.log("ss");
+      // 滚动条高度
+      // console.log(that.$refs.scrollWrap.$el.scrollHeight);
+      // 滚动距离
+      // console.log(that.$refs.scrollWrap.$el.scrollTop);
+      // 盒子高度
+      // console.log(that.$refs.scrollWrap.$el.offsetHeight);
+      console.log(that.$refs.scrollWrap.$el.scrollHeight);
+      console.log(
+        that.$refs.scrollWrap.$el.scrollTop + that.$refs.scrollWrap.$el.offsetHeight
+      );
+      console.log(
+        that.$refs.scrollWrap.$el.scrollHeight -
+          (that.$refs.scrollWrap.$el.scrollTop + that.$refs.scrollWrap.$el.offsetHeight)
+      );
+      if (
+        that.$refs.scrollWrap.$el.scrollHeight -
+          (that.$refs.scrollWrap.$el.scrollTop + that.$refs.scrollWrap.$el.offsetHeight) <
+        100
+      ) {
+        console.log("距离底部少于100px");
+        that.$bus.$emit("overScroll");
+      }
+      // console.log(that.$refs.scrollWrap.$el.scrollTop+that.$refs.scrollWrap.$el.offsetHeight);
+      // console.log(
+      //   that.$refs.scrollWrap.$el.scrollHeight -
+      //     that.$refs.scrollWrap.$el.pageYOffset -
+      //     that.$refs.scrollWrap.$el.innerHeight
+      // );
+    });
     // console.log(this.$refs.tagOpen.$el);
     // let width = this.$refs.tagOpen.$el.clientWidth;
     // console.log(width);
