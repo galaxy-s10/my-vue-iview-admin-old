@@ -17,7 +17,7 @@ const user = {
         role: "",
         status: "",
         avatar: "",
-        title: ""
+        title: "",
     }),
     mutations: {
         editRemember(state, payload) {

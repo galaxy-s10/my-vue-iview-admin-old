@@ -307,22 +307,21 @@ export default {
   mounted() {
     let that = this;
     this.$refs.scrollWrap.$el.addEventListener("scroll", function () {
-      console.log("ss");
-      console.log(document.documentElement.offsetHeight)
+      // console.log(document.documentElement.offsetHeight)
       // 滚动条高度
       // console.log(that.$refs.scrollWrap.$el.scrollHeight);
       // 滚动距离
       // console.log(that.$refs.scrollWrap.$el.scrollTop);
       // 盒子高度
       // console.log(that.$refs.scrollWrap.$el.offsetHeight);
-      console.log(that.$refs.scrollWrap.$el.scrollHeight);
-      console.log(
-        that.$refs.scrollWrap.$el.scrollTop + that.$refs.scrollWrap.$el.offsetHeight
-      );
-      console.log(
-        that.$refs.scrollWrap.$el.scrollHeight -
-          (that.$refs.scrollWrap.$el.scrollTop + that.$refs.scrollWrap.$el.offsetHeight)
-      );
+      // console.log(that.$refs.scrollWrap.$el.scrollHeight);
+      // console.log(
+      //   that.$refs.scrollWrap.$el.scrollTop + that.$refs.scrollWrap.$el.offsetHeight
+      // );
+      // console.log(
+      //   that.$refs.scrollWrap.$el.scrollHeight -
+      //     (that.$refs.scrollWrap.$el.scrollTop + that.$refs.scrollWrap.$el.offsetHeight)
+      // );
       if (
         that.$refs.scrollWrap.$el.scrollHeight -
           (that.$refs.scrollWrap.$el.scrollTop + that.$refs.scrollWrap.$el.offsetHeight) <

@@ -21,6 +21,8 @@ import baseForm from "../../../components/hssComponents/form/base-form/index";
 import { getTypeList } from "../../../api/type";
 import { findMusic, updateMusic } from "../../../api/music";
 import { getQiniuToken, deleteQiniu } from "../../../api/qiniu";
+import { mapState } from "vuex";
+
 import * as qiniu from "qiniu-js";
 
 export default {
@@ -48,15 +50,23 @@ export default {
       typeList: [],
     };
   },
-  computed: {},
+  computed: {
+    ...mapState({
+      user_id: (state) => state.user.id,
+      auth: (state) => state.user.auth,
+    }),
+    // ...mapState("user", ["auth"]),
+  },
   methods: {
     // 上传七牛云图片
     async qiniuUpload(file) {
       const datetime = new Date();
       const key = datetime.getTime() + file.name;
-      const uploadToken = await getQiniuToken();
+      const { uploadToken } = await getQiniuToken();
       const uptoken = uploadToken;
-      const putExtra = {};
+      const putExtra = {
+        customVars: { "x:user_id": `${this.user_id}` },
+      };
       const config = { useCdnDomain: true };
       const observable = qiniu.upload(file, key, uptoken, putExtra, config);
       const that = this;
@@ -84,12 +94,15 @@ export default {
     onSubmit() {
       this.$refs.hssBaseForm.submit(async (v) => {
         if (v) {
-          console.log(v);
-          console.log(typeof v.img);
+          if (!this.auth.includes("UPDATE_MUSIC")) {
+            this.$Message.error({
+              content: "你没有权限修改音乐!",
+            });
+            return;
+          }
           if (typeof v.img == "object") {
             await deleteQiniu(this.initData.img.slice(33));
             let res = await this.qiniuUpload(v.img);
-            console.log(res);
             v.img = res;
           }
           if (typeof v.url == "object") {
@@ -173,7 +186,7 @@ export default {
                 { label: "待审核", value: 0 },
               ],
               prop: "status",
-              required: true,
+              // required: true,
             },
           ],
         };

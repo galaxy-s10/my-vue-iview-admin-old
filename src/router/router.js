@@ -582,17 +582,17 @@ export const roleRoutes = [
                 authKey: "ADD_MUSIC",
             },
         },
-        {
-            name: "deleteMusic",
-            path: '/musicManage/delete',
-            authKey: "DELETE_MUSIC",
-            component: () => import('@/views/musicManage/delete/index'),
-            meta: {
-                title: '删除音乐',
-                icon: 'md-speedometer',
-                authKey: "DELETE_MUSIC",
-            },
-        },
+            // {
+            //     name: "deleteMusic",
+            //     path: '/musicManage/delete',
+            //     authKey: "DELETE_MUSIC",
+            //     component: () => import('@/views/musicManage/delete/index'),
+            //     meta: {
+            //         title: '删除音乐',
+            //         icon: 'md-speedometer',
+            //         authKey: "DELETE_MUSIC",
+            //     },
+            // },
         ]
     },
     {

@@ -66,7 +66,7 @@ export default {
       this.$refs.hssBaseForm.submit((v) => {
         if (v) {
           console.log(v);
-          updateArticle(v)
+          updateArticle({ ...v, type_id: v.type })
             .then((res) => {
               console.log(res);
               this.$Message.success({

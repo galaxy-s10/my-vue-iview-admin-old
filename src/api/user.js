@@ -31,6 +31,16 @@ export function getUserInfo() {
   })
 }
 
+export function findOne(id) {
+  return request({
+    url: '/api/user/findOne',
+    method: 'get',
+    params: {
+      id
+    }
+  })
+}
+
 export function findUser(id) {
   return request({
     url: '/api/user/findUser',

@@ -1,10 +1,10 @@
 <template>
   <div>
     <Upload
-      :format="uploaOption.format"
-      :max-size="uploaOption.maxSize"
-      :multiple="uploaOption.multiple"
-      :type="uploaOption.type"
+      :format="uploaOption && uploaOption.format"
+      :max-size="uploaOption && uploaOption.maxSize"
+      :multiple="uploaOption && uploaOption.multiple"
+      :type="uploaOption && uploaOption.type"
       :before-upload="handleUpload"
       :on-exceeded-size="handleMaxSize"
       :on-format-error="handleFormatError"
@@ -17,7 +17,9 @@
         </div>
       </div>
     </Upload>
-    <div v-if="uploadFile && uploadFile.url != ''">已选文件: {{ uploadFile.name }}</div>
+    <div v-if="uploadFile && uploadFile.url != ''">
+      已选文件: {{ uploadFile.name }}
+    </div>
   </div>
 </template>
 
@@ -46,18 +48,31 @@ export default {
       文件上传首先执行这个函数，因此后面的判断类型，大小的钩子不会执行
     */
     handleUpload(file) {
-      if (file.name.length > this.uploaOption.fileNameLength) {
+      console.log(this.uploaOption);
+      if (
+        this.uploaOption &&
+        this.uploaOption.fileNameLength &&
+        file.name.length > this.uploaOption.fileNameLength
+      ) {
         this.$Message.error({
           content: `文件名不能超过${this.uploaOption.fileNameLength}个字符!`,
         });
         return false;
       }
       let fileType = file.type.split("/")[1];
-      if (!this.uploaOption.format.includes(fileType)) {
+      if (
+        this.uploaOption &&
+        this.uploaOption.format &&
+        !this.uploaOption.format.includes(fileType)
+      ) {
         this.handleFormatError(file);
         return false;
       }
-      if (parseInt((file.size / 1024).toFixed()) > this.uploaOption.maxSize) {
+      if (
+        this.uploaOption &&
+        this.uploaOption.maxSize &&
+        parseInt((file.size / 1024).toFixed()) > this.uploaOption.maxSize
+      ) {
         this.handleMaxSize(file);
         return false;
       }

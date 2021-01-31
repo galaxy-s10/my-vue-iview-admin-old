@@ -71,6 +71,7 @@ export default {
         const putExtra = {
           customVars: { "x:user_id": `${this.user_id}` },
         };
+        console.log(uploadToken)
         const config = { useCdnDomain: true };
         const observable = qiniu.upload(file, key, uploadToken, putExtra, config);
         let that = this;

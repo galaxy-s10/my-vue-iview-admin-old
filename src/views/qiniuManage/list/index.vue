@@ -22,7 +22,7 @@
       @on-ok="onOk"
       @onSubmit="onSubmit"
     ></component>
-    <button @click="insert">insert</button>
+    <!-- <i-button @click="insert">获取所有七牛云服务器文件</i-button> -->
   </div>
 </template>
 
@@ -68,9 +68,9 @@ export default {
         {
           type: "Date",
           key: "updatedAt",
-          name: "更新时间",
+          name: "修改时间",
           format: "yyyy-MM-dd",
-          placeholder: "请选择更新时间",
+          placeholder: "请选择修改时间",
           width: 200,
         },
       ],
@@ -169,9 +169,10 @@ export default {
               this.$Message.success({
                 content: res.message,
               });
-              this.getQiniuList({ ...this.params, marker: "" }).then((res) => {
-                this.qiniuList = res;
-              });
+              this.getQiniuList({ ...this.params, marker: "" });
+              // .then((res) => {
+              //   this.qiniuList = res;
+              // });
             });
           },
           isShow() {
@@ -187,7 +188,7 @@ export default {
         {
           title: "文件名",
           align: "center",
-          //   width: 100,
+          width: 200,
           render: (h, params) => {
             return h(
               "span",
@@ -231,14 +232,19 @@ export default {
           key: "mimeType",
         },
         {
-          title: "最后修改",
+          title: "创建时间",
           align: "center",
           render: (h, params) => {
-            let temp = params.row.putTime + "";
-            return h("span", this.formateDate(parseInt(temp.slice(0, temp.length - 4))));
+            return h("span", this.formateDate(params.row.createdAt));
           },
         },
-
+        {
+          title: "修改时间",
+          align: "center",
+          render: (h, params) => {
+            return h("span", this.formateDate(params.row.updatedAt));
+          },
+        },
         {
           title: "操作",
           align: "center",
@@ -267,10 +273,14 @@ export default {
         // await insertQiniu(rows[i]);
         let x = rows[i].putTime + "";
         let t = x.slice(0, x.length - 4);
-        console.log(utils.formateDate1(parseInt(t))+"");
-        temp.push(t);
+        console.log(utils.formateDate1(parseInt(t)) + "");
+        rows[i].putTime = utils.formateDate1(parseInt(t)) + "";
+        temp.push(rows[i]);
       }
       console.dir(temp);
+      for (let i = 0; i < temp.length; i++) {
+        await insertQiniu(temp[i]);
+      }
     },
     // 格式化文件大小
     formatFsize(val) {
@@ -313,7 +323,7 @@ export default {
     },
     changePage(v) {
       console.log(v);
-      this.getQiniuList(v);
+      this.getQiniuList({ ...this.params, ...v });
     },
     //转换时间格式
     formateDate(datetime) {

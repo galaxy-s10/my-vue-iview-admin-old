@@ -1,46 +1,24 @@
 <template>
   <div>
     <Tree :data="treeData1" :render="renderContent"></Tree>
-    <hss-popup
-      :show="hssShow"
-      :title="hssTitle"
-      @okk="popOk"
-      @cancell="popCancel"
-    >
+    <hss-popup :show="hssShow" :title="hssTitle" @okk="popOk" @cancell="popCancel">
       <Form :model="authInfo" :label-width="80">
         <FormItem label="id">
-          <Input
-            v-model="authInfo.id"
-            :placeholder="authInfo.id + ''"
-            disabled
-          ></Input>
+          <Input v-model="authInfo.id" :placeholder="authInfo.id + ''" disabled></Input>
         </FormItem>
         <FormItem label="父级">
-          <Select
-            v-if="action == 'edit'"
-            v-model="authInfo.p_id"
-            style="width: 200px"
-          >
-            <Option
-              v-for="item in parentAuth"
-              :value="item.id"
-              :key="item.id"
-              >{{ item.auth_name + "-" + item.auth_description }}</Option
-            >
+          <Select v-if="action == 'edit'" v-model="authInfo.p_id" style="width: 200px">
+            <Option v-for="item in parentAuth" :value="item.id" :key="item.id">{{
+              item.auth_name + "-" + item.auth_description
+            }}</Option>
           </Select>
           <span v-else-if="action == 'add'">{{ authInfo.p }}</span>
         </FormItem>
         <FormItem label="权限名">
-          <Input
-            v-model="authInfo.auth_name"
-            placeholder="请输入权限名"
-          ></Input>
+          <Input v-model="authInfo.auth_name" placeholder="请输入权限名"></Input>
         </FormItem>
         <FormItem label="权限描述">
-          <Input
-            v-model="authInfo.auth_description"
-            placeholder="请输入权限描述"
-          ></Input>
+          <Input v-model="authInfo.auth_description" placeholder="请输入权限描述"></Input>
         </FormItem>
       </Form>
     </hss-popup>
@@ -49,17 +27,8 @@
 
 <script>
 import hssPopup from "../popup";
-import {
-  getAuthList,
-  addAuth,
-  editAuth,
-  findParentAuth,
-} from "../../../../../api/auth";
-import {
-  getAuth,
-  getOneRoleAuth,
-  addAuthForRole,
-} from "../../../../../api/roleauth";
+import { getAuthList, addAuth, editAuth, findParentAuth } from "../../../../../api/auth";
+import { getAuth, getOneRoleAuth, addAuthForRole } from "../../../../../api/roleauth";
 export default {
   components: { hssPopup },
   props: {
@@ -118,7 +87,10 @@ export default {
             //     marginRight: "8px",
             //   },
             // }),
-            h("span", data.auth_name + "-" + data.auth_description),
+            h(
+              "span",
+              "id:" + data.id + "-" + data.auth_name + "-" + data.auth_description
+            ),
           ]),
           h(
             "span",
@@ -227,5 +199,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

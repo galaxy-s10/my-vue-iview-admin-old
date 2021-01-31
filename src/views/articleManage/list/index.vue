@@ -344,7 +344,8 @@ export default {
       row.tags.forEach((item) => {
         tagTemp.push(item.id);
       });
-      updateArticle({ ...row, status: v ? 1 : 0, tags: tagTemp })
+      let type_id = row.types[0].id;
+      updateArticle({ ...row, status: v ? 1 : 0, tags: tagTemp, type_id })
         .then((res) => {
           this.$Message.success({
             content: res.message,

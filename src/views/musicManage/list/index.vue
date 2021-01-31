@@ -30,6 +30,7 @@
 <script>
 // import { format } from "../../../../../webchat/src/utils/format";
 import { getMusicList, updateMusic, addMusic, deleteMusic } from "../../../api/music";
+import { getQiniuToken, deleteQiniu } from "../../../api/qiniu";
 import hssPopupForm from "../../../components/hssComponents/form/popup-form/index";
 import hssTable from "../../../components/hssComponents/table";
 import hssOperation from "../../../components/hssComponents/table/operation";
@@ -132,7 +133,7 @@ export default {
               color: "red",
             };
           },
-          custom: (row) => {
+          custom: async (row) => {
             console.log(row);
             if (!this.auth.includes("DELETE_MUSIC")) {
               this.$Message.error({
@@ -140,14 +141,22 @@ export default {
               });
               return;
             }
-            // if (row.articles.length > 0) {
+            let delImg = await deleteQiniu(row.img.slice(33));
+            this.$Notice.success({
+              title: `${delImg.message}`,
+              desc: "",
+            });
+            let delUrl = await deleteQiniu(row.url.slice(33));
+            this.$Notice.success({
+              title: `${delUrl.message}`,
+              desc: "",
+            });
             deleteMusic(row.id).then((res) => {
               this.$Message.success({
                 content: res.message,
               });
               this.getMusicList(this.params);
             });
-            // }
           },
           isShow() {
             return 1;
@@ -181,7 +190,7 @@ export default {
           key: "author",
         },
         {
-          title: "图片",
+          title: "封面图",
           align: "center",
           render: (h, params) => {
             return h("img", {

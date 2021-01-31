@@ -124,9 +124,9 @@ export default {
     */
     handleUpload(file) {
       // console.log(file);
-      if (file.name.length > 15) {
+      if (file.name.length > 20) {
         this.$Message.error({
-          content: "文件名不能超过15个字符!",
+          content: "文件名不能超过20个字符!",
         });
         return false;
       }

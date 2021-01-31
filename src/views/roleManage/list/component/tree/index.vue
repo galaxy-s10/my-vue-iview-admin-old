@@ -227,7 +227,9 @@ export default {
           },
         },
         [
-          h("span", [h("span", data.auth_name + "(" + data.auth_description + ")")]),
+          h("span", [
+            h("span", data.id + "" + data.auth_name + "(" + data.auth_description + ")"),
+          ]),
           h("span", {
             style: {
               display: "inline-block",
@@ -257,7 +259,7 @@ export default {
             //     marginRight: "8px",
             //   },
             // }),
-            h("span", data.role_name + "(" + data.role_description + ")"),
+            h("span", data.id + "" + data.role_name + "(" + data.role_description + ")"),
           ]),
           h(
             "span",

@@ -1,7 +1,6 @@
 <template>
   <div>
-    <h1>欢迎进入控制台！</h1>
-    <span @click="aaa">aaa</span>
+    <h1>欢迎{{user.username}}进入控制台！</h1>
     <!-- 第一种情况（报警告），将val作为hssIpt的model里hssIptVal的值 -->
     <!-- <hss-input v-model="val"></hss-input> -->
     <!-- 第二种情况 -->
@@ -24,41 +23,6 @@
     <!-- <i-button @click="ppp">ppp</i-button>
     <i-button @click="modal1">a</i-button>
     <hss-modal :val="modalVal" @hssModalOk="ok" @hssModalCancel="cancel"></hss-modal> -->
-    <div class="masonry-wrap" ref="masonry-wrap">
-      <!-- <div class="masonry-wrap" ref="masonry-wrap" v-if="showMasonry"> -->
-      <div
-        class="masonry-item"
-        ref="masonry-item"
-        v-for="item in articleList"
-        :key="item.id"
-        style="background: pink; padding: 10px; border-radius: 10px; opacity: 0"
-      >
-        {{ item.id }}{{ item.title }}
-        <img
-          :src="item.img ? item.img : require('../../assets/logo.png')"
-          alt=""
-          style="max-width: 100%"
-          @load="imgLoad"
-        />
-        <!-- <img
-          :src="item.img ? item.img : '../../assets/logo.png'"
-          alt=""
-          style="max-width: 100%"
-        /> -->
-      </div>
-      <!-- <div v-if="isLoad">
-        <div style="color: #2d8cf0">
-          <Icon type="ios-loading" size="18" class="demo-spin-icon-load"></Icon>
-          <div>Loading1</div>
-        </div>
-      </div> -->
-    </div>
-    <div v-if="isLoad">
-        <div style="color: #2d8cf0;text-align:center">
-          <Icon type="ios-loading" size="18" class="demo-spin-icon-load"></Icon>
-          <div>加载中...</div>
-        </div>
-      </div>
   </div>
 </template>
 
@@ -66,6 +30,7 @@
 import hssInput from "./custom/hssInput";
 import hssModal from "./custom/hssModal";
 import { getArticleList, updateArticle, deleteArticle } from "@/api/article";
+import { mapState } from "vuex";
 export default {
   components: { hssInput, hssModal },
   data() {
@@ -85,6 +50,9 @@ export default {
       isLoad: false,
       showMasonry: false,
     };
+  },
+  computed: {
+    ...mapState({ user: (v) => v.user }),
   },
   created() {
     console.log("createdcreated");
@@ -160,7 +128,9 @@ export default {
           // 将第一行的offsetHeight都保存在数组里
           console.log(item[i]);
           console.log(item[i].offsetHeight);
-          offsetList.push(i == 0 ? item[i].offsetHeight + gap : item[i].offsetHeight);
+          offsetList.push(
+            i == 0 ? item[i].offsetHeight + gap : item[i].offsetHeight
+          );
           item[i].style.top = "0";
           if ((i + 1) % column == 1) {
             item[i].style.left = 0;
