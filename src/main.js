@@ -1,7 +1,16 @@
+/*
+ * @Author: your name
+ * @Date: 2021-01-11 11:41:11
+ * @LastEditTime: 2021-02-04 17:38:50
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \hss\vue-iview-admin\src\main.js
+ */
 import Vue from 'vue'
 import App from './App.vue';
 import iView from 'iview';
 import axios from "axios";
+import * as echarts from 'echarts';
 
 import 'iview/dist/styles/iview.css';
 
@@ -18,6 +27,8 @@ import './permission'
 
 import plugins from './libs/plugins'
 Vue.prototype.$bus = new Vue()
+console.log(echarts);
+Vue.prototype.$echarts = echarts
 
 
 Vue.use(iView);

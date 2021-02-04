@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>欢迎{{user.username}}进入控制台！</h1>
+    <h1>欢迎{{ user.username }}进入控制台！</h1>
     <!-- 第一种情况（报警告），将val作为hssIpt的model里hssIptVal的值 -->
     <!-- <hss-input v-model="val"></hss-input> -->
     <!-- 第二种情况 -->
@@ -23,6 +23,8 @@
     <!-- <i-button @click="ppp">ppp</i-button>
     <i-button @click="modal1">a</i-button>
     <hss-modal :val="modalVal" @hssModalOk="ok" @hssModalCancel="cancel"></hss-modal> -->
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div ref="echartDemo" style="width: 600px; height: 400px"></div>
   </div>
 </template>
 
@@ -35,6 +37,26 @@ export default {
   components: { hssInput, hssModal },
   data() {
     return {
+      option: {
+        title: {
+          text: "一周内流量",
+        },
+        tooltip: {},
+        legend: {
+          data: ["销量"],
+        },
+        xAxis: {
+          data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"],
+        },
+        yAxis: {},
+        series: [
+          {
+            name: "销量",
+            type: "line",
+            data: [5, 20, 36, 10, 10, 20],
+          },
+        ],
+      },
       val: "10",
       modalVal: false,
       masonryParams: {
@@ -60,6 +82,7 @@ export default {
   },
   mounted() {
     console.log("mountedmountedmounted");
+    this.drawEchart();
     let that = this;
     this.$bus.$on("overScroll", function () {
       console.log("1111111111");
@@ -86,6 +109,11 @@ export default {
     },
   },
   methods: {
+    drawEchart() {
+      console.log(this.$echarts);
+      let myChart = this.$echarts.init(this.$refs.echartDemo);
+      myChart.setOption(this.option);
+    },
     aaa() {
       this.params.nowPage += 1;
       this.getArticleList();
