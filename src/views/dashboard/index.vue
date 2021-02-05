@@ -24,7 +24,10 @@
     <i-button @click="modal1">a</i-button>
     <hss-modal :val="modalVal" @hssModalOk="ok" @hssModalCancel="cancel"></hss-modal> -->
     <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-    <div ref="echartDemo" style="width: 600px; height: 400px"></div>
+    <div
+      ref="echartDemo"
+      style="width: 600px; height: 400px; margin: 10px auto"
+    ></div>
   </div>
 </template>
 
@@ -39,21 +42,50 @@ export default {
     return {
       option: {
         title: {
-          text: "一周内流量",
+          text: "流量概况",
+          // subtext:'subtext'
         },
-        tooltip: {},
+        tooltip: {
+          trigger: "axis",
+        },
         legend: {
-          data: ["销量"],
+          data: ["访问量", "访客量"],
         },
         xAxis: {
-          data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"],
+          boundaryGap: false,
+          data: ["2021-02-02", "2021-02-03", "2021-02-04", "2021-02-05"],
         },
         yAxis: {},
         series: [
           {
-            name: "销量",
+            name: "访问量",
             type: "line",
-            data: [5, 20, 36, 10, 10, 20],
+            // smooth: true,
+            data: [15, 18, 34, 7],
+            // markPoint: {
+            //   data: [
+            //     { type: "max", name: "最大值" },
+            //     { type: "min", name: "最小值" },
+            //   ],
+            // },
+            markLine: {
+              data: [{ type: "average", name: "平均值" }],
+            },
+          },
+          {
+            name: "访客量",
+            type: "line",
+            // smooth: true,
+            data: [10, 13, 14, 4],
+            // markPoint: {
+            //   data: [
+            //     { type: "max", name: "最大值" },
+            //     { type: "min", name: "最小值" },
+            //   ],
+            // },
+            markLine: {
+              data: [{ type: "average", name: "平均值" }],
+            },
           },
         ],
       },
