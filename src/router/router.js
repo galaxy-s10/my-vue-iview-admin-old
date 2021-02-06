@@ -59,6 +59,7 @@ export const defaultRoutes = [
             name: "notFound",
             path: '/404',
             component: () => import('@/views/error/404/index'),
+            // component: () => import('@/views/testPage'),
             meta: {
                 title: '页面不存在',
                 icon: 'md-speedometer',

@@ -19,6 +19,11 @@ import request from './api/request'
 Vue.prototype.$axios = axios;
 Vue.prototype.$http = request
 
+// console.log(request({
+//   url: '/api/log/list',
+//   method: 'get',
+  
+// }))
 import router from './router'
 import store from './store'
 

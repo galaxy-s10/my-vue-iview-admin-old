@@ -345,7 +345,28 @@ export default {
     // }
     // console.log(width);
     // this.menuList = roleRoutes;
+    let tree = [
+      {
+        name: "treeManage",
+        // authKey: "COMMENT_LIST",
+        path: "/treeManage",
+        component: () => import("@/views/testPage"),
+        meta: {
+          icon: "ios-podium-outline",
+          title: "treeManage",
+          authKey: "ARTICLE_LIST",
+        },
+      },
+    ];
+    console.log(this.$router.options.routes);
+    this.$router.addRoutes(tree);
+    // this.$router.addRoutes(...tree);
+    console.log(this.$router.options.routes);
+    this.$router.options.routes.push(...tree);
+    // this.$nextTick(() => {
     this.menuList = this.$router.options.routes;
+    // });
+
     console.log(this.menuList);
   },
 };

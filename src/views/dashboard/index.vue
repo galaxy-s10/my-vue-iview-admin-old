@@ -24,10 +24,7 @@
     <i-button @click="modal1">a</i-button>
     <hss-modal :val="modalVal" @hssModalOk="ok" @hssModalCancel="cancel"></hss-modal> -->
     <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-    <div
-      ref="echartDemo"
-      style="width: 600px; height: 400px; margin: 10px auto"
-    ></div>
+    <div ref="echartDemo" style="width: 600px; height: 400px; margin: 10px auto"></div>
   </div>
 </template>
 
@@ -40,6 +37,7 @@ export default {
   components: { hssInput, hssModal },
   data() {
     return {
+      // option.xAxis.data
       option: {
         title: {
           text: "流量概况",
@@ -53,7 +51,17 @@ export default {
         },
         xAxis: {
           boundaryGap: false,
-          data: ["2021-02-02", "2021-02-03", "2021-02-04", "2021-02-05"],
+          data: [],
+          axisLabel: { interval: 0 },
+          // data: [
+          //   "2021-02-01",
+          //   "2021-02-02",
+          //   "2021-02-03",
+          //   "2021-02-04",
+          //   "2021-02-05",
+          //   "2021-02-06",
+          //   "2021-02-07",
+          // ],
         },
         yAxis: {},
         series: [
@@ -61,7 +69,7 @@ export default {
             name: "访问量",
             type: "line",
             // smooth: true,
-            data: [15, 18, 34, 7],
+            data: [],
             // markPoint: {
             //   data: [
             //     { type: "max", name: "最大值" },
@@ -76,7 +84,7 @@ export default {
             name: "访客量",
             type: "line",
             // smooth: true,
-            data: [10, 13, 14, 4],
+            data: [],
             // markPoint: {
             //   data: [
             //     { type: "max", name: "最大值" },
@@ -110,11 +118,11 @@ export default {
   },
   created() {
     console.log("createdcreated");
-    this.getArticleList();
+    // this.getArticleList();
   },
   mounted() {
     console.log("mountedmountedmounted");
-    this.drawEchart();
+    this.getVisitInfo();
     let that = this;
     this.$bus.$on("overScroll", function () {
       console.log("1111111111");
@@ -141,6 +149,55 @@ export default {
     },
   },
   methods: {
+    getDay(day) {
+      function doHandleMonth(month) {
+        var m = month;
+        if (month.toString().length == 1) {
+          m = "0" + month;
+        }
+        return m;
+      }
+      var today = new Date();
+
+      var targetday_milliseconds = today.getTime() + 1000 * 60 * 60 * 24 * day;
+
+      today.setTime(targetday_milliseconds); //注意，这行是关键代码
+
+      var tYear = today.getFullYear();
+      var tMonth = today.getMonth();
+      var tDate = today.getDate();
+      tMonth = doHandleMonth(tMonth + 1);
+      tDate = doHandleMonth(tDate);
+      return tYear + "-" + tMonth + "-" + tDate;
+    },
+    async getVisitInfo() {
+      let params = {};
+      params.startDate = this.getDay(-7);
+      params.endDate = this.getDay(0);
+      console.log(params);
+      console.log(this);
+      console.log(this.$http);
+      console.log(this.$http.get);
+      this.$http({
+        url: "/api/log/getRangeVisitInfo",
+        method: "get",
+        params,
+      }).then((res) => {
+        console.log(res);
+        res.data.rangeData.forEach((i) => {
+          this.option.xAxis.data.push(i.today);
+          this.option.series[0].data.push(i.allVisiteTotal);
+          this.option.series[1].data.push(i.allVisitorTotal);
+        });
+        this.option.title.text = "历史总访问量：" + res.data.allData[0].allVisiteTotal;
+        this.option.title.subtext =
+          "历史总访客量：" + res.data.allData[0].allVisitorTotal;
+        // this.$nextTick(() => {
+        this.drawEchart();
+        // });
+      });
+      // console.log(res);
+    },
     drawEchart() {
       console.log(this.$echarts);
       let myChart = this.$echarts.init(this.$refs.echartDemo);
@@ -188,9 +245,7 @@ export default {
           // 将第一行的offsetHeight都保存在数组里
           console.log(item[i]);
           console.log(item[i].offsetHeight);
-          offsetList.push(
-            i == 0 ? item[i].offsetHeight + gap : item[i].offsetHeight
-          );
+          offsetList.push(i == 0 ? item[i].offsetHeight + gap : item[i].offsetHeight);
           item[i].style.top = "0";
           if ((i + 1) % column == 1) {
             item[i].style.left = 0;
