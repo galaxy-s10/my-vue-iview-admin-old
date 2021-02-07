@@ -39,7 +39,7 @@ export const defaultRoutes = [
     },
     {
         name: "error",
-        path: '*',
+        path: '/error',
         component: Layout,
         redirect: '/404',
         meta: {
@@ -155,18 +155,59 @@ export const roleRoutes = [
             title: '前台管理',
             icon: 'ios-home-outline',
             authKey: ["FRONTEND_MANAGE", "FRONTEND_LIST", "FRONTEND_UPDATE"],
+            roles: ['developer', 'tester1']
         },
-        children: [{
-            name: "frontendList",
-            path: '/frontendManage/list',
-            component: () => import('@/views/frontend/list/index'),
-            authKey: "FRONTEND_LIST",
-            meta: {
+        children: [
+            {
+                name: "frontendList",
+                path: '/frontendManage/list',
+                component: () => import('@/views/frontend/list/index'),
                 authKey: "FRONTEND_LIST",
-                title: '前台信息',
-                icon: 'md-add',
+                meta: {
+                    roles: ['developer2', 'tester1'],
+                    authKey: "FRONTEND_LIST",
+                    title: '前台信息',
+                    icon: 'md-add',
+                },
             },
-        },
+            {
+                name: "frontendList3232",
+                path: '/frontendManage/list',
+                component: () => import('@/views/frontend/list/index'),
+                authKey: "FRONTEND_LIST",
+                meta: {
+                    roles: ['developer', 'tester1'],
+                    authKey: "FRONTEND_LIST",
+                    title: '前台信息3443',
+                    icon: 'md-add',
+                },
+            },
+            {
+                name: "backendList",
+                path: '/backendManage/list',
+                component: () => import('@/views/frontend/list/index'),
+                authKey: "FRONTEND_LIST",
+                meta: {
+                    roles: ['developer', 'tester1'],
+                    authKey: "FRONTEND_LIST",
+                    title: '后台信息',
+                    icon: 'md-add',
+                },
+                children: [
+                    {
+                        name: "backendList1",
+                        path: '/backendList/list',
+                        component: () => import('@/views/frontend/list/index'),
+                        authKey: "FRONTEND_LIST",
+                        meta: {
+                            roles: ['developer', 'tester1'],
+                            authKey: "FRONTEND_LIST",
+                            title: '前台信息1',
+                            icon: 'md-add',
+                        },
+                    },
+                ]
+            },
             // {
             //     name: "login",
             //     path: '/frontend/login',
@@ -761,6 +802,5 @@ const router = new VueRouter({
         ...roleRoutes
     ]
 })
-
 
 export default router

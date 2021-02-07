@@ -1,85 +1,159 @@
 <template>
   <div>
-    <Layout>
+    <Layout :style="{ height: '100vh' }">
       <Sider
-        :style="{
-          color: 'red',
-          position: 'fixed',
-          height: '100vh',
-          left: 0,
-          overflow: 'auto',
-        }"
+        width="200"
+        :collapsed-width="70"
+        collapsible
+        v-model="isCollapsed"
         hide-trigger
       >
-        <Menu mode="vertical" width="200" theme="dark" active-name="1">
-          <Submenu name="1">
-            <template slot="title">
-              <Icon type="ios-analytics" />
-              文章管理
+        <!-- <Sider width="200" collapsible v-model="isCollapsed"> -->
+        <!-- <div v-if="auth.length != 0"> -->
+        <div style="height: 100vh; overflow-y: scroll">
+          <div class="logo">
+            {{ title }}
+          </div>
+          <Menu
+            mode="vertical"
+            width="100"
+            theme="dark"
+            @on-select="changeMenu"
+            :active-name="activeName"
+          >
+            <template v-for="(item, index) in menuList">
+              <template v-if="!item.hidden">
+                <Submenu
+                  v-if="item.children && item.children.length > 1"
+                  :name="item.name"
+                  :key="index"
+                  v-auth="item.authKey"
+                >
+                  <template slot="title">
+                    <Icon :type="item.meta.icon" />
+                    <span v-if="!isCollapsed">{{ item.meta.title }}223</span>
+                    <!-- <tree-item :icon="item.meta.icon" :title="item.meta.title"></tree-item> -->
+                  </template>
+                  <template v-for="(itemm, indexx) in item.children">
+                    <template v-if="!itemm.hidden">
+                      <MenuItem
+                        :name="itemm.name"
+                        :key="indexx"
+                        v-auth="itemm.authKey"
+                      >
+                        <span v-if="!isCollapsed"
+                          >{{ itemm.meta.title }}222</span
+                        >
+                      </MenuItem>
+                    </template>
+                  </template>
+                </Submenu>
+
+                <MenuItem
+                  v-if="item.children && item.children.length <= 1"
+                  :name="item.children[0].name"
+                  :key="index"
+                  v-auth="item.authKey"
+                >
+                  <Icon :type="item.meta.icon" />
+                  <span v-if="!isCollapsed">
+                    {{ item.meta.title }}
+                  </span>
+                </MenuItem>
+                <MenuItem v-if="!item.children" :name="item.name">
+                  <Icon :type="item.meta.icon" />
+                  <span v-if="!isCollapsed">
+                    {{ item.meta.title }}
+                  </span>
+                </MenuItem>
+              </template>
             </template>
-            <MenuItem name="1-1">文章列表</MenuItem>
-            <MenuItem name="1-2">新增文章</MenuItem>
-            <MenuItem name="1-3">删除文章</MenuItem>
-            <MenuItem name="1-4">查找文章</MenuItem>
-            <MenuItem name="1-5">修改文章</MenuItem>
-          </Submenu>
-          <Submenu name="2">
-            <template slot="title">
-              <Icon type="ios-analytics" />
-              标签管理
-            </template>
-            <MenuItem name="2-1">标签列表</MenuItem>
-            <MenuItem name="2-2">新增标签</MenuItem>
-            <MenuItem name="2-3">删除标签</MenuItem>
-            <MenuItem name="2-4">查找标签</MenuItem>
-            <MenuItem name="2-5">修改标签</MenuItem>
-          </Submenu>
-          <Submenu name="3">
-            <template slot="title">
-              <Icon type="ios-analytics" />
-              友链管理
-            </template>
-            <MenuItem name="3-1">友链列表</MenuItem>
-            <MenuItem name="3-2">新增友链</MenuItem>
-            <MenuItem name="3-3">删除友链</MenuItem>
-            <MenuItem name="3-4">查找友链</MenuItem>
-            <MenuItem name="3-5">修改友链</MenuItem>
-          </Submenu>
-          <Submenu name="4">
-            <template slot="title">
-              <Icon type="ios-analytics" />
-              评论管理
-            </template>
-            <MenuItem name="4-1">评论列表</MenuItem>
-            <MenuItem name="4-2">新增评论</MenuItem>
-            <MenuItem name="4-3">删除评论</MenuItem>
-            <MenuItem name="4-4">查找评论</MenuItem>
-            <MenuItem name="4-5">修改评论</MenuItem>
-          </Submenu>
-          <MenuItem name="5">
-            <Icon type="ios-construct" />
-            权限设置
-          </MenuItem>
-        </Menu>
+          </Menu>
+          <Row
+            type="flex"
+            justify="center"
+            align="middle"
+            class="code-row-bg"
+            style="color: white; z-index: 999"
+          >
+            <p style="height: 75px"></p>
+            <Icon
+              @click.native="collapsedSider"
+              :class="rotateIcon"
+              :style="{
+                margin: '0 20px',
+                transform: !isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)',
+              }"
+              type="ios-arrow-back"
+              size="20"
+            ></Icon>
+          </Row>
+        </div>
       </Sider>
-      <Layout :style="{ marginLeft: '200px' }">
+      <!-- <Layout :style="{overflowX:'auto'}"> -->
+      <Layout ref="scrollWrap">
         <Header
           :style="{
+            padding: '0',
             background: '#fff',
             boxShadow: '0 2px 3px 2px rgba(0,0,0,.1)',
           }"
         >
-          Header
+          <div style="position: relative; display: flex; align-items: center">
+            <Icon
+              @click.native="collapsedSider"
+              :class="rotateIcon"
+              :style="{
+                margin: '0 20px',
+                transform: !isCollapsed ? 'rotate(0deg)' : 'rotate(90deg)',
+              }"
+              type="md-menu"
+              size="24"
+            ></Icon>
+            <Breadcrumb>
+              <!-- <BreadcrumbItem
+                v-for="(item, index) in breadList"
+                :key="index"
+                :to="item.path"
+                >{{ item.meta.title }}</BreadcrumbItem
+              > -->
+              <BreadcrumbItem v-for="(item, index) in breadList" :key="index">{{
+                item.meta.title
+              }}</BreadcrumbItem>
+            </Breadcrumb>
+            <div style="position: absolute; right: 10px">
+              <Dropdown style="margin-left: 20px" trigger="click">
+                <a href="javascript:void(0)">
+                  {{ username }}
+                  <Icon type="md-arrow-dropdown" />
+                </a>
+                <DropdownMenu slot="list">
+                  <DropdownItem
+                    ><a href="https://www.zhengbeining.com/" target="_bank"
+                      >网站前台</a
+                    >
+                  </DropdownItem>
+                  <DropdownItem divided>个人信息</DropdownItem>
+                  <DropdownItem divided @click.native="logout">
+                    退出登录
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+              <Avatar size="large" shape="square" :src="avatar" />
+            </div>
+          </div>
         </Header>
-        <Content :style="{ padding: '0 16px 16px' }">
-          <router-view></router-view>
+        <Content>
+          <tag-open-page ref="tagOpen"></tag-open-page>
+          <div class="main-content">
+            <router-view></router-view>
+          </div>
         </Content>
+
         <Footer
           :style="{
             background: '#e74c3c',
-            position: 'fixed',
-            padding: '0',
-            width: 'calc(100% - 200px)',
+            padding: 0,
             bottom: 0,
             textAlign: 'center',
           }"
@@ -92,24 +166,251 @@
 </template>
 
 <script>
+// import treeItem from "./treeItem";
+import sideBarItem from "./sideBarItem";
+import utils from "../libs/utils";
+import TagOpenPage from "../components/tagOpenPage";
+import { roleRoutes } from "@/router/router";
 // import Header from "./header/index";
 // import Sider from "./sider/index";
 // import Footer from "./footer/index";
+import { mapState, mapMutations } from "vuex";
+import cache from "@/libs/cache";
 export default {
-  //   components: {
-  //     Header,
-  //     Sider,
-  //     Footer,
-  //   },
-  data() {
-    return {};
+  components: {
+    TagOpenPage,
+    // treeItem,
+    sideBarItem,
+    // Header,
+    // Sider,
+    // Footer,
   },
-  computed: {},
-  methods: {},
-  created() {},
-  mounted() {},
+  data() {
+    return {
+      isCollapsed: false,
+      menuList: [],
+      // menuList: [
+      //   "ARTICLE_LIST",
+      //   "ADD_ARTICLE",
+      //   "UPDATE_ARTICLE",
+      //   "SELECT_ARTICLE",
+      //   "DELETE_ARTICLE",
+      // ],
+      breadList: [],
+    };
+  },
+  computed: {
+    ...mapState("user", ["username", "avatar"]),
+    // ...mapState("app", {
+    //   title: (state) => state.title,
+    // }),
+    ...mapState({
+      title(state) {
+        // console.log("titletitle");
+        // console.log(state);
+        return state.app.title;
+      },
+      auth(state) {
+        // console.log("state.auth.auth");
+        // console.log(state);
+        // console.log(this.menuList);
+        // console.log(state.auth.auth == this.menuList);
+        // return state.auth;
+      },
+      tagList(state) {
+        return state.app.tagOpenPageList;
+      },
+    }),
+    activeName() {
+      console.log(this.$route.name);
+      return this.$route.name;
+    },
+    rotateIcon() {
+      return ["menu-icon", this.isCollapsed ? "rotate-icon" : ""];
+    },
+  },
+  methods: {
+    logout() {
+      cache.clearStorage("token");
+      this.$router.push({ path: `/login?redirect=${this.$route.path}` });
+    },
+    ...mapMutations(["addTagOpenPage", "changeActiveTagOpenPage"]),
+    // ...mapMutations("app", ["addTagOpenPage"]),
+    collapsedSider() {
+      this.isCollapsed = !this.isCollapsed;
+    },
+    findItem(source, target) {
+      var res = false;
+      function digui(source, target) {
+        let ress = "";
+        try {
+          source.forEach((item) => {
+            if (item.name == target) {
+              ress = item;
+              throw new Error();
+            } else {
+              if (item.children) {
+                digui(item.children, target);
+              }
+            }
+          });
+        } catch (e) {
+          res = ress;
+        }
+      }
+      digui(source, target);
+      return res;
+    },
+    changeMenu(name) {
+      // 判断当前跳转页面有没有在tagOpenPageList里面
+      // 查询点击跳转的路由信息
+      console.log(name);
+      this.$router.push({ name: name });
+      return;
+      let target = this.findItem(this.menuList, name);
+      let tag;
+      let bool = utils.exist(this.tagList, name);
+      if (!bool) {
+        console.log("点击判断，没有就插入1");
+        console.log(target);
+        this.addTagOpenPage(target);
+        this.changeActiveTagOpenPage(target.name);
+      } else {
+        this.changeActiveTagOpenPage(target.name);
+      }
+      this.$router.push({ name: name });
+      // .catch((err) => {
+      //   console.log(err);
+      // });
+    },
+    change(e, role) {
+      if (e) {
+        if (!this.roles.includes(role)) {
+          this.roles.push(role);
+        }
+      } else {
+        const index = this.roles.findIndex((item) => item === role);
+        this.roles.splice(index, 1);
+      }
+    },
+    getBreadcrumb() {
+      // console.log('[[[[[[[[]]]]]]]]')
+      // console.log(this.$route.matched)
+      const matched = this.$route.matched.filter(
+        (item) => item.meta && item.meta.title
+      );
+      // console.log(
+      //   this.$route.matched.filter((item) => item.meta && item.meta.title)
+      // );
+      // console.log(matched[0]);
+      // console.log(this.$route.matched);
+      // console.log('】】】】】】】】】】】】】】】】】】】】】】】】】')
+      // console.log(matched)
+      console.log(matched);
+      this.breadList = matched;
+    },
+  },
+  watch: {
+    $route() {
+      this.getBreadcrumb();
+    },
+  },
+  created() {
+    this.getBreadcrumb();
+  },
+  // beforeDestroy() {
+  // this.$bus.$off("overScroll");
+  // },
+  mounted() {
+    let that = this;
+    this.$refs.scrollWrap.$el.addEventListener("scroll", function () {
+      // console.log(document.documentElement.offsetHeight)
+      // 滚动条高度
+      // console.log(that.$refs.scrollWrap.$el.scrollHeight);
+      // 滚动距离
+      // console.log(that.$refs.scrollWrap.$el.scrollTop);
+      // 盒子高度
+      // console.log(that.$refs.scrollWrap.$el.offsetHeight);
+      // console.log(that.$refs.scrollWrap.$el.scrollHeight);
+      // console.log(
+      //   that.$refs.scrollWrap.$el.scrollTop + that.$refs.scrollWrap.$el.offsetHeight
+      // );
+      // console.log(
+      //   that.$refs.scrollWrap.$el.scrollHeight -
+      //     (that.$refs.scrollWrap.$el.scrollTop + that.$refs.scrollWrap.$el.offsetHeight)
+      // );
+      if (
+        that.$refs.scrollWrap.$el.scrollHeight -
+          (that.$refs.scrollWrap.$el.scrollTop +
+            that.$refs.scrollWrap.$el.offsetHeight) <
+        100
+      ) {
+        console.log("距离底部少于100px");
+        that.$bus.$emit("overScroll");
+      }
+      // console.log(that.$refs.scrollWrap.$el.scrollTop+that.$refs.scrollWrap.$el.offsetHeight);
+      // console.log(
+      //   that.$refs.scrollWrap.$el.scrollHeight -
+      //     that.$refs.scrollWrap.$el.pageYOffset -
+      //     that.$refs.scrollWrap.$el.innerHeight
+      // );
+    });
+    // console.log(this.$refs.tagOpen.$el);
+    // let width = this.$refs.tagOpen.$el.clientWidth;
+    // console.log(width);
+    // if (this.isCollapsed) {
+    //   width = width - 200;
+    // }
+    // console.log(width);
+    // this.menuList = roleRoutes;
+    let tree = [
+      {
+        name: "treeManage",
+        // authKey: "ARTICLE_LIST",
+        path: "/treeManage",
+        component: () => import("@/views/testPage"),
+        meta: {
+          icon: "ios-podium-outline",
+          title: "treeManage",
+          authKey: "ARTICLE_LIST",
+        },
+      },
+      {
+        name: "xxx",
+        path: "*",
+        redirect: "/404",
+        meta: {
+          icon: "ios-podium-outline",
+          title: "xxx",
+        },
+        component: () => import("@/views/error/401/index"),
+      },
+    ];
+    // console.log(this.$router.options.routes);
+    // this.$router.addRoutes(tree);
+    // // this.$router.addRoutes(...tree);
+    // console.log(this.$router.options.routes);
+    // this.$router.options.routes.push(...tree);
+    this.$store.dispatch("user/generateRoutes");
+    console.log(this.$store.state.user.addRoutes);
+    this.menuList = this.$router.options.routes;
+    console.log(this.menuList);
+  },
 };
 </script>
 
 <style scoped>
+.logo {
+  color: white;
+  width: 100%;
+  height: 64px;
+  line-height: 64px;
+  font-size: 24px;
+  font-weight: 500;
+  text-align: center;
+}
+.main-content {
+  background: white;
+  padding: 20px;
+}
 </style>

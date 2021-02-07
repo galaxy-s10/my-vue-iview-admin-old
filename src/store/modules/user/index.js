@@ -1,6 +1,8 @@
 // import { getAuth } from "@/api/auth";
 // import { getRoleList } from "../../../api/role";
 import { getAuth } from "../../../api/roleauth";
+import { roleRoutes } from '../../../router/router';
+
 import { login, getUserInfo } from "@/api/user";
 import cache from '@/libs/cache'
 const user = {
@@ -14,12 +16,15 @@ const user = {
         auth: [],
         username: "",
         id: "",
-        role: "",
         status: "",
         avatar: "",
         title: "",
+        addRoutes: []
     }),
     mutations: {
+        setRoutes(state, payload) {
+            state.addRoutes = payload
+        },
         editRemember(state, payload) {
             state.remember = payload
         },
@@ -45,6 +50,48 @@ const user = {
 
     },
     actions: {
+        generateRoutes({ commit, state }, val) {
+            console.log('generateRoutesgenerateRoutes');
+            // console.log(roleRoutes)
+            console.log(state)
+            // 比较两数组是否有交集(返回true代表有交集)
+            function hasMixin(a, b) {
+                return a.length + b.length !== new Set([...a, ...b]).size
+            }
+            // 判断权限
+            function hasPermission(route, roles) {
+                if (route.meta && route.meta.roles) {
+                    return hasMixin(route.meta.roles, roles)
+                    // return roles.some(role => {
+                    //     console.log(role);
+                    //     route.meta.roles.includes(role)
+                    // })
+                } else {
+                    return true
+                }
+            }
+            // 递归权限路由
+            function filterAsyncRoutes(routes, roles) {
+                const res = []
+                routes.forEach(route => {
+                    const tmp = { ...route }
+                    if (hasPermission(tmp, roles)) {
+                        if (tmp.children) {
+                            tmp.children = filterAsyncRoutes(tmp.children, roles)
+                        }
+                        res.push(tmp)
+                    }
+                })
+
+                return res
+            }
+            let accessRoutes = filterAsyncRoutes(roleRoutes, state.role)
+            console.log(accessRoutes)
+            accessRoutes.forEach(item=>{
+                console.log(item.name);
+            })
+            commit('setRoutes', accessRoutes)
+        },
         login({ state }, userInfo) {
             return new Promise((reslove, reject) => {
                 login(userInfo).then(res => {

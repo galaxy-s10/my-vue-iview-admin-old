@@ -22,6 +22,9 @@ defaultRoutes.forEach(item => {
 // console.log(whiteList)
 
 router.beforeEach(async (to, from, next) => {
+  console.log('beforeEachbeforeEach');
+  console.log('to',to);
+  console.log('from',from );
   const hasToken = cache.getStorageExt("token")
   if (hasToken) {
     const hasUserInfo = store.state.user
@@ -32,10 +35,13 @@ router.beforeEach(async (to, from, next) => {
       if (whiteList.indexOf(to.path) == -1) {
         // console.log('不在白名单，判断有无对应权限，没有就跳转登录页面')
         const allAuths = hasUserInfo.auth
+        console.log(allAuths);
         if (allAuths.includes(to.meta.authKey)) {
           next()
         } else {
-          next({ name: "authError", params: { msg: to.meta.title } })
+          console.log(to);
+          next()
+          // next({ name: "authError", params: { msg: to.meta.title } })
         }
       } else {
         // console.log('在白名单，直接跳转')

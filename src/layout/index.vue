@@ -14,54 +14,7 @@
           <div class="logo">
             {{ title }}
           </div>
-          <Menu
-            mode="vertical"
-            width="100"
-            theme="dark"
-            @on-select="changeMenu"
-            :active-name="activeName"
-          >
-            <template v-for="(item, index) in menuList">
-              <template v-if="!item.hidden">
-                <Submenu
-                  v-if="item.children && item.children.length > 1"
-                  :name="item.name"
-                  :key="index"
-                  v-auth="item.authKey"
-                >
-                  <template slot="title">
-                    <Icon :type="item.meta.icon" />
-                    <span v-if="!isCollapsed">{{ item.meta.title }}</span>
-                  </template>
-                  <template v-for="(itemm, indexx) in item.children">
-                    <template v-if="!itemm.hidden">
-                      <MenuItem :name="itemm.name" :key="indexx" v-auth="itemm.authKey">
-                        <span v-if="!isCollapsed">{{ itemm.meta.title }}</span>
-                      </MenuItem>
-                    </template>
-                  </template>
-                </Submenu>
-
-                <MenuItem
-                  v-if="item.children && item.children.length <= 1"
-                  :name="item.children[0].name"
-                  :key="index"
-                  v-auth="item.authKey"
-                >
-                  <Icon :type="item.meta.icon" />
-                  <span v-if="!isCollapsed">
-                    {{ item.meta.title }}
-                  </span>
-                </MenuItem>
-                <MenuItem v-if="!item.children" :name="item.name">
-                  <Icon :type="item.meta.icon" />
-                  <span v-if="!isCollapsed">
-                    {{ item.meta.title }}
-                  </span>
-                </MenuItem>
-              </template>
-            </template>
-          </Menu>
+          <side-bar-item :menuList="menuList"></side-bar-item>
           <Row
             type="flex"
             justify="center"
@@ -122,10 +75,14 @@
                 </a>
                 <DropdownMenu slot="list">
                   <DropdownItem
-                    ><a href="https://www.zhengbeining.com/" target="_bank">网站前台</a>
+                    ><a href="https://www.zhengbeining.com/" target="_bank"
+                      >网站前台</a
+                    >
                   </DropdownItem>
                   <DropdownItem divided>个人信息</DropdownItem>
-                  <DropdownItem divided @click.native="logout"> 退出登录 </DropdownItem>
+                  <DropdownItem divided @click.native="logout">
+                    退出登录
+                  </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
               <Avatar size="large" shape="square" :src="avatar" />
@@ -155,6 +112,8 @@
 </template>
 
 <script>
+// import treeItem from "./treeItem";
+import sideBarItem from "./sideBarItem";
 import utils from "../libs/utils";
 import TagOpenPage from "../components/tagOpenPage";
 import { roleRoutes } from "@/router/router";
@@ -166,6 +125,8 @@ import cache from "@/libs/cache";
 export default {
   components: {
     TagOpenPage,
+    // treeItem,
+    sideBarItem,
     // Header,
     // Sider,
     // Footer,
@@ -281,7 +242,9 @@ export default {
     getBreadcrumb() {
       // console.log('[[[[[[[[]]]]]]]]')
       // console.log(this.$route.matched)
-      const matched = this.$route.matched.filter((item) => item.meta && item.meta.title);
+      const matched = this.$route.matched.filter(
+        (item) => item.meta && item.meta.title
+      );
       // console.log(
       //   this.$route.matched.filter((item) => item.meta && item.meta.title)
       // );
@@ -324,7 +287,8 @@ export default {
       // );
       if (
         that.$refs.scrollWrap.$el.scrollHeight -
-          (that.$refs.scrollWrap.$el.scrollTop + that.$refs.scrollWrap.$el.offsetHeight) <
+          (that.$refs.scrollWrap.$el.scrollTop +
+            that.$refs.scrollWrap.$el.offsetHeight) <
         100
       ) {
         console.log("距离底部少于100px");
@@ -348,7 +312,7 @@ export default {
     let tree = [
       {
         name: "treeManage",
-        // authKey: "COMMENT_LIST",
+        // authKey: "ARTICLE_LIST",
         path: "/treeManage",
         component: () => import("@/views/testPage"),
         meta: {
@@ -357,16 +321,25 @@ export default {
           authKey: "ARTICLE_LIST",
         },
       },
+      {
+        name: "xxx",
+        path: "*",
+        redirect: "/404",
+        meta: {
+          icon: "ios-podium-outline",
+          title: "xxx",
+        },
+        component: () => import("@/views/error/401/index"),
+      },
     ];
-    console.log(this.$router.options.routes);
-    this.$router.addRoutes(tree);
-    // this.$router.addRoutes(...tree);
-    console.log(this.$router.options.routes);
-    this.$router.options.routes.push(...tree);
-    // this.$nextTick(() => {
+    // console.log(this.$router.options.routes);
+    // this.$router.addRoutes(tree);
+    // // this.$router.addRoutes(...tree);
+    // console.log(this.$router.options.routes);
+    // this.$router.options.routes.push(...tree);
+    this.$store.dispatch("user/generateRoutes");
+    console.log(this.$store.state.user.addRoutes);
     this.menuList = this.$router.options.routes;
-    // });
-
     console.log(this.menuList);
   },
 };
