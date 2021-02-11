@@ -28,28 +28,51 @@ function hasMixin(a, b) {
   return a.length + b.length !== new Set([...a, ...b]).size
 }
 router.beforeEach(async (to, from, next) => {
+  console.log('to', to);
+  console.log('from', from);
   const hasToken = cache.getStorageExt("token")
   if (hasToken) {
     const hasUserInfo = store.state.user
     // 判断用户有没有登录
     if (hasUserInfo.username) {
-      next()
+      // console.log(whiteList)
+      // console.log(to.path)
+      if (whiteList.indexOf(to.path) == -1) {
+        // console.log('不在白名单，判断有无对应权限，没有就跳转登录页面')
+        const allAuths = hasUserInfo.auth
+        // console.log(allAuths);
+        if (allAuths.includes(to.meta.authKey)) {
+          next()
+        } else {
+          // console.log(to);
+          next()
+          // next({ name: "authError", params: { msg: to.meta.title } })
+        }
+      } else {
+        // console.log('在白名单，直接跳转')
+        next()
+      }
     } else {
+      // console.log('没登录')
       try {
         await store.dispatch("user/getUserInfo")
         await store.dispatch("user/getAuth")
-        store.dispatch("user/generateRoutes");
-        next(to)
+        next({
+          path: to.path
+        })
+        next()
       } catch (err) {
+        console.log(err)
+        console.log(to)
         cache.clearStorage("token")
         next(`/login?direct=${to.path}`)
       }
     }
   } else {
-    if (whiteList.indexOf(to.path) != -1) {
-      next()
-    } else {
+    if (to.path != '/login') {
       next(`/login?redirect=${to.path}`)
+    } else {
+      next()
     }
   }
 })

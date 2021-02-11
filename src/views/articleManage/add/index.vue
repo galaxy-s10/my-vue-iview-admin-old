@@ -142,6 +142,7 @@ export default {
       initData: {
         status: 1,
         is_comment: 1,
+        tags:[]
       },
       // init: false,
       init: true,

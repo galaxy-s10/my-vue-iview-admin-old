@@ -1,17 +1,19 @@
 <template>
-  <div>留言列表</div>
+    
+  <div>theme</div>
 </template>
 
 <script>
 export default {
   components: {},
+  props: {},
   data() {
     return {};
   },
-  computed: {},
-  methods: {},
   created() {},
   mounted() {},
+  computed: {},
+  methods: {},
 };
 </script>
 

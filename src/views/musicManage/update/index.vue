@@ -12,6 +12,14 @@
     <div v-else>请在音乐列表选择要编辑的音乐</div>
     <!-- <i-button @click="confirm">修改</i-button> -->
     <!-- <markdown ref="md" v-if="this.form.content != null" /> -->
+    <component
+      v-bind:is="comments"
+      :isShow="circleData.isShow"
+      :percent="circleData.percent"
+      :title="circleData.title"
+      :desc="circleData.desc"
+      :content="circleData.content"
+    ></component>
   </div>
 </template>
 
@@ -21,14 +29,24 @@ import baseForm from "../../../components/hssComponents/form/base-form/index";
 import { getTypeList } from "../../../api/type";
 import { findMusic, updateMusic } from "../../../api/music";
 import { getQiniuToken, deleteQiniu } from "../../../api/qiniu";
+import hssCircle from "@/components/hssCircle";
+
 import { mapState } from "vuex";
 
 import * as qiniu from "qiniu-js";
 
 export default {
-  components: { baseForm, hssUpload },
+  components: { baseForm, hssUpload, hssCircle },
   data() {
     return {
+      comments: "",
+      circleData: {
+        isShow: false,
+        percent: 0,
+        title: "",
+        desc: "",
+        content: "",
+      },
       tagList: [],
       form: {
         id: "",
@@ -58,6 +76,14 @@ export default {
     // ...mapState("user", ["auth"]),
   },
   methods: {
+    initCircle() {
+      this.comments = "";
+      this.circleData.percent = 0;
+      this.circleData.isShow = false;
+      this.circleData.title = "";
+      this.circleData.desc = "";
+      this.circleData.content = "";
+    },
     // 上传七牛云图片
     async qiniuUpload(file) {
       const datetime = new Date();
@@ -77,6 +103,8 @@ export default {
             const percent = res.total.percent; // 当前上传进度
             console.log(percent);
             // that.percent = parseInt(percent.toFixed());
+            console.log(parseInt(percent.toFixed()));
+            that.circleData.percent = parseInt(percent.toFixed());
           },
           // error: 上传错误后触发
           error(err) {
@@ -86,7 +114,8 @@ export default {
           // complete: 接收上传完成后的后端返回信息
           complete(ress) {
             console.log("上传七牛云图片成功");
-            resolve("https://img.cdn.zhengbeining.com/" + ress.key);
+            console.log(ress);
+            resolve(ress);
           },
         });
       });
@@ -100,16 +129,61 @@ export default {
             });
             return;
           }
+          let num = 0;
           if (typeof v.img == "object") {
-            await deleteQiniu(this.initData.img.slice(33));
-            let res = await this.qiniuUpload(v.img);
-            v.img = res;
+            num += 2;
           }
           if (typeof v.url == "object") {
-            await deleteQiniu(this.initData.url.slice(33));
-            let res = await this.qiniuUpload(v.url);
-            v.url = res;
+            num += 2;
           }
+          if (num) {
+            this.comments = "hssCircle";
+            this.circleData.isShow = true;
+            this.circleData.title = "正在修改";
+            this.circleData.content = "0/" + num;
+            if (typeof v.img == "object") {
+              this.circleData.desc = "正在删除原封面图";
+              let delImg = await deleteQiniu(this.initData.img.slice(33));
+              this.circleData.content = "1/" + num;
+              this.$Notice.success({
+                title: `${delImg.message}`,
+                desc: "",
+              });
+              this.circleData.desc = "正在上传新封面图";
+              let res = await this.qiniuUpload(v.img);
+              console.log(res);
+              this.circleData.content = "2/" + num;
+              this.$Notice.success({
+                title: `${res.message}`,
+                desc: "",
+              });
+              v.img = "https://img.cdn.zhengbeining.com/" + res.key;
+              if (num == 2) {
+                this.initCircle();
+              }
+            }
+            if (typeof v.url == "object") {
+              console.log("正在删除原音乐文件");
+              this.circleData.percent = 0;
+              this.circleData.desc = "正在删除原音乐文件";
+              let delUrl = await deleteQiniu(this.initData.url.slice(33));
+              this.$Notice.success({
+                title: `${delUrl.message}`,
+                desc: "",
+              });
+              this.circleData.content = num == 2 ? "1/" : "3/" + num;
+              this.circleData.desc = "正在上传新音乐文件";
+              let res = await this.qiniuUpload(v.url);
+              this.$Notice.success({
+                title: `${res.message}`,
+                desc: "",
+              });
+              this.circleData.content = num == 2 ? "2/" : "4/" + num;
+              v.url = "https://img.cdn.zhengbeining.com/" + res.key;
+              this.initCircle();
+            }
+          }
+
           updateMusic(v)
             .then((res) => {
               console.log(res);

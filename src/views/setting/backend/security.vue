@@ -12,9 +12,9 @@
 </template>
 
 <script>
-import { findOne } from "../../api/user";
+import { findOne } from "@/api/user";
 import { mapState } from "vuex";
-import baseForm from "../../components/hssComponents/form/base-form/index";
+import baseForm from "@/components/hssComponents/form/base-form/index";
 
 export default {
   components: { baseForm },

@@ -14,32 +14,47 @@
         <hss-operation :row="row" :operation="operationData"></hss-operation>
       </template>
     </hss-table>
-    <!-- <Table
-      border
-      :loading="articleList.rows && articleList.rows.length == 0"
-      :columns="columns"
-      :data="articleList.rows"
-    ></Table> -->
-    <!-- <Page
-      style="text-align: right"
-      :total="articleList.count"
-      show-total
-      show-elevator
-      @on-change="changePage"
-    /> -->
+    <!-- <hss-circle
+      :isShow="isShow"
+      :percent="percent"
+      :title="circleTitle"
+      :content="circleContent"
+    ></hss-circle> -->
+    <component
+      v-bind:is="comments"
+      :isShow="circleData.isShow"
+      :percent="circleData.percent"
+      :title="circleData.title"
+      :desc="circleData.desc"
+      :content="circleData.content"
+    ></component>
   </div>
 </template>
 
 <script>
+import { deleteQiniu } from "@/api/qiniu";
 import { mapState } from "vuex";
+import hssCircle from "../../../components/hssCircle";
 import hssTable from "../../../components/hssComponents/table";
 import hssOperation from "../../../components/hssComponents/table/operation";
-import { getArticleList, updateArticle, deleteArticle } from "../../../api/article";
+import {
+  getArticleList,
+  updateArticle,
+  deleteArticle,
+} from "../../../api/article";
 import { getTypeList } from "../../../api/type";
 export default {
-  components: { hssTable, hssOperation },
+  components: { hssTable, hssOperation, hssCircle },
   data() {
     return {
+      comments: "",
+      circleData: {
+        isShow: false,
+        percent: 0,
+        title: "",
+        desc: "",
+        content: "",
+      },
       params: {
         // is_admin: 1, //是否后台，是的话显示所有文章，包括未审核
         pageSize: 10,
@@ -79,7 +94,7 @@ export default {
               color: "red",
             };
           },
-          custom: (row) => {
+          custom: async (row) => {
             console.log(row);
             if (!this.auth.includes("DELETE_ARTICLE")) {
               this.$Message.error({
@@ -87,12 +102,35 @@ export default {
               });
               return;
             }
-            // deleteArticle(row.id).then((res) => {
-            //   this.$Message.success({
-            //     content: res.message,
-            //   });
-            //   this.getArticleList(this.params);
-            // });
+            let reg = /https:\/\/img.cdn.zhengbeining.com\/.+?(jpg|png|jpeg|gif)/g;
+            const qiniuImgs = row.content.match(reg);
+
+            if (qiniuImgs) {
+              console.log(qiniuImgs);
+              let num = 0;
+              this.comments = "hssCircle";
+              this.circleData.isShow = true;
+              this.circleData.title = "正在删除";
+              this.circleData.desc = "正在删除文章图片";
+              this.circleData.percent =
+                (num / qiniuImgs.length).toFixed(2) * 100;
+              this.circleData.content = num + "/" + qiniuImgs.length;
+              for (let i = 0; i < qiniuImgs.length; i++) {
+                await this.delQiniuImg(qiniuImgs[i]).then((res) => {
+                  console.log(res);
+                  this.circleData.content = ++num + "/" + qiniuImgs.length;
+                  this.circleData.percent =
+                    (num / qiniuImgs.length).toFixed(2) * 100;
+                });
+              }
+            }
+            deleteArticle(row.id).then((res) => {
+              this.$Message.success({
+                content: res.message,
+              });
+              this.getArticleList(this.params);
+              this.initCircle();
+            });
           },
           isShow() {
             return 1;
@@ -336,6 +374,17 @@ export default {
     ...mapState("user", ["auth"]),
   },
   methods: {
+    initCircle() {
+      this.isShow = false;
+      this.comments = "";
+      this.circleData.percent = 0;
+      this.circleData.title = "";
+      this.circleData.desc = "";
+      this.circleData.content = "";
+    },
+    async delQiniuImg(filename) {
+      await deleteQiniu(filename.slice(33));
+    },
     changeStatus(v, row) {
       console.log(v);
       console.log(row);
@@ -366,7 +415,13 @@ export default {
       row.tags.forEach((item) => {
         tagTemp.push(item.id);
       });
-      updateArticle({ ...row, is_comment: v ? 1 : 0, tags: tagTemp }).then((res) => {
+      let type_id = row.types[0].id;
+      updateArticle({
+        ...row,
+        is_comment: v ? 1 : 0,
+        tags: tagTemp,
+        type_id,
+      }).then((res) => {
         this.$Message.success({
           content: res.message,
         });
@@ -572,9 +627,9 @@ export default {
 </script>
 
 <style scoped>
-/deep/ .ivu-spin {
+/* /deep/ .ivu-spin {
   text-align: initial;
-}
+} */
 /* .aaa /deep/ .ivu-tree ul li{
     margin: 0;
 }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Layout :style="{ height: '100vh' }">
+    <Layout :style="{ height: '100vh' }" class="slider-menu">
       <Sider
         width="200"
         :collapsed-width="70"
@@ -75,14 +75,10 @@
                 </a>
                 <DropdownMenu slot="list">
                   <DropdownItem
-                    ><a href="https://www.zhengbeining.com/" target="_bank"
-                      >网站前台</a
-                    >
+                    ><a href="https://www.zhengbeining.com/" target="_bank">网站前台</a>
                   </DropdownItem>
                   <DropdownItem divided>个人信息</DropdownItem>
-                  <DropdownItem divided @click.native="logout">
-                    退出登录
-                  </DropdownItem>
+                  <DropdownItem divided @click.native="logout"> 退出登录 </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
               <Avatar size="large" shape="square" :src="avatar" />
@@ -210,8 +206,9 @@ export default {
     changeMenu(name) {
       // 判断当前跳转页面有没有在tagOpenPageList里面
       // 查询点击跳转的路由信息
+      console.log("查询点击跳转的路由信息");
       console.log(name);
-      this.$router.push({ name: name });
+      // this.$router.push({ name: name });
       return;
       let target = this.findItem(this.menuList, name);
       let tag;
@@ -230,6 +227,7 @@ export default {
       // });
     },
     change(e, role) {
+      console.log("changechange");
       if (e) {
         if (!this.roles.includes(role)) {
           this.roles.push(role);
@@ -242,9 +240,7 @@ export default {
     getBreadcrumb() {
       // console.log('[[[[[[[[]]]]]]]]')
       // console.log(this.$route.matched)
-      const matched = this.$route.matched.filter(
-        (item) => item.meta && item.meta.title
-      );
+      const matched = this.$route.matched.filter((item) => item.meta && item.meta.title);
       // console.log(
       //   this.$route.matched.filter((item) => item.meta && item.meta.title)
       // );
@@ -287,12 +283,11 @@ export default {
       // );
       if (
         that.$refs.scrollWrap.$el.scrollHeight -
-          (that.$refs.scrollWrap.$el.scrollTop +
-            that.$refs.scrollWrap.$el.offsetHeight) <
+          (that.$refs.scrollWrap.$el.scrollTop + that.$refs.scrollWrap.$el.offsetHeight) <
         100
       ) {
-        console.log("距离底部少于100px");
-        that.$bus.$emit("overScroll");
+        // console.log("距离底部少于100px");
+        // that.$bus.$emit("overScroll");
       }
       // console.log(that.$refs.scrollWrap.$el.scrollTop+that.$refs.scrollWrap.$el.offsetHeight);
       // console.log(
@@ -339,13 +334,23 @@ export default {
     // this.$router.options.routes.push(...tree);
     this.$store.dispatch("user/generateRoutes");
     console.log(this.$store.state.user.addRoutes);
-    this.menuList = this.$router.options.routes;
+    // this.menuList = this.$router.options.routes;
+    this.$router.addRoutes(this.$store.state.user.addRoutes)
+    this.menuList = this.$router.options.routes.concat(this.$store.state.user.addRoutes);
     console.log(this.menuList);
   },
 };
 </script>
 
 <style scoped>
+.slider-menu
+  /deep/
+  .ivu-menu-dark.ivu-menu-vertical
+  .ivu-menu-opened
+  .ivu-menu-submenu-has-parent-submenu
+  .ivu-menu-submenu-title {
+  background: #515a6e;
+}
 .logo {
   color: white;
   width: 100%;

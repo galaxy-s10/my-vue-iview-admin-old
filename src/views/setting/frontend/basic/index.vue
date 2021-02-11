@@ -16,8 +16,8 @@
 </template>
 
 <script>
-import hssMd from "../../../components/hssMarkdown";
-import baseForm from "../../../components/hssComponents/form/base-form/index";
+import hssMd from "@/components/hssMarkdown";
+import baseForm from "@/components/hssComponents/form/base-form/index";
 
 import { getFrontend, updateFrontend } from "@/api/frontend";
 import { mapState } from "vuex";

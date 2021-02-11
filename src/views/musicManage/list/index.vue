@@ -15,37 +15,44 @@
 
     <component
       v-bind:is="comments"
-      :request="request"
-      :fromData="columnForm"
-      :initData="qiniuData"
-      :isInit="isInit"
-      @on-cancel="onCancel"
-      @on-ok="onOk"
-      @onSubmit="onSubmit"
+      :isShow="circleData.isShow"
+      :percent="circleData.percent"
+      :title="circleData.title"
+      :desc="circleData.desc"
+      :content="circleData.content"
     ></component>
-    <!-- <hss-table v-if="tableData.list.length>0" :tableData="tableData" :columns="columns" :params="params"></hss-table> -->
   </div>
 </template>
 
 <script>
 // import { format } from "../../../../../webchat/src/utils/format";
-import { getMusicList, updateMusic, addMusic, deleteMusic } from "../../../api/music";
+import {
+  getMusicList,
+  updateMusic,
+  addMusic,
+  deleteMusic,
+} from "../../../api/music";
 import { getQiniuToken, deleteQiniu } from "../../../api/qiniu";
 import hssPopupForm from "../../../components/hssComponents/form/popup-form/index";
 import hssTable from "../../../components/hssComponents/table";
 import hssOperation from "../../../components/hssComponents/table/operation";
+import hssCircle from "@/components/hssCircle";
+
 import { mapState } from "vuex";
 export default {
-  components: { hssTable, hssOperation, hssPopupForm },
+  components: { hssTable, hssOperation, hssPopupForm, hssCircle },
   data() {
     return {
+      circleData: {
+        isShow: false,
+        percent: 0,
+        title: "",
+        desc: "",
+        content: "",
+      },
       searchRes: {},
       action: "", //1:编辑，2:新增
-      columnForm: {},
-      qiniuData: {},
       comments: "",
-      isInit: false,
-      request: {},
       linkList: [],
       // 搜索列
       searchData: [
@@ -141,16 +148,30 @@ export default {
               });
               return;
             }
+            this.comments = "hssCircle";
+            this.circleData.isShow = true;
+            this.circleData.title = "正在删除";
+            this.circleData.desc = "正在删除封面图";
+            this.circleData.content = "0/2";
             let delImg = await deleteQiniu(row.img.slice(33));
             this.$Notice.success({
               title: `${delImg.message}`,
               desc: "",
             });
+            this.circleData.percent = 0;
+            this.circleData.content = "1/2";
+            this.circleData.percent = 50;
+            this.circleData.desc = "正在删除音乐文件";
             let delUrl = await deleteQiniu(row.url.slice(33));
+            this.circleData.percent = 100;
+            this.circleData.content = "2/2";
             this.$Notice.success({
               title: `${delUrl.message}`,
               desc: "",
             });
+            setTimeout(() => {
+              this.initCircle();
+            }, 500);
             deleteMusic(row.id).then((res) => {
               this.$Message.success({
                 content: res.message,
@@ -273,6 +294,14 @@ export default {
     this.getMusicList(this.params);
   },
   methods: {
+    initCircle() {
+      this.comments = "";
+      this.circleData.percent = 0;
+      this.circleData.isShow = false;
+      this.circleData.title = "";
+      this.circleData.desc = "";
+      this.circleData.content = "";
+    },
     onSelect() {
       this.params.marker = "";
       this.linkList = [];
@@ -295,26 +324,6 @@ export default {
           content: res.message,
         });
         this.getMusicList({ ...this.params, ...this.searchRes });
-      });
-    },
-    onCancel() {
-      // this.showRole = false
-      console.log("onCancel");
-      this.roleInfo = {};
-      this.comments = "";
-    },
-    onOk() {
-      this.comments = "";
-    },
-    async onSubmit(v) {
-      console.log(v);
-      let temp = [];
-      await updateMusic(v).then((res) => {
-        console.log(res);
-        this.$Message.success({
-          content: res.message,
-        });
-        this.getMusicList({ ...this.params });
       });
     },
     onSearch(v) {
@@ -349,7 +358,6 @@ export default {
       return formatdatetime;
     },
     getMusicList(v) {
-      let that = this;
       getMusicList(v).then((res) => {
         console.log(res);
         this.linkList = res;

@@ -37,10 +37,8 @@
           </div>
         </div>
       </div>
-      <!-- <div class="drop"> -->
       <Dropdown placement="bottom-end">
         <Button size="small">
-          <!-- 下拉菜单 -->
           <Icon type="ios-arrow-down"></Icon>
         </Button>
         <DropdownMenu slot="list">
@@ -50,7 +48,6 @@
           <DropdownItem @click.native="close(4)">全部关闭</DropdownItem>
         </DropdownMenu>
       </Dropdown>
-      <!-- </div> -->
     </div>
   </div>
 </template>
@@ -72,7 +69,7 @@ export default {
   computed: {
     ...mapState({
       tagOpenPageList(state) {
-        console.log(state.app);
+        console.log(state.app.tagOpenPageList);
         return state.app.tagOpenPageList;
       },
     }),

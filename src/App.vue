@@ -23,6 +23,9 @@ export default {
       tagList(state) {
         return state.app.tagOpenPageList;
       },
+      addRoutes(state) {
+        return state.user.addRoutes;
+      },
     }),
     checkRole() {
       return (v) => {
@@ -36,7 +39,11 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["addTagOpenPage", "editTagOpenPage", "changeActiveTagOpenPage"]),
+    ...mapMutations([
+      "addTagOpenPage",
+      "editTagOpenPage",
+      "changeActiveTagOpenPage",
+    ]),
     findItem(source, target) {
       var res = false;
       function digui(source, target) {
@@ -60,9 +67,14 @@ export default {
       return res;
     },
     changeMenu(name) {
+      console.log(name);
       // 判断当前跳转页面有没有在tagOpenPageList里面
       // 查询点击跳转的路由信息
-      let target = this.findItem(this.menuList, name);
+      console.log(this.menuList);
+      console.log(this.addRoutes);
+      console.log(this.menuList.concat(this.addRoutes));
+      let target = this.findItem(this.menuList.concat(this.addRoutes), name);
+      console.log(target);
       let tag;
       let bool = utils.exist(this.tagList, name);
       if (!bool) {

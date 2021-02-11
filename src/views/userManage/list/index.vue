@@ -130,17 +130,12 @@ export default {
           name: "编辑",
           type: "CUSTOM", //CUSTOM（自定义）、ROUTER（路由方式）、DELETE（删除按钮）、STATUS（双状态切换）
           custom: async (row) => {
-            console.log(row);
-            console.log(this.auth.includes("UPDATE_USER"));
             if (!this.auth.includes("UPDATE_USER")) {
               this.$Message.error({
                 content: "你没有权限修改用户!",
               });
               return;
             }
-            console.log("rowrow");
-            console.log(row);
-            console.log({ ...row });
             this.editRole({ ...row });
           },
           // 是否显示
@@ -157,7 +152,6 @@ export default {
             };
           },
           custom: (row) => {
-            console.log(row);
             if (!this.auth.includes("DELETE_USER")) {
               this.$Message.error({
                 content: "你没有权限删除用户!",
@@ -255,7 +249,6 @@ export default {
               role.forEach((item) => {
                 temp.push(h("Tag", [item.parent + "-" + item.role_name]));
               });
-              console.log(role);
               role = temp;
             } else {
               role = "无";
@@ -275,7 +268,6 @@ export default {
           title: "收到赞",
           align: "center",
           render: (h, params) => {
-            console.log(params);
             // if (!params.row.children) {
             return h("span", params.row.stars.length);
           },
@@ -285,7 +277,6 @@ export default {
           width: 100,
           align: "center",
           render: (h, params) => {
-            console.log(params.row.status);
             // this.status = params.row.status == 1 ? true : false;
             // if (params.row.status == 1) {
             return h("iSwitch", {
@@ -340,20 +331,17 @@ export default {
   },
   methods: {
     onCancel() {
-      console.log("onCancel");
       this.roleInfo = {};
       this.comments = "";
       this.allAuth = [];
       this.currentAuth = [];
     },
     async onSubmit(v) {
-      console.log(v);
       let temp = [];
       v.roles.forEach((item) => {
         temp.push(item.id);
       });
       await updateUser({ ...v, roles: temp }).then((res) => {
-        console.log(res);
         this.$Message.success({
           content: res.message,
         });

@@ -84,9 +84,11 @@ export default {
   },
   async created() {
     console.log(this.$route);
+    console.log(this.$route.params.id)
     if (!this.$route.params.id) {
       return;
     }
+    console.log('00')
     await getTagList({ nowPage: 1, pageSize: 100 }).then((res) => {
       this.tagList = res.rows;
     });

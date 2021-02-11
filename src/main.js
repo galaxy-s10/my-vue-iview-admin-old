@@ -10,7 +10,10 @@ import Vue from 'vue'
 import App from './App.vue';
 import iView from 'iview';
 import axios from "axios";
+import less from 'less'
 import * as echarts from 'echarts';
+
+
 
 import 'iview/dist/styles/iview.css';
 
@@ -22,7 +25,7 @@ Vue.prototype.$http = request
 // console.log(request({
 //   url: '/api/log/list',
 //   method: 'get',
-  
+
 // }))
 import router from './router'
 import store from './store'
@@ -32,12 +35,12 @@ import './permission'
 
 import plugins from './libs/plugins'
 Vue.prototype.$bus = new Vue()
-console.log(echarts);
 Vue.prototype.$echarts = echarts
 
 
 Vue.use(iView);
 Vue.use(plugins);
+Vue.use(less)
 
 Vue.config.productionTip = false
 

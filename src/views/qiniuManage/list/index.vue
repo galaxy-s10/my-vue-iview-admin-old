@@ -22,7 +22,7 @@
       @on-ok="onOk"
       @onSubmit="onSubmit"
     ></component>
-    <!-- <i-button @click="insert">获取所有七牛云服务器文件</i-button> -->
+    <i-button @click="insert">获取所有七牛云服务器文件</i-button>
   </div>
 </template>
 
@@ -278,9 +278,9 @@ export default {
         temp.push(rows[i]);
       }
       console.dir(temp);
-      for (let i = 0; i < temp.length; i++) {
-        await insertQiniu(temp[i]);
-      }
+      // for (let i = 0; i < temp.length; i++) {
+      //   await insertQiniu(temp[i]);
+      // }
     },
     // 格式化文件大小
     formatFsize(val) {

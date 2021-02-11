@@ -1,8 +1,7 @@
 // import { getAuth } from "@/api/auth";
 // import { getRoleList } from "../../../api/role";
 import { getAuth } from "../../../api/roleauth";
-import { roleRoutes } from '../../../router/router';
-
+import router, { roleRoutes } from '../../../router/router';
 import { login, getUserInfo } from "@/api/user";
 import cache from '@/libs/cache'
 const user = {
@@ -12,7 +11,7 @@ const user = {
     state: () => ({
         token: "",
         remember: false,    // 七天内免登陆
-        role: [],
+        roles: [],
         auth: [],
         username: "",
         id: "",
@@ -33,16 +32,15 @@ const user = {
             cache.setStorageExt("token", token, exp);
         },
         setUser(state, payload) {
-            const { id, username, role, status, avatar, title } = payload
+            const { id, username, status, avatar, title } = payload
             state.id = id
             state.username = username
-            state.role = role
             state.avatar = avatar
             state.title = title
             state.status = status
         },
         setRole(state, payload) {
-            state.role = payload
+            state.roles = payload
         },
         setAuth(state, payload) {
             state.auth = payload
@@ -50,10 +48,8 @@ const user = {
 
     },
     actions: {
-        generateRoutes({ commit, state }, val) {
-            console.log('generateRoutesgenerateRoutes');
-            // console.log(roleRoutes)
-            console.log(state)
+        // 生成权限路由
+        generateRoutes({ commit, state }) {
             // 比较两数组是否有交集(返回true代表有交集)
             function hasMixin(a, b) {
                 return a.length + b.length !== new Set([...a, ...b]).size
@@ -85,11 +81,8 @@ const user = {
 
                 return res
             }
-            let accessRoutes = filterAsyncRoutes(roleRoutes, state.role)
-            console.log(accessRoutes)
-            accessRoutes.forEach(item=>{
-                console.log(item.name);
-            })
+            let accessRoutes = filterAsyncRoutes(roleRoutes, state.roles)
+            router.addRoutes(accessRoutes)
             commit('setRoutes', accessRoutes)
         },
         login({ state }, userInfo) {
@@ -107,6 +100,7 @@ const user = {
             return new Promise((resolve, reject) => {
                 getUserInfo().then(res => {
                     const { userInfo } = res
+                    console.log(userInfo)
                     commit('setUser', userInfo)
                     if (res.code == 0) {
                         reject('验证失败，请重新登录。')

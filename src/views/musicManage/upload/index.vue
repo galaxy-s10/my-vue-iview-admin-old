@@ -8,15 +8,21 @@
       @onSubmit="onSubmit"
     >
     </base-form>
-    <!-- <div v-else>请在音乐列表选择要编辑的音乐</div> -->
-    <!-- <i-button @click="confirm">修改</i-button> -->
-    <!-- <markdown ref="md" v-if="this.form.content != null" /> -->
+    <component
+      v-bind:is="comments"
+      :isShow="circleData.isShow"
+      :percent="circleData.percent"
+      :title="circleData.title"
+      :desc="circleData.desc"
+      :content="circleData.content"
+    ></component>
   </div>
 </template>
 
 <script>
 import hssUpload from "../../../components/upload/index";
 import baseForm from "../../../components/hssComponents/form/base-form/index";
+import hssCircle from "@/components/hssCircle";
 import { getTypeList } from "../../../api/type";
 import { findMusic, addMusic, updateMusic } from "../../../api/music";
 import { getQiniuToken, deleteQiniu } from "../../../api/qiniu";
@@ -24,9 +30,17 @@ import { mapState } from "vuex";
 import * as qiniu from "qiniu-js";
 
 export default {
-  components: { baseForm, hssUpload },
+  components: { baseForm, hssUpload, hssCircle },
   data() {
     return {
+      comments: "",
+      circleData: {
+        isShow: false,
+        percent: 0,
+        title: "",
+        desc: "",
+        content: "",
+      },
       tagList: [],
       form: {
         id: "",
@@ -63,6 +77,7 @@ export default {
             uploaOption: {
               maxSize: 1024 * 10,
               fileNameLength: 20,
+              format: ["jpg", "jpeg", "png", "mpeg", "mp4", "gif"],
             },
             required: true,
           },
@@ -100,6 +115,14 @@ export default {
     }),
   },
   methods: {
+    initCircle() {
+      this.comments = "";
+      this.circleData.percent = 0;
+      this.circleData.isShow = false;
+      this.circleData.title = "";
+      this.circleData.desc = "";
+      this.circleData.content = "";
+    },
     // 上传七牛云文件
     async qiniuUpload(file) {
       const datetime = new Date();
@@ -113,13 +136,14 @@ export default {
       const config = { useCdnDomain: true };
       const observable = qiniu.upload(file, key, uptoken, putExtra, config);
       const that = this;
+
       return new Promise(function (resolve, reject) {
         const subscription = observable.subscribe({
           // next: 接收上传进度信息的回调函数
           next(res) {
             const percent = res.total.percent; // 当前上传进度
             console.log(percent);
-            // that.percent = parseInt(percent.toFixed());
+            that.circleData.percent = parseInt(percent.toFixed());
           },
           // error: 上传错误后触发
           error(err) {
@@ -128,7 +152,6 @@ export default {
           },
           // complete: 接收上传完成后的后端返回信息
           complete(ress) {
-            console.log("上传七牛云图片成功");
             resolve("https://img.cdn.zhengbeining.com/" + ress.key);
           },
         });
@@ -141,20 +164,25 @@ export default {
           // return;
           // if (typeof v.img == "object") {
           //   await deleteQiniu(this.initData.img.slice(33));
+          this.comments = "hssCircle";
+          this.circleData.isShow = true;
+          this.circleData.title = "正在上传";
+          this.circleData.desc = "正在上传封面图";
+          this.circleData.content = "0/2";
           let upImg = await this.qiniuUpload(v.img);
           console.log(upImg);
           v.img = upImg;
+          this.circleData.percent = 0;
+          this.circleData.content = "1/2";
+          this.circleData.desc = "正在上传音乐文件";
+          this.circleTitle = "正在上传音乐文件";
           let upUrl = await this.qiniuUpload(v.url);
+          this.circleData.content = "2/2";
+          setTimeout(() => {
+            this.initCircle();
+          }, 500);
           v.url = upUrl;
           console.log(upUrl);
-          //   console.log(res);
-          //   v.img = res;
-          // }
-          // if (typeof v.url == "object") {
-          //   await deleteQiniu(this.initData.url.slice(33));
-          //   let res = await this.qiniuUpload(v.url);
-          //   v.url = res;
-          // }
           addMusic(v)
             .then((res) => {
               console.log(res);

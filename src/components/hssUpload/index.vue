@@ -17,9 +17,8 @@
         </div>
       </div>
     </Upload>
-    <div v-if="uploadFile && uploadFile.url != ''">
-      已选文件: {{ uploadFile.name }}
-    </div>
+    <!-- <div v-if="uploadFile && uploadFile.url != ''"> -->
+    <div v-if="uploadFile || file">已选文件: {{ uploadFile.name || file }}</div>
   </div>
 </template>
 
@@ -31,6 +30,7 @@ export default {
       type: Object,
       default: () => {},
     },
+    file: "",
   },
   model: {
     prop: "uploadFile",

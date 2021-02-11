@@ -172,7 +172,7 @@ export default {
     },
     async getVisitInfo() {
       let params = {};
-      params.startDate = this.getDay(-7);
+      params.startDate = this.getDay(-6);
       params.endDate = this.getDay(0);
       console.log(params);
       console.log(this);

@@ -19,10 +19,12 @@
     <div v-if="tempFile && tempFile.name">
       <img :src="tempFile.url" style="max-width: 200px" :alt="tempFile.name" />
       <div>
-        <Button icon="ios-cloud-upload-outline" @click="submitUpload">上传</Button>
+        <Button icon="ios-cloud-upload-outline" @click="submitUpload"
+          >上传</Button
+        >
       </div>
     </div>
-    <Modal
+    <!-- <Modal
       :value="percent != 0"
       title="正在上传"
       :closable="false"
@@ -32,20 +34,32 @@
       style="text-align: center"
     >
       <i-circle :percent="percent">
-        <span class="demo-Circle-inner" style="font-size: 24px">{{ percent }}%</span>
+        <span class="demo-Circle-inner" style="font-size: 24px"
+          >{{ percent }}%</span
+        >
       </i-circle>
-    </Modal>
+    </Modal> -->
+    <component
+      v-bind:is="comments"
+      :isShow="isShow"
+      :percent="circleData.percent"
+      :title="circleData.title"
+      :desc="circleData.desc"
+      :content="circleData.content"
+    ></component>
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
-import { getQiniuToken, deleteQiniu } from "@/api/qiniu";
+import { getQiniuToken } from "@/api/qiniu";
+import hssCircle from "@/components/hssCircle";
+
 // 引入七牛云
 import * as qiniu from "qiniu-js";
 
 export default {
-  components: {},
+  components: { hssCircle },
   props: {
     imgList: {
       type: Array,
@@ -56,12 +70,20 @@ export default {
   },
   data() {
     return {
+      comments: "",
+      isShow: false,
+      circleData: {
+        percent: 0,
+        title: "",
+        desc: "",
+        content: "",
+      },
       uploadLoading: true,
       uploadFile: "",
       uploaOption: {
-        multiple: true,
+        multiple: false,
         type: "drag",
-        format: ["jpg", "jpeg", "png", "mpeg", "mp4"],
+        format: ["jpg", "jpeg", "png", "mpeg", "mp4", "gif"],
         // format: [],
         maxSize: 1024 * 10, //单位kb
       },
@@ -74,9 +96,25 @@ export default {
       user_id: (state) => state.user.id,
     }),
   },
+  mounted() {
+    // this.comments = "hssCircle";
+    // this.percent = "100";
+    // this.isShow = true;
+    // this.circleData.percent = 10;
+    // this.circleData.title = "22";
+    // this.circleData.desc = "sfsdf";
+    // this.circleData.content = "1/3";
+  },
   methods: {
     submitUpload() {
       this.qiniuUpload(this.uploadFile);
+    },
+    init() {
+      this.comments = "";
+      this.isShow = false;
+      this.percent = 0;
+      this.circleTitle = "";
+      this.circleContent = "";
     },
     // 上传七牛云图片
     async qiniuUpload(file) {
@@ -91,14 +129,19 @@ export default {
       const config = { useCdnDomain: true };
       const observable = qiniu.upload(file, key, uptoken, putExtra, config);
       let that = this;
+      this.isShow = true;
+      this.circleTitle = "正在上传";
+      this.comments = "hssCircle";
       return new Promise(function (resolve, reject) {
         const subscription = observable.subscribe({
           // next: 接收上传进度信息的回调函数
           next(res) {
             const percent = res.total.percent; // 当前上传进度
-            that.$nextTick(() => {
-              that.percent = parseInt(percent.toFixed());
-            });
+            // that.$nextTick(() => {
+            that.percent = parseInt(percent.toFixed());
+            console.log(parseInt(percent.toFixed()));
+            that.circleContent = parseInt(percent.toFixed()) + "%";
+            // });
           },
           // error: 上传错误后触发
           error(err) {
@@ -111,7 +154,7 @@ export default {
               duration: 2,
             });
             that.$nextTick(() => {
-              that.percent = 0;
+              that.init();
               that.tempFile = "";
             });
           },
