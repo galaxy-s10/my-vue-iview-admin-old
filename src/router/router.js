@@ -200,7 +200,7 @@ export const roleRoutes = [{
     {
         name: "updateArticle",
         path: '/articleManage/updateArticle/:id',
-        // hidden:true,
+        hidden:true,
         component: () => import('@/views/articleManage/update/index'),
         meta: {
             title: '修改文章',
@@ -341,6 +341,7 @@ export const roleRoutes = [{
     {
         name: "updateMusic",
         path: '/musicManage/update/:id',
+        hidden:true,
         component: () => import('@/views/musicManage/update/index'),
         meta: {
             title: '修改音乐',

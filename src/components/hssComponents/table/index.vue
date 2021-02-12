@@ -103,7 +103,7 @@ export default {
       console.log(v);
       // this.changePage(1);
       // console.log(this.paramsData);
-      // this.searchResult = v;
+      this.searchResult = v;
       // this.changePage(1, v);
       console.log({ ...v });
       this.$emit("onSearch", v);

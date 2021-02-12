@@ -169,6 +169,13 @@ export default {
               required: true,
             },
             {
+              name: "封面图",
+              type: "Upload",
+              prop: "img",
+              placeholder: "请选择封面图",
+              required: true,
+            },
+            {
               name: "发布时间",
               type: "Date",
               prop: "createdAt",
@@ -176,14 +183,14 @@ export default {
               isDate: true,
               required: true,
             },
-            {
-              name: "最后更新",
-              type: "Date",
-              prop: "updatedAt",
-              placeholder: "请选择最后更新时间",
-              isDate: true,
-              required: true,
-            },
+            // {
+            //   name: "最后更新",
+            //   type: "Date",
+            //   prop: "updatedAt",
+            //   placeholder: "请选择最后更新时间",
+            //   isDate: true,
+            //   required: true,
+            // },
           ],
         };
         let tagTemp1 = [];
@@ -192,8 +199,7 @@ export default {
         });
         // let deepTags = JSON.parse(JSON.stringify(res.detail.tags));
         res.detail.tags = tagTemp1;
-        this.initData = res.detail;
-        this.initData.type = res.detail.types[0].id;
+        
         // console.log(this.initData);
         this.form.id = res.detail.id;
         this.form.title = res.detail.title;
@@ -212,6 +218,7 @@ export default {
           // tagTemp.push(item.id);
         });
         // console.log(tagTemp);
+        // 标签
         this.columnForm.list[4].data = tagTemp;
 
         // 保存文章所有图片
@@ -220,6 +227,9 @@ export default {
         if (res.detail.img) {
           this.headerImg.push({ name: "", url: res.detail.img });
         }
+        console.log(res.detail)
+        this.initData = res.detail;
+        this.initData.type = res.detail.types[0].id;
       })
       .catch((err) => {
         console.log(err);

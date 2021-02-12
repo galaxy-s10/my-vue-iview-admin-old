@@ -41,7 +41,7 @@
     </Modal> -->
     <component
       v-bind:is="comments"
-      :isShow="isShow"
+      :isShow="circleData.isShow"
       :percent="circleData.percent"
       :title="circleData.title"
       :desc="circleData.desc"
@@ -71,8 +71,8 @@ export default {
   data() {
     return {
       comments: "",
-      isShow: false,
       circleData: {
+        isShow: false,
         percent: 0,
         title: "",
         desc: "",
@@ -109,12 +109,13 @@ export default {
     submitUpload() {
       this.qiniuUpload(this.uploadFile);
     },
-    init() {
+    initCircle() {
       this.comments = "";
-      this.isShow = false;
-      this.percent = 0;
-      this.circleTitle = "";
-      this.circleContent = "";
+      this.circleData.percent = 0;
+      this.circleData.isShow = false;
+      this.circleData.title = "";
+      this.circleData.desc = "";
+      this.circleData.content = "";
     },
     // 上传七牛云图片
     async qiniuUpload(file) {
@@ -129,18 +130,18 @@ export default {
       const config = { useCdnDomain: true };
       const observable = qiniu.upload(file, key, uptoken, putExtra, config);
       let that = this;
-      this.isShow = true;
-      this.circleTitle = "正在上传";
       this.comments = "hssCircle";
+      this.circleData.isShow = true;
+      this.circleData.title = "正在上传";
+      this.circleData.desc = "正在上传文件";
+      this.circleData.content = "0/1";
       return new Promise(function (resolve, reject) {
         const subscription = observable.subscribe({
           // next: 接收上传进度信息的回调函数
           next(res) {
             const percent = res.total.percent; // 当前上传进度
             // that.$nextTick(() => {
-            that.percent = parseInt(percent.toFixed());
-            console.log(parseInt(percent.toFixed()));
-            that.circleContent = parseInt(percent.toFixed()) + "%";
+            that.circleData.percent = parseInt(percent.toFixed());
             // });
           },
           // error: 上传错误后触发
@@ -149,14 +150,17 @@ export default {
           },
           // complete: 接收上传完成后的后端返回信息
           complete(ress) {
+            that.circleData.content = "1/1";
             that.$Message.success({
               content: ress.message,
               duration: 2,
             });
-            that.$nextTick(() => {
-              that.init();
+            // that.$nextTick(() => {
+            setTimeout(() => {
+              that.initCircle();
               that.tempFile = "";
-            });
+            }, 500);
+            // });
           },
         });
       });

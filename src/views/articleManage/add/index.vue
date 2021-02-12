@@ -8,8 +8,14 @@
       @onSubmit="onSubmit"
     >
     </base-form>
-    <!-- <i-button @click="confirm">修改</i-button> -->
-    <!-- <markdown ref="md" v-if="this.form.content != null" /> -->
+    <component
+      v-bind:is="comments"
+      :isShow="circleData.isShow"
+      :percent="circleData.percent"
+      :title="circleData.title"
+      :desc="circleData.desc"
+      :content="circleData.content"
+    ></component>
   </div>
 </template>
 
@@ -17,6 +23,8 @@
 // import markdown from "../../../components/markdown/index";
 import hssUpload from "../../../components/upload/index";
 import baseForm from "../../../components/hssComponents/form/base-form/index";
+import hssCircle from "../../../components/hssCircle";
+
 import { findArticle, editArticle, addArticle } from "@/api/article";
 import { getTagList, updateTag, deleteTag, addTag } from "@/api/tag";
 import { getTypeList } from "../../../api/type";
@@ -26,21 +34,18 @@ import { mapState } from "vuex";
 
 // import { editarticle } from '../../../../../vueblog-client/src/api/article';
 export default {
-  components: { baseForm, hssUpload },
+  components: { baseForm, hssUpload, hssCircle },
   data() {
     return {
+      comments: "",
+      circleData: {
+        isShow: false,
+        percent: 0,
+        title: "",
+        desc: "",
+        content: "",
+      },
       tagList: [],
-      // form: {
-      //   id: "",
-      //   title: "",
-      //   tags: "",
-      //   type: "",
-      //   content: "",
-      //   img: "",
-      //   createdAt: "",
-      //   updatedAt: "",
-      // },
-      // columnForm: {},
       columnForm: {
         submitBtn: true,
         list: [
@@ -128,21 +133,21 @@ export default {
             },
             // required: true,
           },
-          {
-            name: "发布时间",
-            type: "Date",
-            mode: "datetime",
-            prop: "createdAt",
-            placeholder: "请选择发布时间",
-            isDate: true,
-            // required: true,
-          },
+          // {
+          //   name: "发布时间",
+          //   type: "Date",
+          //   mode: "datetime",
+          //   prop: "createdAt",
+          //   placeholder: "请选择发布时间",
+          //   isDate: true,
+          //   // required: true,
+          // },
         ],
       },
       initData: {
         status: 1,
         is_comment: 1,
-        tags:[]
+        tags: [],
       },
       // init: false,
       init: true,
@@ -186,6 +191,7 @@ export default {
           // next: 接收上传进度信息的回调函数
           next(res) {
             const percent = res.total.percent; // 当前上传进度
+            that.circleData.percent = parseInt(percent.toFixed());
           },
           // error: 上传错误后触发
           error(err) {
@@ -194,17 +200,34 @@ export default {
           },
           // complete: 接收上传完成后的后端返回信息
           complete(ress) {
-            resolve("https://img.cdn.zhengbeining.com/" + ress.key);
+            resolve(ress);
           },
         });
       });
+    },
+    initCircle() {
+      this.comments = "";
+      this.circleData.percent = 0;
+      this.circleData.isShow = false;
+      this.circleData.title = "";
+      this.circleData.desc = "";
+      this.circleData.content = "";
     },
     onSubmit() {
       this.$refs.hssBaseForm.submit(async (v) => {
         if (v) {
           if (typeof v.img == "object") {
+            this.comments = "hssCircle";
+            this.circleData.isShow = true;
+            this.circleData.title = "正在上传";
+            this.circleData.desc = "正在上传封面图";
+            this.circleData.content = "0/1";
             let res = await this.qiniuUpload(v.img);
-            v.img = res;
+            this.circleData.content = "1/1";
+            setTimeout(() => {
+              this.initCircle();
+            }, 500);
+            v.img = "https://img.cdn.zhengbeining.com/" + res.key;
           }
           addArticle(v)
             .then((res) => {

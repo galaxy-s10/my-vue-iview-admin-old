@@ -19,6 +19,7 @@
     </Upload>
     <!-- <div v-if="uploadFile && uploadFile.url != ''"> -->
     <div v-if="uploadFile || file">已选文件: {{ uploadFile.name || file }}</div>
+    <div v-else>暂未选择文件</div>
   </div>
 </template>
 

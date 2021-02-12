@@ -102,25 +102,31 @@ export default {
               });
               return;
             }
+            // return
             let reg = /https:\/\/img.cdn.zhengbeining.com\/.+?(jpg|png|jpeg|gif)/g;
             const qiniuImgs = row.content.match(reg);
-
+            let allImgs = [];
+            if (row.img) {
+              allImgs.push(row.img);
+            }
             if (qiniuImgs) {
-              console.log(qiniuImgs);
+              allImgs.push(qiniuImgs);
+            }
+            if (allImgs) {
+              console.log(allImgs);
               let num = 0;
               this.comments = "hssCircle";
               this.circleData.isShow = true;
               this.circleData.title = "正在删除";
               this.circleData.desc = "正在删除文章图片";
-              this.circleData.percent =
-                (num / qiniuImgs.length).toFixed(2) * 100;
-              this.circleData.content = num + "/" + qiniuImgs.length;
-              for (let i = 0; i < qiniuImgs.length; i++) {
-                await this.delQiniuImg(qiniuImgs[i]).then((res) => {
+              this.circleData.percent = (num / allImgs.length).toFixed(2) * 100;
+              this.circleData.content = num + "/" + allImgs.length;
+              for (let i = 0; i < allImgs.length; i++) {
+                await this.delQiniuImg(allImgs[i]).then((res) => {
                   console.log(res);
-                  this.circleData.content = ++num + "/" + qiniuImgs.length;
+                  this.circleData.content = ++num + "/" + allImgs.length;
                   this.circleData.percent =
-                    (num / qiniuImgs.length).toFixed(2) * 100;
+                    (num / allImgs.length).toFixed(2) * 100;
                 });
               }
             }
@@ -153,7 +159,7 @@ export default {
           // width: 150,
           align: "center",
           render: (h, params) => {
-            console.log(params);
+            // console.log(params);
             return h("span", params.row.title);
           },
         },
@@ -162,7 +168,7 @@ export default {
           // width: 150,
           align: "center",
           render: (h, params) => {
-            console.log(params);
+            // console.log(params);
             return h("span", params.row.types[0].name);
           },
         },
@@ -189,7 +195,7 @@ export default {
           // width: 100,
           align: "center",
           render: (h, params) => {
-            console.log(params.row);
+            // console.log(params.row);
             return h("span", params.row.users[0].username);
           },
         },
@@ -214,7 +220,7 @@ export default {
           // width: 100,
           align: "center",
           render: (h, params) => {
-            console.log(params.row.status);
+            // console.log(params.row.status);
             // this.status = params.row.status == 1 ? true : false;
             // if (params.row.status == 1) {
             return h("iSwitch", {
@@ -250,7 +256,7 @@ export default {
           align: "center",
           render: (h, params) => {
             let that = this;
-            console.log(params.row.is_comment);
+            // console.log(params.row.is_comment);
             // this.is_comment = params.row.is_comment == 1 ? true : false;
             // if (params.row.is_comment == 1) {
             let aaa = { ...params.row };
@@ -277,7 +283,7 @@ export default {
                     进行修改
                    */
                   params.row.is_comment = is_comment ? 1 : 0;
-                  console.log("on-changeon-change");
+                  // console.log("on-changeon-change");
                   setTimeout(() => {
                     that.changeIsComment(is_comment, aaa);
                   }, 1000);
@@ -511,6 +517,7 @@ export default {
       console.log(v);
       console.log({ ...v });
       let res = await getArticleList(v);
+      console.log(res)
       this.articleList = res;
       this.params.count = res.count;
     },

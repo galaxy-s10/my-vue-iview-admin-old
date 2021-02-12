@@ -46,11 +46,16 @@ router.beforeEach(async (to, from, next) => {
       }
     }
   } else {
-    if (whiteList.indexOf(to.path) != -1) {
+    if (to.path == '/login') {
       next()
     } else {
       next(`/login?redirect=${to.path}`)
     }
+    // if (whiteList.indexOf(to.path) != -1) {
+    //   next()
+    // } else {
+    //   next(`/login?redirect=${to.path}`)
+    // }
   }
 })
 

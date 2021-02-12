@@ -6,15 +6,19 @@
         :prop="item.prop"
         v-for="(item, index) in fromData.list"
         :key="index"
+        :style="{ display: item.display }"
       >
         <template>
           <div v-if="item.render">
-            <hss-render :render="item.render" :row="item" :index="index"></hss-render>
+            <hss-render
+              :render="item.render"
+              :row="item"
+              :index="index"
+            ></hss-render>
           </div>
           <!-- 输入框 -->
           <Input
             v-if="item.type == 'Input'"
-            :style="{ display: item.display }"
             clearable
             :number="item.isNumber"
             :disabled="item.disabled"
@@ -42,10 +46,16 @@
             }}</Radio>
           </RadioGroup>
           <!-- 多选框 -->
-          <CheckboxGroup v-if="item.type == 'Check'" v-model="fromCol[item.prop]">
-            <Checkbox :label="el.value" v-for="el in item.data" :key="el.value">{{
-              el.label
-            }}</Checkbox>
+          <CheckboxGroup
+            v-if="item.type == 'Check'"
+            v-model="fromCol[item.prop]"
+          >
+            <Checkbox
+              :label="el.value"
+              v-for="el in item.data"
+              :key="el.value"
+              >{{ el.label }}</Checkbox
+            >
           </CheckboxGroup>
           <!-- 树结构 -->
           <hss-tree
@@ -181,17 +191,20 @@ export default {
           console.log("表单验证失败");
           let that = this;
           function digui(j) {
-            that.$refs["hssForm"].validateField(that.fromData.list[j].prop, (valid) => {
-              if (valid) {
-                that.$Message.error(valid);
-                console.log("cb");
-                // console.log(cb)
-                cb(false);
-              } else {
-                console.log(that.fromData.list[j].prop);
-                digui(j + 1);
+            that.$refs["hssForm"].validateField(
+              that.fromData.list[j].prop,
+              (valid) => {
+                if (valid) {
+                  that.$Message.error(valid);
+                  console.log("cb");
+                  // console.log(cb)
+                  cb(false);
+                } else {
+                  console.log(that.fromData.list[j].prop);
+                  digui(j + 1);
+                }
               }
-            });
+            );
           }
 
           digui(0);
@@ -256,8 +269,14 @@ export default {
                 // trigger: "blur",
                 message:
                   item.name +
-                  `必须是${item.isNumber ? "数字" : item.isDate ? "日期" : "字符串"}类型`,
-                type: item.isNumber ? "number" : item.isDate ? "date" : "string",
+                  `必须是${
+                    item.isNumber ? "数字" : item.isDate ? "日期" : "字符串"
+                  }类型`,
+                type: item.isNumber
+                  ? "number"
+                  : item.isDate
+                  ? "date"
+                  : "string",
               },
             ];
             // if (item.isNumber) {

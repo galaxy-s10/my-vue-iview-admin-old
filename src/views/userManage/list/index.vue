@@ -33,7 +33,7 @@ import hssOperation from "../../../components/hssComponents/table/operation";
 import hssPopupForm from "../../../components/hssComponents/form/popup-form/index";
 
 import utils from "../../../libs/utils";
-import { getUserList, updateUser, updateUserStatus, deleteUser } from "../../../api/user";
+import { getUserList, updateUserAndRole, updateUserStatus, deleteUser } from "../../../api/user";
 import {
   addRole,
   getRoleList,
@@ -341,7 +341,7 @@ export default {
       v.roles.forEach((item) => {
         temp.push(item.id);
       });
-      await updateUser({ ...v, roles: temp }).then((res) => {
+      await updateUserAndRole({ ...v, roles: temp }).then((res) => {
         this.$Message.success({
           content: res.message,
         });
@@ -604,7 +604,7 @@ export default {
       user.roles.forEach((item) => {
         temp.push(item.id);
       });
-      updateUser({ ...user, status: user.status == 1 ? 0 : 1, roles: temp })
+      updateUserAndRole({ ...user, status: user.status == 1 ? 0 : 1, roles: temp })
         .then((res) => {
           this.$Message.success({
             content: res.message,

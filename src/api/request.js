@@ -40,7 +40,27 @@ service.interceptors.response.use(
   },
   error => {
     NProgress.done()
-    if (error.response && error.response.status != 500) {
+    console.log(error)
+    console.log(error.response)
+    console.log(error.response.status)
+    // 服务器会返回400系列状态码：
+    // 400参数错误
+    // 401授权错误
+    // 403权限不足
+    // 404未找到
+    let whiteList = ['400', '401', '403', '404']
+    if (error && error.response && (whiteList.indexOf(error.response.status + '') == -1)) {
+      console.log(error.response)
+      Message.error({
+        content: error.response.status + "：" + error.response.data
+      })
+      if (router.currentRoute.path != '/login') {
+        router.push('/login')
+      }
+      return
+    }
+    if (error.response) {
+      // if (error.response && error.response.status != 500) {
       if (error.response.status == 401) {
         // if (error.response.status == 401 || error.response.status == 403) {
         cache.clearStorage("token")

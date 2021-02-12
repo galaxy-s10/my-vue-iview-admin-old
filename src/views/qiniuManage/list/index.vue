@@ -22,7 +22,21 @@
       @on-ok="onOk"
       @onSubmit="onSubmit"
     ></component>
-    <i-button @click="insert">获取所有七牛云服务器文件</i-button>
+    <!-- <i-button @click="insert">获取所有七牛云服务器文件</i-button> -->
+    <Modal
+      v-model="modal2"
+      :mask-closable="false"
+      @on-cancel="closeModal2"
+      width="360"
+    >
+      <p slot="header">预览</p>
+      <div>
+        <img :src="previewSrc" alt="" width="100%" />
+      </div>
+      <div slot="footer">
+        <Button @click="closeModal2">关闭</Button>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -44,6 +58,8 @@ export default {
   components: { hssTable, hssOperation, hssPopupForm },
   data() {
     return {
+      previewSrc: "",
+      modal2: false,
       flag: true, //是否可加载下一页
       action: "", //1:编辑，2:新增
       columnForm: {},
@@ -65,6 +81,14 @@ export default {
           placeholder: "文件名/类型",
           width: 200,
         },
+        // {
+        //   type: "Date",
+        //   key: "createdAt",
+        //   name: "创建时间",
+        //   format: "yyyy-MM-dd",
+        //   placeholder: "请选择创建时间",
+        //   width: 200,
+        // },
         {
           type: "Date",
           key: "updatedAt",
@@ -138,7 +162,7 @@ export default {
               ],
             };
             this.request = {
-              title: "编辑标签",
+              title: "编辑",
               size: "centre",
             };
             this.isInit = true;
@@ -169,7 +193,7 @@ export default {
               this.$Message.success({
                 content: res.message,
               });
-              this.getQiniuList({ ...this.params, marker: "" });
+              this.getQiniuList({ ...this.params, ...this.searchRes });
               // .then((res) => {
               //   this.qiniuList = res;
               // });
@@ -194,7 +218,8 @@ export default {
               "span",
               {
                 attrs: {
-                  style: "overflow:hidden;text-overflow:ellipsis;white-space: nowrap;",
+                  style:
+                    "overflow:hidden;text-overflow:ellipsis;white-space: nowrap;",
                 },
               },
               params.row.key
@@ -212,6 +237,18 @@ export default {
                   icon: "md-eye",
                   type: "info",
                   size: "small",
+                },
+                on: {
+                  click: () => {
+                    console.log(params.row.key);
+                    this.modal2 = true;
+                    this.previewSrc =
+                      "https://img.cdn.zhengbeining.com/" + params.row.key;
+                  },
+                  // "on-change": (status) => {
+                  //   console.log(params.row);
+                  //   console.log(status);
+                  // },
                 },
               },
               "预览"
@@ -265,6 +302,10 @@ export default {
     // this.QiniuList = res;
   },
   methods: {
+    closeModal2() {
+      this.modal2 = false;
+      this.previewSrc = "";
+    },
     async insert() {
       let res = await getAllQiniuData();
       let rows = res.respInfo.data.items;
@@ -310,7 +351,7 @@ export default {
           this.$Message.success({
             content: res.message,
           });
-          this.getQiniuList({ ...this.params });
+          this.getQiniuList({ ...this.params, ...this.searchRes });
         });
       } catch (err) {
         console.log(err);

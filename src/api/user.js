@@ -41,6 +41,16 @@ export function findOne(id) {
   })
 }
 
+export function findDuplicate(id, username) {
+  return request({
+    url: '/api/user/findDuplicate',
+    method: 'get',
+    params: {
+      id, username
+    }
+  })
+}
+
 export function findUser(id) {
   return request({
     url: '/api/user/findUser',
@@ -63,6 +73,14 @@ export function deleteUser(id) {
 export function updateUser(data) {
   return request({
     url: '/api/user/update',
+    method: 'put',
+    data
+  })
+}
+
+export function updateUserAndRole(data) {
+  return request({
+    url: '/api/user/updateUserAndRole',
     method: 'put',
     data
   })
