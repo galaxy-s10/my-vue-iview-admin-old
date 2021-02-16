@@ -75,10 +75,16 @@
                 </a>
                 <DropdownMenu slot="list">
                   <DropdownItem
-                    ><a href="https://www.zhengbeining.com/" target="_bank">网站前台</a>
+                    ><a href="https://www.zhengbeining.com/" target="_bank"
+                      >网站前台</a
+                    >
                   </DropdownItem>
-                  <DropdownItem divided>个人信息</DropdownItem>
-                  <DropdownItem divided @click.native="logout"> 退出登录 </DropdownItem>
+                  <DropdownItem divided @click.native="goProfile"
+                    >个人信息</DropdownItem
+                  >
+                  <DropdownItem divided @click.native="logout">
+                    退出登录
+                  </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
               <Avatar size="large" shape="square" :src="avatar" />
@@ -172,6 +178,9 @@ export default {
     },
   },
   methods: {
+    goProfile() {
+      this.$router.push({ name: "profile" });
+    },
     logout() {
       cache.clearStorage("token");
       this.$router.push({ path: `/login?redirect=${this.$route.path}` });
@@ -240,7 +249,9 @@ export default {
     getBreadcrumb() {
       // console.log('[[[[[[[[]]]]]]]]')
       // console.log(this.$route.matched)
-      const matched = this.$route.matched.filter((item) => item.meta && item.meta.title);
+      const matched = this.$route.matched.filter(
+        (item) => item.meta && item.meta.title
+      );
       // console.log(
       //   this.$route.matched.filter((item) => item.meta && item.meta.title)
       // );
@@ -283,7 +294,8 @@ export default {
       // );
       if (
         that.$refs.scrollWrap.$el.scrollHeight -
-          (that.$refs.scrollWrap.$el.scrollTop + that.$refs.scrollWrap.$el.offsetHeight) <
+          (that.$refs.scrollWrap.$el.scrollTop +
+            that.$refs.scrollWrap.$el.offsetHeight) <
         100
       ) {
         // console.log("距离底部少于100px");
@@ -335,8 +347,10 @@ export default {
     this.$store.dispatch("user/generateRoutes");
     console.log(this.$store.state.user.addRoutes);
     // this.menuList = this.$router.options.routes;
-    this.$router.addRoutes(this.$store.state.user.addRoutes)
-    this.menuList = this.$router.options.routes.concat(this.$store.state.user.addRoutes);
+    this.$router.addRoutes(this.$store.state.user.addRoutes);
+    this.menuList = this.$router.options.routes.concat(
+      this.$store.state.user.addRoutes
+    );
     console.log(this.menuList);
   },
 };

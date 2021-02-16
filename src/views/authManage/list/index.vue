@@ -317,9 +317,9 @@ export default {
         .catch((err) => {
           console.log(err);
           console.log("pppp");
-          this.$Message.error({
-            content: err.message,
-          });
+          // this.$Message.error({
+          //   content: err.message,
+          // });
         });
     },
     popOk(v) {

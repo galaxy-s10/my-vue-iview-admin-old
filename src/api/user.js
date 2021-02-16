@@ -41,12 +41,12 @@ export function findOne(id) {
   })
 }
 
-export function findDuplicate(id, username) {
+export function findDuplicate(data) {
   return request({
     url: '/api/user/findDuplicate',
     method: 'get',
     params: {
-      id, username
+      ...data
     }
   })
 }

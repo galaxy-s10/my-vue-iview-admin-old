@@ -7,6 +7,7 @@
         v-for="(item, index) in fromData.list"
         :key="index"
         :style="{ display: item.display }"
+        :rules="item.rules"
       >
         <template>
           <div v-if="item.render">

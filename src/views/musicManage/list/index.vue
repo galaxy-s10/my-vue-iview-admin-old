@@ -240,7 +240,7 @@ export default {
               props: {
                 value: params.row.status ? true : false,
                 size: "large",
-                // "before-change": () => this.beforeChangeStatus(params.row),
+                "before-change": () => this.beforeChangeStatus(params.row),
               },
               on: {
                 "on-change": (status) => this.changeStatus(params.row),
@@ -316,15 +316,42 @@ export default {
         this.getQiniuList(this.params);
       }
     },
-    beforeChangeStatus(v, row) {},
-    changeStatus(row) {
-      updateMusic({ ...row, status: row.status == 1 ? 0 : 1 }).then((res) => {
-        row.status = row.status == 1 ? 0 : 1;
+    async beforeChangeStatus(row) {
+      console.log(row);
+      try {
+        let res = await updateMusic({
+          ...row,
+          status: row.status == 1 ? 0 : 1,
+        });
         this.$Message.success({
           content: res.message,
         });
-        this.getMusicList({ ...this.params, ...this.searchRes });
-      });
+      } catch (err) {
+        return Promise.reject();
+      }
+
+      // row.status = 0;
+
+      // });
+    },
+    changeStatus(row) {
+      console.log(row.status);
+      row.status = row.status == 1 ? 0 : 1;
+      this.getMusicList({ ...this.params, ...this.searchRes });
+      // updateMusic({ ...row, status: row.status == 1 ? 0 : 1 })
+      //   .then((res) => {
+      //     console.log('xxxxxx')
+      //     row.status = row.status == 1 ? 0 : 1;
+      //     this.$Message.success({
+      //       content: res.message,
+      //     });
+      //     this.getMusicList({ ...this.params, ...this.searchRes });
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //     row.status = 0
+      //      return Promise.reject()
+      //   });
     },
     onSearch(v) {
       console.log(v);

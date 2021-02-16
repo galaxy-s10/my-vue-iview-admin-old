@@ -173,7 +173,7 @@ export default {
               type: "Upload",
               prop: "img",
               placeholder: "请选择封面图",
-              required: true,
+              // required: true,
             },
             {
               name: "发布时间",

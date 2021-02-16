@@ -96,34 +96,45 @@ export default {
         if (v) {
           console.log(v);
           // return;
-          if (typeof v.avatar == "object") {
-            let num = 1;
-            this.comments = "hssCircle";
-            this.circleData.isShow = true;
-            this.circleData.title = "正在上传";
-            if (this.initData.avatar) {
-              num++;
-              this.circleData.content = "0/" + num;
-              this.circleData.desc = "正在删除旧头像";
-              let delAvatar = await deleteQiniu(this.initData.avatar.slice(33));
-              this.circleData.content = "1/" + num;
-              this.$Notice.success({
-                title: `${delAvatar.message}`,
-                desc: "",
-              });
+          let isDup = await findDuplicate({ id: v.id, username: v.username });
+          console.log(isDup);
+          if (isDup.count == 0) {
+            // return;
+            if (v.avatar != null && typeof v.avatar == "object") {
+              let num = 1;
+              this.comments = "hssCircle";
+              this.circleData.isShow = true;
+              this.circleData.title = "正在上传";
+              if (this.initData.avatar) {
+                num++;
+                this.circleData.content = "0/" + num;
+                this.circleData.desc = "正在删除旧头像";
+                let delAvatar = await deleteQiniu(
+                  this.initData.avatar.slice(33)
+                );
+                this.circleData.content = "1/" + num;
+                this.$Notice.success({
+                  title: `${delAvatar.message}`,
+                  desc: "",
+                });
+              }
+              this.circleData.desc = "正在上传头像";
+              let upAvatar = await this.qiniuUpload(v.avatar);
+              this.circleData.content = (num == 1 ? "1/" : "2/") + num;
+              console.log(upAvatar);
+              v.avatar = "https://img.cdn.zhengbeining.com/" + upAvatar.key;
+              setTimeout(() => {
+                this.initCircle();
+              }, 500);
             }
-            this.circleData.desc = "正在上传头像";
-            let upAvatar = await this.qiniuUpload(v.avatar);
-            this.circleData.content = (num == 1 ? "1/" : "2/") + num;
-            console.log(upAvatar);
-            v.avatar = "https://img.cdn.zhengbeining.com/" + upAvatar.key;
-            setTimeout(() => {
-              this.initCircle();
-            }, 500);
             updateUser(v).then((res) => {
               this.$Message.success({
                 content: res.message,
               });
+            });
+          } else {
+            this.$Message.error({
+              content: isDup.message,
             });
           }
         }

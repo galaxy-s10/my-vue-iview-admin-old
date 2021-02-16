@@ -49,6 +49,7 @@ service.interceptors.response.use(
     // 403权限不足
     // 404未找到
     let whiteList = ['400', '401', '403', '404']
+    // 如果返回的不是400系列错误码
     if (error && error.response && (whiteList.indexOf(error.response.status + '') == -1)) {
       console.log(error.response)
       Message.error({
