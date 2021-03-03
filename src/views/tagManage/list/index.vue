@@ -172,16 +172,9 @@ export default {
       searchData: [
         {
           type: "Input",
-          key: "name",
+          key: "keyword",
           name: "关键字",
           placeholder: "请输入关键字",
-          width: 200,
-        },
-        {
-          type: "DateTime",
-          key: "createdAt",
-          name: "创建时间",
-          placeholder: "请选择创建时间",
           width: 200,
         },
         {
@@ -304,6 +297,7 @@ export default {
     },
     onSearch(v) {
       console.log(v);
+      this.params.nowPage = 1;
       this.getTagList({ ...this.params, ...v });
     },
     changePage(v) {

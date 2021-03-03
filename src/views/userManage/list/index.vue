@@ -33,7 +33,12 @@ import hssOperation from "../../../components/hssComponents/table/operation";
 import hssPopupForm from "../../../components/hssComponents/form/popup-form/index";
 
 import utils from "../../../libs/utils";
-import { getUserList, updateUserAndRole, updateUserStatus, deleteUser } from "../../../api/user";
+import {
+  getUserList,
+  updateUserAndRole,
+  updateUserStatus,
+  deleteUser,
+} from "../../../api/user";
 import {
   addRole,
   getRoleList,
@@ -222,7 +227,8 @@ export default {
               "span",
               {
                 attrs: {
-                  style: "overflow:hidden;text-overflow:ellipsis;white-space: nowrap;",
+                  style:
+                    "overflow:hidden;text-overflow:ellipsis;white-space: nowrap;",
                 },
               },
               params.row.title
@@ -421,7 +427,10 @@ export default {
                 },
                 [
                   h("span", [
-                    h("span", data.role_name + "(" + data.role_description + ")"),
+                    h(
+                      "span",
+                      data.role_name + "(" + data.role_description + ")"
+                    ),
                   ]),
                 ]
               );
@@ -442,6 +451,7 @@ export default {
     onSearch(v) {
       this.searchRes = v;
       console.log(v);
+      this.params.nowPage = 1;
       this.getUserList({ ...this.params, ...v });
     },
     changePage(v) {
@@ -604,7 +614,11 @@ export default {
       user.roles.forEach((item) => {
         temp.push(item.id);
       });
-      updateUserAndRole({ ...user, status: user.status == 1 ? 0 : 1, roles: temp })
+      updateUserAndRole({
+        ...user,
+        status: user.status == 1 ? 0 : 1,
+        roles: temp,
+      })
         .then((res) => {
           this.$Message.success({
             content: res.message,

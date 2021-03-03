@@ -360,6 +360,7 @@ export default {
     onSearch(v) {
       console.log(v);
       this.searchRes = v;
+      this.params.nowPage = 1
       this.getQiniuList({ ...this.params, ...v });
     },
     changePage(v) {

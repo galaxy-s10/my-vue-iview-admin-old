@@ -63,7 +63,6 @@ export default {
       this.onClick(v);
     },
     cancel(v) {
-      console.log(v);
       this.$Message.info({
         content: `你取消了${v.name}操作`,
       });

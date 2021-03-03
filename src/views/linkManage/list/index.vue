@@ -62,7 +62,10 @@ export default {
               return;
             }
             this.action = 1;
-            this.tagInfo = { ...row, createdAt: this.formateDate(row.createdAt) };
+            this.tagInfo = {
+              ...row,
+              createdAt: this.formateDate(row.createdAt),
+            };
             this.columnForm = {
               list: [
                 {
@@ -212,6 +215,16 @@ export default {
           align: "center",
         },
         {
+          title: "申请者ip",
+          align: "center",
+          key: "ip",
+        },
+        {
+          title: "申请者email",
+          align: "center",
+          key: "email",
+        },
+        {
           title: "名称",
           align: "center",
           key: "name",
@@ -320,7 +333,7 @@ export default {
     },
     changeStatus(v, row) {
       let tagTemp = [];
-      updateLink({ ...row, status: v ? 1 : 0 }).then((res) => {
+      updateLink({ ...row, status: v ? 1 : 0, isSendEmail: v }).then((res) => {
         this.$Message.success({
           content: res.message,
         });
@@ -392,11 +405,12 @@ export default {
     },
     onOk() {
       this.comments = "";
+      console.log('xo');
     },
     async onSubmit(v) {
       console.log(v);
       let temp = [];
-      await editLink(v).then((res) => {
+      await updateLink(v).then((res) => {
         console.log(res);
         this.$Message.success({
           content: res.message,
@@ -407,7 +421,7 @@ export default {
     onSearch(v) {
       console.log(v);
       this.searchRes = v;
-      console.log("!!!!!!!!!");
+      this.params.nowPage = 1;
       this.getLinkList({ ...this.params, ...v });
     },
     changePage(v) {

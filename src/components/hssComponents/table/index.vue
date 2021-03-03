@@ -6,7 +6,8 @@
       :columns="columns"
       :data="tableData.list"
     ></Table> -->
-    <div v-if="tableData.list && searchData.length">
+    <!-- <div v-if="tableData.list && searchData.length"> -->
+    <div>
       <hss-search
         :searchValue="searchData"
         @onSelect="onSelect"
@@ -17,7 +18,7 @@
     </div>
 
     <!-- <Table border :columns="columns" :data="tableData.list"> -->
-    <Table :columns="columns" :data="tableData.list" :loading="!tableData.list">
+    <Table :columns="columns" :data="tableData.list" :loading="loading">
       <template
         v-for="(col, colIndex) in columns"
         v-if="col.slot"
@@ -31,7 +32,7 @@
       v-if="Object.keys(params).length != 0"
       style="text-align: right"
       :total="tableData.count"
-      :current="params.nowPage"
+      :current.sync="params.nowPage"
       show-total
       show-elevator
       @on-change="changePage"
@@ -72,48 +73,53 @@ export default {
   },
   data() {
     return {
+      loading: true,
       searchResult: {},
     };
   },
-  created() {
-    console.log(this.searchData);
-  },
+  created() {},
   mounted() {},
   computed: {},
   watch: {
     searchData(newVal, oldVal) {
-      console.log('searchDatasearchData')
-      // this.$emit("changeSearchResult", newVal);
-      // this.searchResult = newVal
+      console.log("searchDatasearchData");
     },
-    searchResult(newVal, oldVal) {
-      // this.$emit("changeSearchResult", newVal);
+    searchResult(newVal, oldVal) {},
+    // tableData: {
+    //   handler(newVal, oldVal) {
+    //     console.log("tableDatatableDatatableDatatableDatatableDatatableData");
+    //     if (this.loading) {
+    //       this.loading = false;
+    //     }
+    //   },
+    //   // deep: true,
+    //   immediate: true,
+    // },
+    tableData(newVal, oldVal) {
+      console.log("tableDatatableDatatableData");
+      if (this.loading) {
+        this.loading = false;
+      }
     },
-    
   },
   methods: {
     changeSearch(v) {
-      console.log(v);
       this.$emit("changeSearchResult", v);
     },
     onSelect(v) {
       this.$emit("onSelect", v);
     },
     onSearch(v) {
-      console.log(v);
-      // this.changePage(1);
-      // console.log(this.paramsData);
+      this.loading = true;
       this.searchResult = v;
-      // this.changePage(1, v);
-      console.log({ ...v });
       this.$emit("onSearch", v);
     },
     changePage(nowPage) {
-      console.log(nowPage);
-      console.log({ ...this.searchResult });
-      // this.paramsData.nowPage = nowPage;
-      this.$emit("changePage", { ...this.params,nowPage, ...this.searchResult });
-      // this.getArticleList(this.params);
+      this.$emit("changePage", {
+        ...this.params,
+        nowPage,
+        ...this.searchResult,
+      });
     },
   },
 };

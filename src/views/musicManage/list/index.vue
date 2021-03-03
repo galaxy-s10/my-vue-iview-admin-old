@@ -355,8 +355,8 @@ export default {
     },
     onSearch(v) {
       console.log(v);
-      console.log("!!!!!!!!!");
       this.searchRes = v;
+      this.params.nowPage = 1
       this.getMusicList({ ...this.params, ...v });
     },
     changePage(v) {

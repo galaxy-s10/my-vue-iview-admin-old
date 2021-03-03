@@ -20,7 +20,10 @@
             justify="center"
             align="middle"
             class="code-row-bg"
-            style="color: white; z-index: 999"
+            style="
+              z-index: 999;
+              color: white;
+            "
           >
             <p style="height: 75px"></p>
             <Icon

@@ -14,12 +14,6 @@
         <hss-operation :row="row" :operation="operationData"></hss-operation>
       </template>
     </hss-table>
-    <!-- <hss-circle
-      :isShow="isShow"
-      :percent="percent"
-      :title="circleTitle"
-      :content="circleContent"
-    ></hss-circle> -->
     <component
       v-bind:is="comments"
       :isShow="circleData.isShow"
@@ -62,7 +56,74 @@ export default {
       },
       searchRes: {},
       // 搜索列
-      searchData: [],
+      searchData: [
+        {
+          type: "Select",
+          key: "type_id",
+          name: "分类",
+          placeholder: "请选择分类",
+          data: this.articleTypeList,
+          width: 150,
+          // val:2,
+        },
+        {
+          type: "Select",
+          key: "status",
+          name: "状态",
+          placeholder: "请选择文章状态",
+          data: [
+            {
+              label: "已发布",
+              value: 1,
+            },
+            {
+              label: "待审核",
+              value: 0,
+            },
+          ],
+          width: 150,
+        },
+        {
+          type: "Select",
+          key: "is_comment",
+          name: "评论",
+          placeholder: "请选择评论状态",
+          data: [
+            {
+              label: "开启",
+              value: 1,
+            },
+            {
+              label: "关闭",
+              value: 0,
+            },
+          ],
+          width: 150,
+        },
+        {
+          type: "Input",
+          key: "keyword",
+          name: "关键字",
+          placeholder: "请输入关键字",
+          width: 200,
+        },
+        {
+          type: "Date",
+          key: "createdAt",
+          name: "创建时间",
+          format: "yyyy-MM-dd",
+          placeholder: "请选择创建时间",
+          width: 200,
+        },
+        {
+          type: "Date",
+          key: "updatedAt",
+          name: "更新时间",
+          format: "yyyy-MM-dd",
+          placeholder: "请选择更新时间",
+          width: 200,
+        },
+      ],
       // 表格操作列
       operationData: [
         {
@@ -326,53 +387,6 @@ export default {
           slot: "operation",
           // width: 400,
         },
-        // {
-        //   title: "操作",
-        //   fixed: "right",
-        //   width: "200",
-        //   align: "center",
-        //   render: (h, params) => {
-        //     return h("div", [
-        //       h(
-        //         "Button",
-        //         {
-        //           props: {
-        //             type: "primary",
-        //             size: "small",
-        //           },
-        //           style: {
-        //             marginRight: "5px",
-        //           },
-        //           on: {
-        //             click: () => {
-        //               // this.show(params.row);
-        //               this.$router.push({
-        //                 name: "updateArticle",
-        //                 params: { id: params.row.id },
-        //               });
-        //             },
-        //           },
-        //         },
-        //         "编辑"
-        //       ),
-        //       h(
-        //         "Button",
-        //         {
-        //           props: {
-        //             type: "error",
-        //             size: "small",
-        //           },
-        //           on: {
-        //             click: () => {
-        //               this.remove(params.row);
-        //             },
-        //           },
-        //         },
-        //         "删除"
-        //       ),
-        //     ]);
-        //   },
-        // },
       ],
     };
   },
@@ -460,13 +474,12 @@ export default {
       // this.params = { ...this.params, ...v };
     },
     onSearch(v) {
-      console.log(v);
+      this.params.nowPage = 1;
       this.searchRes = v;
-      this.changePage({ ...this.params, ...v });
+      // this.changePage({ ...this.params, ...v });
+      this.getArticleList({ ...this.params, ...v });
     },
     changePage(v) {
-      console.log(v);
-      // this.params = v;
       this.getArticleList(v);
     },
     //转换时间格式
@@ -514,10 +527,11 @@ export default {
       );
     },
     async getArticleList(v) {
+      console.log("9999999999");
       console.log(v);
       console.log({ ...v });
       let res = await getArticleList(v);
-      console.log(res)
+      console.log(res);
       this.articleList = res;
       this.params.count = res.count;
     },
@@ -531,104 +545,13 @@ export default {
         typeList.push(temp);
       });
       this.articleTypeList = typeList;
-      this.searchData = [
-        {
-          type: "Select",
-          key: "type_id",
-          name: "分类",
-          placeholder: "请选择分类",
-          data: this.articleTypeList,
-          width: 150,
-          // val:2,
-        },
-        {
-          type: "Select",
-          key: "status",
-          name: "状态",
-          placeholder: "请选择文章状态",
-          data: [
-            {
-              label: "已发布",
-              value: 1,
-            },
-            {
-              label: "待审核",
-              value: 0,
-            },
-          ],
-          width: 150,
-        },
-        {
-          type: "Select",
-          key: "is_comment",
-          name: "评论",
-          placeholder: "请选择评论状态",
-          data: [
-            {
-              label: "开启",
-              value: 1,
-            },
-            {
-              label: "关闭",
-              value: 0,
-            },
-          ],
-          width: 150,
-        },
-        {
-          type: "Input",
-          key: "keyword",
-          name: "关键字",
-          placeholder: "请输入关键字",
-          width: 200,
-        },
-        {
-          type: "Date",
-          key: "createdAt",
-          name: "创建时间",
-          format: "yyyy-MM-dd",
-          placeholder: "请选择创建时间",
-          width: 200,
-        },
-        {
-          type: "Date",
-          key: "updatedAt",
-          name: "更新时间",
-          format: "yyyy-MM-dd",
-          placeholder: "请选择更新时间",
-          width: 200,
-        },
-        // {
-        //   type: "Date",
-        //   key: "createdAt1",
-        //   name: "创建时间(日)",
-        //   // format: "yyyy-MM-dd",
-        //   placeholder: "请选择创建时间(日)",
-        //   width: 200,
-        // },
-        // {
-        //   type: "Month",
-        //   key: "createdAt2",
-        //   name: "创建时间(月)",
-        //   // format: "yyyy-MM-dd",
-        //   placeholder: "请选择创建时间(月)",
-        //   width: 200,
-        // },
-        // {
-        //   type: "Year",
-        //   key: "createdAt3",
-        //   name: "创建时间(年)",
-        //   // format: "yyyy-MM-dd",
-        //   placeholder: "请选择创建时间(年)",
-        //   width: 200,
-        // },
-      ];
+      this.searchData[0].data = this.articleTypeList;
     },
   },
   created() {},
   async mounted() {
-    await this.getArticleTypeList(this.params);
-    await this.getArticleList(this.params);
+    this.getArticleList(this.params);
+    this.getArticleTypeList(this.params);
   },
 };
 </script>

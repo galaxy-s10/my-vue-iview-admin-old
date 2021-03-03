@@ -128,19 +128,12 @@ export default {
   watch: {
     searchValue: {
       handler(newVal, oldVal) {
-        // console.log(newVal);
-        // console.log(oldVal);
-        // console.log("handler");
         let temp = {};
         newVal.forEach((item) => {
-          console.log(item.name);
-          console.log(item.val != undefined);
           if (item.val != undefined) {
-            console.log(item.key);
             temp[item.key] = item.val;
           }
         });
-        console.log(temp);
         this.$emit("changeSearch", temp);
       },
       deep: true,
@@ -151,24 +144,16 @@ export default {
   mounted() {},
   computed: {},
   methods: {
-    ppp(v) {
-      console.log(v);
-    },
     onSelect(v) {
       this.$emit("onSelect", v);
     },
     handleSearch() {
       let temp = {};
       this.searchValue.forEach((item) => {
-        console.log(item.val);
-        console.log(item.val != "");
-        console.log(item.val != undefined);
         if (item.val == 0 || (item.val != "" && item.val != undefined)) {
-          console.log("p");
           temp[item.key] = item.val;
         }
       });
-      console.log(temp);
       this.$emit("onSearch", temp);
     },
   },
