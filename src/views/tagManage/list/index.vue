@@ -137,7 +137,7 @@ export default {
                 title: "提示",
                 content: `${row.name}标签下有${row.articles.length}篇文章，确定删除吗?`,
                 onOk: () => {
-                  delTag(row.id).then((res) => {
+                  deleteTag(row.id).then((res) => {
                     this.$Message.success({
                       content: res.message,
                     });
@@ -151,7 +151,7 @@ export default {
                 },
               });
             } else {
-              delTag(row.id).then((res) => {
+              deleteTag(row.id).then((res) => {
                 this.$Message.success({
                   content: res.message,
                 });

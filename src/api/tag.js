@@ -30,7 +30,7 @@ export function addTag(data) {
 // 删除标签
 export function deleteTag(id) {
     return request({
-        url: '/api/tag/deleteTag',
+        url: '/api/tag/delete',
         method: 'delete',
         data: {
             id

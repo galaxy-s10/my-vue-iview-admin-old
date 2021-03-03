@@ -17,13 +17,6 @@ export default {
         submitBtn: true,
         list: [
           {
-            // name: "id",
-            // type: "Input",
-            prop: "id",
-            // placeholder: "",
-            // display:'none'
-          },
-          {
             type: "Input",
             name: "名称",
             prop: "name",
@@ -37,14 +30,6 @@ export default {
             placeholder: "请输入标签颜色",
             required: true,
           },
-          // {
-          //   name: "创建时间",
-          //   type: "Date",
-          //   prop: "createdAt",
-          //   isDate: true,
-          //   placeholder: "请选择创建时间",
-          //   required: true,
-          // },
         ],
       },
       init: false,
