@@ -71,8 +71,8 @@ export default {
       // 判断当前跳转页面有没有在tagOpenPageList里面
       // 查询点击跳转的路由信息
       console.log(this.menuList);
-      console.log(this.addRoutes);
-      console.log(this.menuList.concat(this.addRoutes));
+      // console.log(this.addRoutes);
+      // console.log(this.menuList.concat(this.addRoutes));
       let target = this.findItem(this.menuList.concat(this.addRoutes), name);
       console.log(target);
       let tag;
@@ -94,6 +94,7 @@ export default {
   },
   created() {},
   mounted() {
+    console.log('Appmounted');
     this.menuList = this.$router.options.routes;
   },
 };

@@ -1,17 +1,21 @@
 <template>
-  <div>sider</div>
+  <div>
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
 export default {
   components: {},
+  props: {},
   data() {
     return {};
   },
-  computed: {},
-  methods: {},
   created() {},
   mounted() {},
+  computed: {},
+  methods: {},
+  watch: {}
 };
 </script>
 

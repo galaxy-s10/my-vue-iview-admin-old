@@ -1,5 +1,7 @@
 <template>
   <div>
+    <span v-auth="'TAG_MANAGE'">TAG_MANAGE</span>
+    <span v-auth="'TAG_MANAGE1'">TAG_MANAGE</span>
     <h1>欢迎{{ user.username }}进入控制台！</h1>
     <!-- 第一种情况（报警告），将val作为hssIpt的model里hssIptVal的值 -->
     <!-- <hss-input v-model="val"></hss-input> -->
@@ -18,11 +20,11 @@
           val = v;
         }
       "
-    ></hss-input> -->
+    ></hss-input>-->
 
     <!-- <i-button @click="ppp">ppp</i-button>
     <i-button @click="modal1">a</i-button>
-    <hss-modal :val="modalVal" @hssModalOk="ok" @hssModalCancel="cancel"></hss-modal> -->
+    <hss-modal :val="modalVal" @hssModalOk="ok" @hssModalCancel="cancel"></hss-modal>-->
     <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
     <div ref="echartDemo" style="width: 600px; height: 400px; margin: 10px auto"></div>
   </div>
@@ -40,19 +42,19 @@ export default {
       // option.xAxis.data
       option: {
         title: {
-          text: "流量概况",
+          text: "流量概况"
           // subtext:'subtext'
         },
         tooltip: {
-          trigger: "axis",
+          trigger: "axis"
         },
         legend: {
-          data: ["访问量", "访客量"],
+          data: ["访问量", "访客量"]
         },
         xAxis: {
           boundaryGap: false,
           data: [],
-          axisLabel: { interval: 0 },
+          axisLabel: { interval: 0 }
           // data: [
           //   "2021-02-01",
           //   "2021-02-02",
@@ -77,8 +79,8 @@ export default {
             //   ],
             // },
             markLine: {
-              data: [{ type: "average", name: "平均值" }],
-            },
+              data: [{ type: "average", name: "平均值" }]
+            }
           },
           {
             name: "访客量",
@@ -92,39 +94,37 @@ export default {
             //   ],
             // },
             markLine: {
-              data: [{ type: "average", name: "平均值" }],
-            },
-          },
-        ],
+              data: [{ type: "average", name: "平均值" }]
+            }
+          }
+        ]
       },
       val: "10",
       modalVal: false,
       masonryParams: {
         column: 2,
-        gap: 10,
+        gap: 10
       },
       params: {
         pageSize: 10,
-        nowPage: 1,
+        nowPage: 1
       },
       articleList: [],
       imgLoadNum: 0,
       isLoad: false,
-      showMasonry: false,
+      showMasonry: false
     };
   },
   computed: {
-    ...mapState({ user: (v) => v.user }),
+    ...mapState({ user: v => v.user })
   },
   created() {
-    console.log("createdcreated");
-    // this.getArticleList();
   },
   mounted() {
     console.log("mountedmountedmounted");
     this.getVisitInfo();
     let that = this;
-    this.$bus.$on("overScroll", function () {
+    this.$bus.$on("overScroll", function() {
       console.log("1111111111");
       // if (this.isLoad) return;
       // that.params.nowPage += 1;
@@ -146,7 +146,7 @@ export default {
         this.isLoad = false;
         this.masonry();
       }
-    },
+    }
   },
   methods: {
     getDay(day) {
@@ -181,15 +181,16 @@ export default {
       this.$http({
         url: "/api/log/getRangeVisitInfo",
         method: "get",
-        params,
-      }).then((res) => {
+        params
+      }).then(res => {
         console.log(res);
-        res.data.rangeData.forEach((i) => {
+        res.data.rangeData.forEach(i => {
           this.option.xAxis.data.push(i.today);
           this.option.series[0].data.push(i.allVisiteTotal);
           this.option.series[1].data.push(i.allVisitorTotal);
         });
-        this.option.title.text = "历史总访问量：" + res.data.allData[0].allVisiteTotal;
+        this.option.title.text =
+          "历史总访问量：" + res.data.allData[0].allVisiteTotal;
         this.option.title.subtext =
           "历史总访客量：" + res.data.allData[0].allVisitorTotal;
         // this.$nextTick(() => {
@@ -245,7 +246,9 @@ export default {
           // 将第一行的offsetHeight都保存在数组里
           console.log(item[i]);
           console.log(item[i].offsetHeight);
-          offsetList.push(i == 0 ? item[i].offsetHeight + gap : item[i].offsetHeight);
+          offsetList.push(
+            i == 0 ? item[i].offsetHeight + gap : item[i].offsetHeight
+          );
           item[i].style.top = "0";
           if ((i + 1) % column == 1) {
             item[i].style.left = 0;
@@ -292,7 +295,7 @@ export default {
       // }, 300);
     },
     ppp() {
-      this.$refs.form1.handleSubmit((x) => {
+      this.$refs.form1.handleSubmit(x => {
         console.log("ooo");
         console.log(x);
       });
@@ -323,8 +326,8 @@ export default {
       //必须，因为这相当于传统的父子传值，子组件的val和hssIptVal都依赖父组件的val
       this.val = v;
       // do some things
-    },
-  },
+    }
+  }
 };
 </script>
 

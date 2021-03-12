@@ -1,8 +1,8 @@
 export default (authData, roleRoutes) => {
     // console.log(authData);
     // console.log('!!!!!!!!!!!!!!!!');
-    // console.log(authData);
-    // console.log(roleRoutes);
+    console.log(authData);
+    console.log(roleRoutes);
     let status = false;
     // console.log(typeof roleRoutes);
     // console.log(roleRoutes instanceof Array);

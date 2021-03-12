@@ -35,9 +35,11 @@ router.beforeEach(async (to, from, next) => {
     if (hasUserInfo.username) {
       next()
     } else {
+      console.log('xxxxxxxxxxxx');
       try {
         await store.dispatch("user/getUserInfo")
         await store.dispatch("user/getAuth")
+        // 生成动态路由
         store.dispatch("user/generateRoutes");
         next(to)
       } catch (err) {
