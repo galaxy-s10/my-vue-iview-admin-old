@@ -174,10 +174,6 @@ export default {
       let params = {};
       params.startDate = this.getDay(-6);
       params.endDate = this.getDay(0);
-      console.log(params);
-      console.log(this);
-      console.log(this.$http);
-      console.log(this.$http.get);
       this.$http({
         url: "/api/log/getRangeVisitInfo",
         method: "get",

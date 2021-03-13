@@ -30,6 +30,7 @@ export const defaultRoutes = [{
     name: "error",
     path: '/error',
     component: Layout,
+    redirect: '/error/404',
     // component: () => import('@/views/error'),
     meta: {
         title: '异常页面',
@@ -37,7 +38,7 @@ export const defaultRoutes = [{
     },
     children: [{
         name: "authError",
-        path: '/401',
+        path: '/error/401',
         component: () => import('@/views/error/401/index'),
         meta: {
             title: '权限错误',
@@ -45,7 +46,7 @@ export const defaultRoutes = [{
     },
     {
         name: "notFound",
-        path: '/404',
+        path: '/error/404',
         component: () => import('@/views/error/404/index'),
         // component: () => import('@/views/testPage'),
         meta: {
@@ -54,7 +55,7 @@ export const defaultRoutes = [{
     },
     {
         name: "serverError",
-        path: '/500',
+        path: '/error/500',
         component: () => import('@/views/error/500/index'),
         meta: {
             title: '服务器错误',
@@ -65,9 +66,10 @@ export const defaultRoutes = [{
 {
     path: '/debug',
     component: Layout,
+    redirect: '/debug/debugs',
     children: [{
         name: "debugs",
-        path: '/debugs',
+        path: '/debug/debugs',
         component: () => import('@/views/debug/index'),
         meta: {
             title: '调试',
@@ -78,6 +80,7 @@ export const defaultRoutes = [{
 {
     path: '/logManage',
     component: Layout,
+    redirect: '/logManage/logList',
     children: [{
         name: "logList",
         path: '/logManage/logList',
@@ -200,7 +203,7 @@ export const roleRoutes = [{
     {
         name: "updateArticle",
         path: '/articleManage/updateArticle/:id',
-        hidden:true,
+        hidden: true,
         component: () => import('@/views/articleManage/update/index'),
         meta: {
             title: '修改文章',
@@ -341,7 +344,7 @@ export const roleRoutes = [{
     {
         name: "updateMusic",
         path: '/musicManage/update/:id',
-        hidden:true,
+        hidden: true,
         component: () => import('@/views/musicManage/update/index'),
         meta: {
             title: '修改音乐',

@@ -58,10 +58,10 @@ export default {
   },
   created() {},
   mounted() {
-    this.$store.dispatch("user/generateRoutes");
+    // this.$store.dispatch("user/generateRoutes");
     console.log(this.$store.state.user.addRoutes);
     // this.menuList = this.$router.options.routes;
-    this.$router.addRoutes(this.$store.state.user.addRoutes);
+    // this.$router.addRoutes(this.$store.state.user.addRoutes);
     this.menuList = this.$router.options.routes.concat(
       this.$store.state.user.addRoutes
     );
