@@ -252,8 +252,16 @@ export const roleRoutes = [{
         }
     },
     {
+        // name: "hiddenTag",
+        // 如果用了hidden，需要填一个路径，不然会报警告
+        /**
+         * [vue-router] Named Route 'linkManage' has a default child route. 
+         * When navigating to this named route (:to="{name: 'linkManage'"),
+         * the default child route will not be rendered. 
+         * Remove the name from this route and use the name of the default child route for named links instead.
+         */
         hidden: true,
-        path: ""
+        path: '/tagManage/hiddenTag',
     },
     ]
 },
@@ -286,7 +294,7 @@ export const roleRoutes = [{
         // 如果children里只有一个值，就只会显示这个值而不会显示父级
         // 如果需要children里面只有一个值也要显示父级的话，可以通过添加一个隐藏的值进行占位
         hidden: true,
-        path: ""
+        path: "/linkManage/hiddenLink"
     },
     ]
 },
@@ -362,7 +370,7 @@ export const roleRoutes = [{
     },
     {
         hidden: true,
-        path: ""
+        path: '/musicManage/hiddenMusic',
     }
     ]
 },
@@ -393,7 +401,7 @@ export const roleRoutes = [{
     },
     {
         hidden: true,
-        path: ""
+        path: '/qiniuManage/hiddenQiniu',
     }
     ]
 },

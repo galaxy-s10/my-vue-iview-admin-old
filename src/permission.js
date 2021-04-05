@@ -69,6 +69,7 @@ router.beforeEach(async (to, from, next) => {
     //   next(`/login?redirect=${to.path}`)
     // }
     console.log('无token')
+    store.commit('user/setRoutes', [])
     console.log(whiteList)
     console.log(whiteList.indexOf(to.path))
     // return

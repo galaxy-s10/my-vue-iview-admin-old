@@ -1,7 +1,7 @@
 <template>
   <div>
-    <span v-auth="'TAG_MANAGE'">TAG_MANAGE</span>
-    <span v-auth="'TAG_MANAGE1'">TAG_MANAGE</span>
+    <!-- <span v-auth="'TAG_MANAGE'">TAG_MANAGE</span>
+    <span v-auth="'TAG_MANAGE1'">TAG_MANAGE</span> -->
     <h1>欢迎{{ user.username }}进入控制台！</h1>
     <!-- 第一种情况（报警告），将val作为hssIpt的model里hssIptVal的值 -->
     <!-- <hss-input v-model="val"></hss-input> -->
